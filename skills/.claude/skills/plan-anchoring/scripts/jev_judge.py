@@ -58,7 +58,6 @@ Plan-gate size handling
   sent (PLAN.TOO_LARGE), and
   a context overflow from Jev is recorded per anchor as PLAN.TOO_LARGE. The
   development gate keeps the truncate-and-halve behaviour.
-  130 interrupted by the user
 """
 from __future__ import annotations
 
