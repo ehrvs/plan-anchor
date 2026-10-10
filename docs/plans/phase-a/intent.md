@@ -45,7 +45,7 @@ Phase A succeeds when:
 - `--dry-run` and fixture-answer modes are proven to make no network calls;
 - harness-specific agents, independent question tuning, Jev requirements,
   secret redaction, and realistic examples remain consistent across the skill,
-  README, design documents, tests, and plugin manifests; and
+  README, design documents, tests, and plugin manifests;
 - the testability rubric is independently calibrated against a frozen,
   plan-independent oracle and reports uncertainty or disagreement without
   mislabeling either as an anchor defect; and
