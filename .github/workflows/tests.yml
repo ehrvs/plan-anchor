@@ -15,7 +15,12 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python }}
       - run: python -m unittest discover -v -s skills/.claude/skills/plan-anchoring/tests
+      - run: python scripts/check_version_sync.py
+      - if: github.event_name == 'pull_request'
+        run: python scripts/check_version_sync.py --base origin/${{ github.base_ref }}
