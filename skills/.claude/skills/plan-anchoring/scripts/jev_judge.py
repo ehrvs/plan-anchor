@@ -28,6 +28,7 @@ Subcommands
   set-beads       record the anchor / plan-questions / dev-questions bead IDs
   promote         mark an anchor as promoted to an ADR (keeps its ID)
   compose-item    build the labelled item text from `bd show --json` (and `bd children --json`)
+  agent-preflight validate and canonicalise agent paths and identifiers before any read or upload
   shape           size and shape metrics of plan beads (sections, code vs prose, references, repeated paragraphs); never gates
   judge           ask Jev about one item against one or more anchors, write a run
   check-fixtures  judge each anchor's fixtures.pass / fixtures.fail sentences as items
@@ -153,6 +154,9 @@ QUOTE_MISSING_PROBLEM = "quote missing; record the user's verbatim words"
 
 _sleep = time.sleep  # replaced in tests
 
+SAFE_AGENT_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$")
+BEARER_RE = re.compile(r"(?i)(bearer\s+)[^\s\"']+")
+
 
 # --------------------------------------------------------------------------- #
 # plumbing
@@ -170,7 +174,7 @@ class JudgeError(Exception):
         self.data = None                # optional facts that explain the error (PLAN.TOO_LARGE carries the bead's shape)
 
     def to_json(self) -> dict:
-        return {
+        return redact_sensitive({
             "success": False,
             "data": self.data,
             "error": {
@@ -179,10 +183,28 @@ class JudgeError(Exception):
                 "recoverable": self.recoverable,
                 "suggested_action": self.action,
             },
-        }
+        })
+
+
+def redact_sensitive(value):
+    """Remove the live TypeSafe credential and bearer tokens from every emitted value."""
+    if isinstance(value, dict):
+        return {key: redact_sensitive(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [redact_sensitive(item) for item in value]
+    if isinstance(value, tuple):
+        return tuple(redact_sensitive(item) for item in value)
+    if not isinstance(value, str):
+        return value
+    text = value
+    api_key = os.environ.get("TYPESAFE_API_KEY", "")
+    if api_key:
+        text = text.replace(api_key, "<redacted>")
+    return BEARER_RE.sub(r"\1<redacted>", text)
 
 
 def emit(obj, fmt: str = "json") -> None:
+    obj = redact_sensitive(obj)
     if fmt == "json":
         print(json.dumps(obj, indent=2, ensure_ascii=False))
     else:
@@ -259,6 +281,78 @@ def short_date(iso: str) -> str:
 
 def sanitize_id(text: str) -> str:
     return re.sub(r"[^A-Za-z0-9_.-]", "_", text)
+
+
+def _inside(path: pathlib.Path, root: pathlib.Path) -> bool:
+    return path == root or root in path.parents
+
+
+def canonical_workspace_path(raw: str, root: pathlib.Path, what: str, *, must_exist: bool,
+                             regular_file: bool = False) -> pathlib.Path:
+    if not raw or not raw.strip():
+        raise JudgeError("VALIDATION.PATH", f"{what} is empty", action=f"Pass a {what} inside the repository.")
+    candidate = pathlib.Path(raw).expanduser()
+    if not candidate.is_absolute():
+        candidate = root / candidate
+    try:
+        resolved = candidate.resolve(strict=must_exist)
+    except (OSError, RuntimeError) as exc:
+        raise JudgeError("VALIDATION.PATH", f"{what} could not be resolved: {exc}",
+                         action=f"Pass a readable {what} inside {root}.")
+    if not _inside(resolved, root):
+        raise JudgeError("VALIDATION.PATH", f"{what} is outside the repository: {resolved}",
+                         action=f"Use a path under {root}; external files are never read or sent to Jev.")
+    if regular_file and not resolved.is_file():
+        raise JudgeError("VALIDATION.PATH", f"{what} is not a regular file: {resolved}",
+                         action=f"Pass an existing regular file for {what}.")
+    return resolved
+
+
+def cmd_agent_preflight(args) -> dict:
+    """Fail closed before an agent reads local evidence or sends it to Jev."""
+    try:
+        root = pathlib.Path(args.workspace_root).expanduser().resolve(strict=True)
+    except (OSError, RuntimeError) as exc:
+        raise JudgeError("VALIDATION.PATH", f"workspace root could not be resolved: {exc}",
+                         action="Run from a Git worktree and pass `git rev-parse --show-toplevel`.")
+    if not root.is_dir():
+        raise JudgeError("VALIDATION.PATH", f"workspace root is not a directory: {root}")
+
+    try:
+        script = pathlib.Path(args.script).expanduser().resolve(strict=True)
+    except (OSError, RuntimeError) as exc:
+        raise JudgeError("VALIDATION.PATH", f"script could not be resolved: {exc}",
+                         action="Use the installed plan-anchoring script selected from the harness skill directory.")
+    running_script = pathlib.Path(__file__).resolve()
+    if script != running_script:
+        raise JudgeError("VALIDATION.PATH", f"script does not match the running plan-anchoring script: {script}",
+                         action="Use the installed plan-anchoring script selected from the harness skill directory.")
+
+    anchors = canonical_workspace_path(args.anchors, root, "anchors file", must_exist=True, regular_file=True)
+    raw_run_dir = args.run_dir or str(anchors.parent / "anchor-runs")
+    run_dir = canonical_workspace_path(raw_run_dir, root, "run directory", must_exist=False)
+    evidence = [str(canonical_workspace_path(path, root, "evidence file", must_exist=True, regular_file=True))
+                for path in args.evidence]
+
+    for identifier in args.identifier:
+        if not SAFE_AGENT_ID_RE.fullmatch(identifier):
+            raise JudgeError("VALIDATION.ID", f"unsafe agent identifier: {identifier!r}",
+                             action="Use 1-128 letters, digits, dots, underscores, colons or hyphens; do not use paths or whitespace.")
+    if args.pr_number and (not args.pr_number.isascii() or not args.pr_number.isdigit() or int(args.pr_number) < 1):
+        raise JudgeError("VALIDATION.ID", f"invalid PR number: {args.pr_number!r}",
+                         action="Pass a positive decimal pull-request number.")
+
+    work_source = args.correlation_id or (args.identifier[0] if args.identifier else "run")
+    return {"success": True, "data": {
+        "workspace_root": str(root),
+        "script": str(script),
+        "anchors_path": str(anchors),
+        "run_dir": str(run_dir),
+        "evidence": evidence,
+        "identifiers": list(args.identifier),
+        "pr_number": args.pr_number or None,
+        "work_key": sanitize_id(work_source)[:128],
+    }, "error": None}
 
 
 # --------------------------------------------------------------------------- #
@@ -2407,6 +2501,17 @@ def build_parser() -> argparse.ArgumentParser:
                          "dev: every section plus closed children")
     ci.add_argument("--out", default="", help="write the text here; without it the text is returned in data.text")
     ci.set_defaults(func=cmd_compose_item)
+
+    ap = sub.add_parser("agent-preflight", help="validate agent paths and identifiers before reading or sending data")
+    ap.add_argument("--workspace-root", required=True, help="absolute root from `git rev-parse --show-toplevel`")
+    ap.add_argument("--script", required=True, help="selected installed jev_judge.py; must equal this running script")
+    ap.add_argument("--anchors", required=True, help="anchors.json inside the workspace")
+    ap.add_argument("--run-dir", default="", help="output directory inside the workspace; default beside anchors.json")
+    ap.add_argument("--evidence", action="append", default=[], help="existing evidence file inside the workspace; repeatable")
+    ap.add_argument("--identifier", action="append", default=[], help="bead, sprint or anchor id; repeatable")
+    ap.add_argument("--pr-number", default="", help="positive decimal GitHub pull-request number")
+    ap.add_argument("--correlation-id", default="", help="safe correlation id used to derive a temporary work key")
+    ap.set_defaults(func=cmd_agent_preflight)
 
     sh = sub.add_parser("shape", help="size and shape metrics of plan beads; informs, never gates (exit 0)")
     sh.add_argument("--beads", default="", help="directory of `bd show --json` files")

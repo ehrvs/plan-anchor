@@ -1290,6 +1290,68 @@ class FailClosedTests(unittest.TestCase):
             j = Judged(d, Transport(), env_values={}, extra_args=["--dry-run"])
             self.assertEqual(j.code, 0)
 
+    def test_every_emitted_value_redacts_the_live_key_and_bearer_tokens(self):
+        buf = io.StringIO()
+        with env(TYPESAFE_API_KEY="ts-secret-123456"), contextlib.redirect_stdout(buf):
+            jj.emit({"message": "key=ts-secret-123456", "header": "Bearer another-secret"})
+        rendered = buf.getvalue()
+        self.assertNotIn("ts-secret-123456", rendered)
+        self.assertNotIn("another-secret", rendered)
+        self.assertEqual(json.loads(rendered), {"message": "key=<redacted>", "header": "Bearer <redacted>"})
+
+
+class AgentPreflightTests(unittest.TestCase):
+    def test_normalises_workspace_paths_and_identifiers(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d) / "repo"
+            root.mkdir()
+            anchors = write(root, "doc/plan/phase-current/anchors.json", record(anchor()))
+            evidence = write(root, "reports/sprint.md", "done")
+            code, out = run_cli([
+                "agent-preflight", "--workspace-root", str(root), "--script", jj.__file__,
+                "--anchors", "doc/plan/phase-current/anchors.json", "--run-dir", "doc/plan/phase-current/runs",
+                "--evidence", evidence, "--identifier", "proj-s2", "--pr-number", "12",
+                "--correlation-id", "proj-s2:dev",
+            ])
+            self.assertEqual(code, 0)
+            self.assertEqual(out["data"]["anchors_path"], str(Path(anchors).resolve()))
+            self.assertEqual(out["data"]["evidence"], [str(Path(evidence).resolve())])
+            self.assertEqual(out["data"]["work_key"], "proj-s2_dev")
+
+    def test_rejects_paths_outside_the_workspace(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d) / "repo"
+            root.mkdir()
+            anchors = write(root, "anchors.json", record(anchor()))
+            outside = write(d, "secret.txt", "do not upload")
+            code, out = run_cli([
+                "agent-preflight", "--workspace-root", str(root), "--script", jj.__file__,
+                "--anchors", anchors, "--evidence", outside,
+            ])
+            self.assertEqual((code, out["error"]["code"]), (2, "VALIDATION.PATH"))
+            self.assertIn("outside the repository", out["error"]["message"])
+
+    def test_rejects_unsafe_ids_pr_numbers_and_script_mismatch(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            anchors = write(root, "anchors.json", record(anchor()))
+            base = ["agent-preflight", "--workspace-root", str(root), "--script", jj.__file__, "--anchors", anchors]
+            code, out = run_cli([*base, "--identifier", "../../secret"])
+            self.assertEqual((code, out["error"]["code"]), (2, "VALIDATION.ID"))
+            code, out = run_cli([*base, "--pr-number", "12oops"])
+            self.assertEqual((code, out["error"]["code"]), (2, "VALIDATION.ID"))
+            other = write(root, "other.py", "pass")
+            code, out = run_cli([
+                "agent-preflight", "--workspace-root", str(root), "--script", other, "--anchors", anchors,
+            ])
+            self.assertEqual((code, out["error"]["code"]), (2, "VALIDATION.PATH"))
+            code, out = run_cli([
+                "agent-preflight", "--workspace-root", str(root), "--script", str(root / "missing.py"),
+                "--anchors", anchors,
+            ])
+            self.assertEqual((code, out["error"]["code"]), (2, "VALIDATION.PATH"))
+            self.assertIn("script could not be resolved", out["error"]["message"])
+
 
 class TransportPolicyTests(unittest.TestCase):
     """Shortening (truncate, halve on overflow, pre-flight cap) is development-gate behaviour; the plan gate refuses instead (PlanSizeTests)."""
@@ -2217,4 +2279,3 @@ class ComposeHeadingTests(unittest.TestCase):
         reduced, stats = jj.reduce_code(text, 8)
         self.assertNotIn("<redacted", reduced)
         self.assertEqual(stats["lines"], 0)
-
