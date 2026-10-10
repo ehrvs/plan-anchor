@@ -13,7 +13,7 @@ flowchart LR
         Runs["anchor-runs/*.json<br/>one file per gate run"]
     end
     subgraph Beads["beads (bd)"]
-        AB["anchor bead (type decision)<br/>description = verbatim statement"]
+        AB["anchor bead (type decision)<br/>description = testable statement, notes = verbatim quote"]
         PQ["plan-questions child<br/>fenced JSON overrides or {}"]
         DQ["dev-questions child<br/>fenced JSON overrides or {}"]
         PB["planning beads"]
@@ -50,7 +50,8 @@ classDiagram
         id : ANC-NNN | REQ-* | ADR-*
         source_type : ANC | REQ | ADR
         source_ref
-        statement : verbatim, immutable
+        statement : testable requirement, authored, approved
+        quote : verbatim user words, immutable
         stated_by
         stated_at : ISO date
         context
@@ -96,8 +97,8 @@ classDiagram
 
 Rules that follow from the model:
 
-- `statement` is immutable. A changed directive is a new anchor; the old one is retired with `replaced_by` in its history. Otherwise past runs would silently refer to different facts.
-- `version` bumps on scope, summary, fixtures, overrides or status changes, never on the statement.
+- `quote` is immutable: the user's words. `statement` is the instrument Jev judges; it may be reworded for testability (`update --statement`), and every run file copies the statement it judged, so past verdicts keep their meaning. A changed directive is a new anchor; the old one is retired with `replaced_by` in its history.
+- `version` bumps on statement, scope, summary, fixtures, overrides or status changes.
 - `ANC-NNN` is allocated by the script as max plus one and never reused. REQ and ADR anchors use their register ID so a report line points at the register directly.
 - `summary` exists for tables; Jev never sees it. `scope` is sent, because it drives the relevance question.
 
@@ -109,7 +110,7 @@ One anchor, one item, three or four questions. Nothing else.
 {
   "model": "jev-latest",
   "state": {
-    "anchor": {"id": "ANC-012", "statement": "copy the libraries from ATM as the starting point and remove the ATM-specific code", "scope": "the runtime crates sprint and anything that creates the core library implementation"},
+    "anchor": {"id": "ANC-012", "statement": "copy the libraries from the legacy repo as the starting point and remove the legacy-specific code", "scope": "the runtime crates sprint and any bead that creates the core library implementation"},
     "item": {"id": "bd-42", "title": "Sprint 2 runtime", "text": "# Sprint 2 runtime\n\n## Description\n..."}
   },
   "questions": {
@@ -215,7 +216,7 @@ sequenceDiagram
     participant S as jev_judge.py
     participant B as bd
 
-    U->>P: "copy the libraries from ATM as the starting point and remove the ATM-specific code"
+    U->>P: "copy the libraries from the legacy repo as the starting point and remove the legacy-specific code"
     P->>U: Anchor candidate quoted verbatim. Lock as ANC-012?
     U->>P: lock it
     P->>S: add --statement "<verbatim>" --scope ... --status locked
@@ -228,4 +229,4 @@ sequenceDiagram
     P->>S: update --id ANC-012 --fixture-pass ... --fixture-fail ... --deterministic-check ...
 ```
 
-Capture is the one interactive step and stays in the main session. Nothing is locked without the user's confirmation, and nothing locked is ever reworded.
+Capture is the one interactive step and stays in the main session. Nothing is locked without the user's confirmation. The statement proposed is a testable requirement that passed the rubric, not the quote; the quote is kept verbatim. After locking, the skill spins off `anchor-question-tune` in the background for each gate, and only tuned anchors are used at a gate.

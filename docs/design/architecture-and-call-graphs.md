@@ -2,7 +2,7 @@
 
 Design document for the `plan-anchoring` skill. Companion to the [PRD](../plan-anchor-prd.md) and to [data model, gating and lifecycle](data-model-and-gating.md). Diagrams are Mermaid.
 
-Status: implemented, offline-tested (73 tests), and verified live against Jev `jev-1.13.0` on both gates with the example anchors. Marketplace packaging is pending.
+Status: implemented and verified live against Jev `jev-1.13.0` on both gates. Revision 0.3 (2026-10-10) adds, from first use on a real plan: the statement/quote split, the testability rubric, the background question tuner, deduplication, deterministic shape metrics, and size-as-symptom handling of oversized beads. Marketplace packaging is pending.
 
 ## 1. Components
 
@@ -17,6 +17,7 @@ flowchart LR
     subgraph Agents["Isolated subagents (Task tool)"]
         PlanAgent["anchor-plan-review<br/>one planning bead per run"]
         SprintAgent["anchor-sprint-review<br/>one sprint per run"]
+        Tuner["anchor-question-tune (background)<br/>one anchor and gate per run"]
     end
 
     subgraph Script["scripts/jev_judge.py (stdlib Python)"]
@@ -25,6 +26,7 @@ flowchart LR
         Gate["decide(): gating in code"]
         Report["report / coverage / diff"]
         Record["add / update / retire / promote / render"]
+        Quality["lint / rubric / dedupe / shape<br/>check-fixtures"]
     end
 
     Jev[("TypeSafe Jev<br/>POST /v1/systemone")]
@@ -36,6 +38,10 @@ flowchart LR
     Skill -- "bd create / bd comment" --> Beads
     Skill -- "Task tool, ≤3 in parallel" --> PlanAgent
     Skill -- "Task tool" --> SprintAgent
+    Skill -- "Task tool, background, after lock" --> Tuner
+    Tuner --> Quality
+    Quality -- "rubric, dedupe, fixtures" --> Jev
+    Tuner -- "fenced JSON: tested override" --> Skill
     PlanAgent -- "bd show --json (read-only)" --> Beads
     SprintAgent -- "bd children --json, gh pr view, git diff --stat (read-only)" --> Beads
     PlanAgent --> Compose --> Judge
@@ -52,9 +58,9 @@ Responsibilities:
 
 | Tier | Owns | Never does |
 | --- | --- | --- |
-| Skill (main session) | Detecting and confirming anchors, locking them through the script, creating the bead tree, deciding what to judge, posting reports, acting on verdicts | Judging text itself, paraphrasing a statement, computing coverage by hand |
-| Agents | Composing the exact text Jev sees, resolving question overrides from beads, invoking the script once, returning fenced JSON | Editing beads, the record, the plan or code; posting comments; retrying around the script |
-| Script | IDs, the Jev request, retries, response validation, gating, run files, coverage, diffs, report rendering | Calling `bd` or `gh`; deciding what to judge |
+| Skill (main session) | Detecting candidates, writing each as one testable statement with the verbatim quote kept, running the rubric and dedupe, locking through the script, spinning off the tuner, creating the bead tree, deciding what to judge, posting reports, triaging verdicts and oversized beads | Judging text itself, locking a statement that is just the quote, computing coverage or size by hand, splitting a bead to pass |
+| Agents | Composing the exact text Jev sees, resolving question overrides from beads, invoking the script once, returning fenced JSON; the tuner rewrites one question per round and proves it against fixtures and known beads | Editing beads, the record, the plan or code; posting comments; retrying around the script; tuning to make one bead pass |
+| Script | IDs, lint, rubric and dedupe requests, the Jev request, retries, response validation, gating, run files, coverage, diffs, shape metrics, report rendering | Calling `bd` or `gh`; deciding what to judge; shortening plan prose |
 | Jev | Answering three or four independent typed questions about one anchor and one item | Counting, gating, explaining, seeing more than one item |
 
 ## 2. Planning gate call graph
@@ -187,7 +193,7 @@ sequenceDiagram
     S->>S: write anchor-runs/<gate>-<stamp>-<item>.json
     S-->>Ag: JSON {success, data: {run_path, results, summary}}, exit 0 pass, 1 fail, 2 fatal
     Ag->>S: report --run <run_path> --format md
-    S-->>Ag: markdown quoting each failing anchor's verbatim statement
+    S-->>Ag: markdown with each failing anchor's statement and verbatim quote
     Ag-->>Ag: return fenced JSON envelope to the skill
 ```
 
@@ -222,4 +228,4 @@ The script path is resolved relative to the skill directory (`scripts/jev_judge.
 
 ## 6. What leaves the machine
 
-Only a `judge` or `check-fixtures` call contacts TypeSafe, and only after both `TYPESAFE_API_KEY` and `PLAN_ANCHOR_ALLOW_REMOTE_JUDGE=1` are set. Each request carries exactly: the anchor's verbatim statement and scope, the item's ID, title and composed text (bead fields or the evidence account, never full diffs or source), and the question set. The key travels only as a bearer header and is never printed, logged or written to a run file. `--dry-run` writes the exact request bodies and totals to the run directory without sending anything; `--answers-file` exercises the whole pipeline with fixture answers for tests and CI.
+Only a `judge` or `check-fixtures` call contacts TypeSafe, and only after both `TYPESAFE_API_KEY` and `PLAN_ANCHOR_ALLOW_REMOTE_JUDGE=1` are set. Each request carries exactly: the anchor's testable statement and scope (the verbatim quote stays local, except in `rubric`), the item's ID, title and composed text (bead fields or the evidence account, never full diffs or source), and the question set. The key travels only as a bearer header and is never printed, logged or written to a run file. `--dry-run` writes the exact request bodies and totals to the run directory without sending anything; `--answers-file` exercises the whole pipeline with fixture answers for tests and CI.

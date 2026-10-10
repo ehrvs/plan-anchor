@@ -6,15 +6,15 @@ A Claude Code skill that keeps plans, and the code built from them, anchored to 
 
 ## The problem
 
-Over a long planning conversation the specific things you say get compressed out of an agent's context. You ask for something concrete, "copy these crates from ATM as the starting point and strip the ATM-specific code", the agent writes it down, and several rounds later it quietly writes a new implementation from scratch. Nothing checks that the plan still says what you said, or that the delivered work matches the plan, so you re-state the same facts every time you re-open the plan.
+Over a long planning conversation the specific things you say get compressed out of an agent's context. You ask for something concrete, "copy these crates from the legacy repo as the starting point and strip the legacy-specific code", the agent writes it down, and several rounds later it quietly writes a new implementation from scratch. Nothing checks that the plan still says what you said, or that the delivered work matches the plan, so you re-state the same facts every time you re-open the plan.
 
 ## How it works
 
-1. **Capture.** While you plan, the orchestrator watches for directives about *how* the work must be done and proposes each one as an anchor, quoting your exact words. Nothing is locked until you confirm or say "lock this".
-2. **Record.** Locked anchors are numbered (`ANC-001`...) and stored verbatim with provenance in `doc/plan/phase-current/anchors.json`, rendered to `anchors.md`, and given a small bead tree so their questions version alongside the work. Existing requirements (`REQ-*`) and ADRs (`ADR-*`) join the same record under their own IDs.
+1. **Capture.** While you plan, the orchestrator watches for directives about *how* the work must be done. For each one it writes one testable requirement (the anchor `statement`), keeps your exact words as the `quote`, checks the statement against a testability rubric and existing anchors, and proposes both. Nothing is locked until you confirm. A phase needs five to fifteen anchors, not one per sentence.
+2. **Record and tune.** Locked anchors are numbered (`ANC-001`...) and stored with provenance in `doc/plan/phase-current/anchors.json`, rendered to `anchors.md`, and given a small bead tree so their questions version alongside the work. Existing requirements (`REQ-*`) and ADRs (`ADR-*`) join the same record under their own IDs. A background agent then tests the generic Jev questions against each anchor's pass and fail fixtures and rewrites them until Jev judges that anchor reliably.
 3. **Planning gate.** Each planning bead is judged against every anchor by three orthogonal Jev questions: is the anchor relevant to this bead, does the bead address it, does the bead contradict it. Answers are gated in code into one verdict per anchor, coverage is computed across beads, and you iterate until nothing is forgotten or contradicted.
 4. **Development gate.** When a sprint is delivered, the same anchors are judged against the account of the work (sprint report, PR, diff summary, tests) with a fourth question: is compliance *evidenced*, not just asserted. Each satisfied anchor is paired with a deterministic check, because Jev judges text and only a diff proves the code.
-5. **Report.** A failing verdict reads: `bd-42 · ANC-012 · not addressed  You said (planning session, Oct 9): "copy the libraries from ATM as the starting point and remove the ATM-specific code." This bead does not carry the directive forward.`
+5. **Report and iterate.** A failing verdict reads: `bd-42 · ANC-012 · not addressed  Anchor: The runtime crates are created by copying the legacy repo's runtime crates and deleting the legacy-specific modules. You said (planning session, Oct 9): "copy the libraries from the legacy repo as the starting point and remove the legacy-specific code" This bead does not carry the directive forward.` Each finding is triaged (plan defect, anchor defect, question defect, or Jev error), fixed where the defect is, and re-run. An oversized bead is treated as a symptom: unapproved work is removed first, then prose and ceremony, and only remaining approved work is split.
 
 The design is documented in [docs/design/architecture-and-call-graphs.md](docs/design/architecture-and-call-graphs.md) (components, call graphs and fan-out for both gates, retry policy) and [docs/design/data-model-and-gating.md](docs/design/data-model-and-gating.md) (record schema, verdict gating, lifecycle). The original PRD is [docs/plan-anchor-prd.md](docs/plan-anchor-prd.md).
 
@@ -49,9 +49,10 @@ S=.claude/skills/plan-anchoring/scripts/jev_judge.py
 A=doc/plan/phase-current/anchors.json
 
 # lock the first anchor (creates anchors.json) and render the human view
-python3 $S add --anchors $A --statement "copy the libraries from ATM as the starting point and remove the ATM-specific code" \
-  --stated-by Rand --context "planning session" --summary "Start from ATM crates" \
-  --scope "the runtime crates sprint" --status locked
+python3 $S add --anchors $A --quote "copy the libraries from the legacy repo as the starting point and remove the legacy-specific code" \
+  --statement "The runtime crates are created by copying the legacy repo's runtime crates and deleting the legacy-specific modules; no runtime crate is written from scratch." \
+  --stated-by "<name>" --context "planning session" --summary "Runtime crates copied, not rewritten" \
+  --scope "any bead that creates the runtime crates" --status locked
 python3 $S validate --anchors $A && python3 $S render --anchors $A
 
 # see exactly what a planning-gate request would send, without a key
@@ -115,7 +116,8 @@ skills/.claude/
 
 | Subcommand | Does |
 | --- | --- |
-| `add`, `update`, `retire`, `promote` | Maintain the anchor record; `add` allocates the next `ANC-NNN` |
+| `add`, `update`, `retire`, `promote` | Maintain the anchor record; `add` allocates the next `ANC-NNN`, lints the statement and refuses near-duplicates |
+| `lint`, `rubric`, `dedupe`, `shape` | Testability lint (deterministic); Jev-judged testability rubric; duplicate detection (lexical, optionally Jev); per-bead size and ceremony metrics |
 | `validate`, `render` | Check the record; write `anchors.md` |
 | `set-beads` | Record the anchor tree's bead IDs |
 | `compose-item` | Turn `bd show --json` output into the labelled item text the agents send |
@@ -142,7 +144,19 @@ python3 $S judge --anchors $X/anchors.example.json --gate plan --all --item-id s
 
 ## Status
 
-Skill, references, agents, script and design documents are complete. The script has 73 offline tests (fixture answers and a stub transport) that run on Linux, macOS and Windows in CI, and has been verified live against Jev (`jev-1.13.0`) on both gates: a from-scratch bead is `contradicted`, a copy-from-ATM bead is `satisfied`, an unrelated bead is `not_applicable`, and an unevidenced sprint report is `asserted_only`, each at confidence 0.9 or higher. One real run is kept at `assets/examples/run.live.example.json`. Marketplace packaging for Claude Code, Codex and Cursor is next.
+Revision 0.3, shaped by first use on a real multi-sprint plan and by 245 live Jev requests against it ([docs/experiments/2026-10-10-phase-h-jev-experiments.md](docs/experiments/2026-10-10-phase-h-jev-experiments.md)). What that round changed:
+
+- Anchors are testable requirements with the user's words kept as a `quote`; a testability lint, a Jev-judged rubric and deduplication guard capture, because the first live use minted untestable, duplicated anchors from raw sentences.
+- Anchor kinds: prohibitions are judged on contradiction only and structural anchors by their deterministic check, because the generic "addressed" question failed both on every bead.
+- The planning gate judges a bead's description and acceptance criteria; a planted contradiction scored 0.79 near the top of a bead and 0.46 when buried 28k characters into its design. An oversized bead is a symptom, triaged as unapproved work, then prose and ceremony, then split last; `shape` measures it first.
+- Per-anchor question tuning is a background agent's job with fixtures and known beads as the acceptance test; one tuned question corrected three false passes on a real plan.
+- Near-threshold cells are re-asked once because run-to-run noise flipped one cell in six; every cell reports its leaning.
+
+The script has 117 offline tests on Linux, macOS and Windows in CI. Marketplace packaging for Claude Code, Codex and Cursor is next.
+
+## Versioning
+
+One version for everything: `SKILL.md`, every reference, every agent, `registry.yaml`, and the plugin and marketplace manifests once they exist. `VERSION` holds it; `scripts/check_version_sync.py` runs in CI and fails on any drift or on a release without a `CHANGELOG.md` entry. Bump only at a release, all artifacts together; never one file on its own.
 
 ## License
 
