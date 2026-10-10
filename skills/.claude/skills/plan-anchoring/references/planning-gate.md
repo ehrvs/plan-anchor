@@ -1,6 +1,6 @@
 ---
 name: planning-gate
-version: 0.3.1
+version: 0.4.0
 description: Running the planning gate end to end - what to pass, what Jev sees, the command and exit codes, and how to read the results for one bead and for the whole plan.
 ---
 

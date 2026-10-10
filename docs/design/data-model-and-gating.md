@@ -229,4 +229,4 @@ sequenceDiagram
     P->>S: update --id ANC-012 --fixture-pass ... --fixture-fail ... --deterministic-check ...
 ```
 
-Capture is the one interactive step and stays in the main session. Nothing is locked without the user's confirmation. The statement proposed is a testable requirement that passed the rubric, not the quote; the quote is kept verbatim. After locking, the skill spins off `anchor-question-tune` in the background for each gate, and only tuned anchors are used at a gate.
+Capture is the one interactive step and stays in the main session. Nothing is locked without the user's confirmation. The statement proposed is a testable requirement that passed the rubric, not the quote; the quote is kept verbatim. After locking, the skill spins off an independent higher-reasoning `anchor-question-tune` evaluator (Opus on Claude, Sol on Codex) for each gate. It freezes an oracle from the approved intent and anchor before its first Jev call and has no objective to make the current plan pass. Only oracle-validated question sets are used at a gate.

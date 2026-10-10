@@ -1351,6 +1351,9 @@ class AgentPreflightTests(unittest.TestCase):
             ])
             self.assertEqual((code, out["error"]["code"]), (2, "VALIDATION.PATH"))
             self.assertIn("script could not be resolved", out["error"]["message"])
+            code, out = run_cli([*base, "--run-dir", write(root, "not-a-directory", "x")])
+            self.assertEqual((code, out["error"]["code"]), (2, "VALIDATION.PATH"))
+            self.assertIn("run directory is not a directory", out["error"]["message"])
 
 
 class TransportPolicyTests(unittest.TestCase):
@@ -2130,6 +2133,9 @@ class DiffTests(unittest.TestCase):
                             {"ANC-001": "satisfied", "ANC-002": "not_addressed", "ANC-003": "satisfied", "ANC-004": "contradicted", "ANC-005": "satisfied"})
             nxt = make_run(d, "n.json", "plan", "bd-1", "2026-10-09T11:00:00+00:00",
                            {"ANC-001": "contradicted", "ANC-002": "satisfied", "ANC-003": "error", "ANC-004": "error", "ANC-006": "satisfied"})
+            nxt_data = json.loads(Path(nxt).read_text())
+            nxt_data["item"]["chars"] = 34
+            Path(nxt).write_text(json.dumps(nxt_data))
             code, out = run_cli(["diff", "--prev", prev, "--next", nxt])
             data = out["data"]
             self.assertEqual(code, 0)
@@ -2145,6 +2151,21 @@ class DiffTests(unittest.TestCase):
             self.assertEqual(data["added"], [{"anchor_id": "ANC-006", "verdict": "satisfied"}])
             self.assertEqual(data["removed"], [{"anchor_id": "ANC-005", "verdict": "satisfied"}])
             self.assertEqual((data["pass_before"], data["pass_after"], data["item"]), (False, False, "bd-1"))
+            self.assertEqual(data["item_size"], {"before_chars": 10, "after_chars": 34, "delta_chars": 24, "grew": True})
+
+    def test_diff_prefers_pre_reduction_size_and_reports_cuts(self):
+        with tempfile.TemporaryDirectory() as d:
+            prev = make_run(d, "p.json", "plan", "bd-1", "2026-10-09T10:00:00+00:00", {"ANC-001": "not_addressed"})
+            nxt = make_run(d, "n.json", "plan", "bd-1", "2026-10-09T11:00:00+00:00", {"ANC-001": "satisfied"})
+            p, n = json.loads(Path(prev).read_text()), json.loads(Path(nxt).read_text())
+            p["item"].update({"chars": 800, "chars_before_reduction": 1200})
+            n["item"].update({"chars": 900, "chars_before_reduction": 1100})
+            Path(prev).write_text(json.dumps(p))
+            Path(nxt).write_text(json.dumps(n))
+            code, out = run_cli(["diff", "--prev", prev, "--next", nxt])
+            self.assertEqual(code, 0, out)
+            self.assertEqual(out["data"]["item_size"], {"before_chars": 1200, "after_chars": 1100,
+                                                         "delta_chars": -100, "grew": False})
 
     def test_expected_verdicts_tell_corrections_from_regressions(self):
         with tempfile.TemporaryDirectory() as d:

@@ -1,12 +1,12 @@
 ---
 name: question-tuning
-version: 0.3.0
+version: 0.4.0
 description: When and how to replace the generic Jev questions with anchor-specific wording, where the overrides live, how to test a question set with fixtures and known beads before trusting it, and when to stop tuning.
 ---
 
 # Tuning the questions
 
-The default sets (`assets/questions/plan.json`, `assets/questions/dev.json`) ask the same generic questions of every anchor; they are a starting point. Every anchor's plan-questions and dev-questions beads start as `{}` (defaults); the orchestrator tunes and tests the wording for any anchor the defaults judge poorly.
+The default sets (`assets/questions/plan.json`, `assets/questions/dev.json`) ask the same generic questions of every anchor; they are a starting point. Every anchor's plan-questions and dev-questions beads start as `{}` (defaults); an independent higher-reasoning evaluator tunes and tests wording when the defaults fail its intent-derived oracle.
 
 ## First: is the anchor testable?
 
@@ -21,11 +21,11 @@ It runs the deterministic lint and asks Jev six questions about the statement: o
 
 ## Who tunes
 
-The `anchor-question-tune` agent, launched in the background by the skill for each locked anchor and gate. It follows the procedure below and returns the tested override with an acceptance table; the skill writes the override into the question bead and posts the acceptance. The procedure is written out so it can be followed by hand and the agent's output checked.
+The planner never tunes questions. The skill launches `anchor-question-tune` as a separate higher-reasoning evaluator (Claude: Opus; Codex: Sol) for each locked anchor and gate. It receives approved intent and anchor material, not a target plan result. Before the first Jev call it exercises judgment to derive expected role answers and verdicts for approved fixtures, calibration examples, and adversarial boundary probes, then freezes their text, labels, rationales, and digest. It may not relabel or discard cases after seeing Jev. The skill writes an override only after presenting the frozen oracle and acceptance table.
 
 ## When to tune
 
-Tune when a gate run shows one of these and the sent bead text does not explain it:
+Tune only when a fixture or expected verdict approved before tuning demonstrates one of these. A live gate failure alone is evidence to inspect, not authority to change the measuring instrument:
 
 | Symptom | Likely cause | Tune |
 | --- | --- | --- |
@@ -36,7 +36,7 @@ Tune when a gate run shows one of these and the sent bead text does not explain 
 | `contradicted` on a bead that merely omits the directive | The conflict question reads silence as conflict | Add "silence is not a contradiction" examples to the `no` criterion |
 | `evidenced: no` on a report that cites a diff | The evidence question does not recognise the artifact type the team produces | Name the artifact types in the `yes` criterion |
 
-Do not tune to make a bead pass. Tune until the fixtures land and a known-good and a known-bad bead are told apart.
+Do not tune to make a bead pass. The active plan's desired verdict is not an input. Before round 1, freeze approved pass/fail fixtures plus independent probes for compliant paraphrase, silence, topical-only mention, direct conflict, irrelevance, and any boundary or exception in the anchor; the development oracle also distinguishes assertion from evidence. Tune until every role answer and derived verdict matches this unchanged oracle. If the intent and anchor do not determine a label, report `ANCHOR.AMBIGUOUS` instead of tuning.
 
 ## Where overrides live
 
@@ -109,7 +109,7 @@ Never deploy an override unread by Jev. Test in this order; each step is one com
 4. **A/B against the default.** Run the same two beads with the default set (`--questions assets/questions/plan.json`, or move the override aside) and `diff` the pairs. The override must fix the symptom without flipping a correct verdict.
 5. **Whole-gate regression.** Re-run the planning gate for all beads and `coverage`. Compare the uncovered list before and after.
 
-Acceptance: both fixtures land, known-good is `satisfied`, known-bad fails, `min_confidence` on both is 0.8 or higher, and no previously correct bead changed verdict. Judge "changed" against what is correct, not the previous run: `diff --expected <json>` reports corrections and regressions, because a correct `satisfied` to `not_addressed` flip is a correction and noise alone flips cells near the threshold (measured-behaviour.md). The script re-asks cells within 0.10 of the threshold once; a cell that disagrees with itself is `underspecified` with `unstable: true` and is not accepted. Record the acceptance as a comment on the question bead (`bd comment <question bead> ...`) with the run IDs.
+Acceptance: every Jev role answer and derived verdict matches the frozen oracle, `min_confidence` is 0.8 or higher, and no previously correct cell changed. The tuner cannot add, relabel, weaken, or remove a probe after seeing an answer. Judge "changed" against what is correct, not the previous run: `diff --expected <json>` reports corrections and regressions. The script re-asks cells within 0.10 of the threshold once; disagreement is `unstable` and is not accepted. Record the oracle digest, rationales, acceptance table, and run IDs on the question bead.
 
 ## Testing a new anchor before the first gate run
 
@@ -118,7 +118,7 @@ Before any gate uses a freshly locked anchor: `lint` clean, fixtures written and
 ## When to stop
 
 - Stop when acceptance holds. Further specificity matches only today's wording of the bead.
-- If three rounds do not reach acceptance, the statement is the problem: bundled, vague, or not expressible by a bead. Fix it (`update --statement`), re-lint, start again. Or the anchor is the wrong kind: a prohibition judged by `addressed` fails on every compliant bead; a structural anchor is a `shape` check, not a question (`anchor-capture.md`).
+- If `max_rounds` (default five) do not reach acceptance, the evaluator distinguishes an ambiguous or bundled anchor from a question set that cannot express the oracle. Return the diagnosis; the planner does not keep tuning. A prohibition judged by `addressed` fails on every compliant bead, while a structural anchor is a deterministic check rather than a planning-gate question (`anchor-capture.md`).
 - Once every anchor has tuned questions, the planning-gate threshold may drop from 0.6 to 0.5 (measured-behaviour.md). Report the `leaning` of any cell still `underspecified`.
 - If Jev's answers on the fixtures swing between runs at the same wording, the fixtures are ambiguous; rewrite them with the user.
 

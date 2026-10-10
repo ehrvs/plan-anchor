@@ -331,6 +331,9 @@ def cmd_agent_preflight(args) -> dict:
     anchors = canonical_workspace_path(args.anchors, root, "anchors file", must_exist=True, regular_file=True)
     raw_run_dir = args.run_dir or str(anchors.parent / "anchor-runs")
     run_dir = canonical_workspace_path(raw_run_dir, root, "run directory", must_exist=False)
+    if run_dir.exists() and not run_dir.is_dir():
+        raise JudgeError("VALIDATION.PATH", f"run directory is not a directory: {run_dir}",
+                         action="Pass a directory inside the repository for run output.")
     evidence = [str(canonical_workspace_path(path, root, "evidence file", must_exist=True, regular_file=True))
                 for path in args.evidence]
 
@@ -2311,6 +2314,13 @@ def cmd_diff(args) -> dict:
     def passing(v):
         return v is not None and v != "error" and v not in FAILING
 
+    def item_chars(run):
+        item = run.get("item") or {}
+        value = item.get("chars_before_reduction", item.get("chars", 0))
+        return value if isinstance(value, int) and not isinstance(value, bool) else 0
+
+    before_chars, after_chars = item_chars(prev), item_chars(nxt)
+
     data = {"gate": nxt["gate"], "item": nxt["item"]["id"], "prev": prev["run_id"], "next": nxt["run_id"],
             "changed": changed, "added": added, "removed": removed,
             # regressions: the verdict got more severe (kept as before). pass_to_fail / fail_to_pass: which side of the gate moved.
@@ -2318,6 +2328,8 @@ def cmd_diff(args) -> dict:
             "regressions": [c["anchor_id"] for c in changed if not c["improved"]],
             "pass_to_fail": [c["anchor_id"] for c in changed if passing(c["from"]) and not passing(c["to"])],
             "fail_to_pass": [c["anchor_id"] for c in changed if not passing(c["from"]) and passing(c["to"])],
+            "item_size": {"before_chars": before_chars, "after_chars": after_chars,
+                          "delta_chars": after_chars - before_chars, "grew": after_chars > before_chars},
             "pass_before": prev["summary"].get("pass"), "pass_after": nxt["summary"].get("pass")}
     if getattr(args, "expected", ""):
         expected = load_json(args.expected, "expected verdicts")

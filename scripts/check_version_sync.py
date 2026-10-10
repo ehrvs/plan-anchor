@@ -34,9 +34,13 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SKILL = ROOT / "skills" / ".claude" / "skills" / "plan-anchoring"
-AGENTS = ROOT / "skills" / ".claude" / "agents"
+AGENT_DIRS = {
+    "claude": ROOT / "skills" / ".claude" / "agents",
+    "codex": ROOT / "skills" / ".codex" / "agents",
+}
 FRONT_RE = re.compile(r"^---\n(.*?)\n---", re.S)
-VER_RE = re.compile(r"^version:\s*([0-9]+\.[0-9]+\.[0-9]+)\s*$", re.M)
+VER_RE = re.compile(r'^\s*version:\s*["\']?([0-9]+\.[0-9]+\.[0-9]+)["\']?\s*$', re.M)
+MODEL_RE = re.compile(r"^model:\s*(\S+)\s*$", re.M)
 
 
 def parse(v: str):
@@ -61,7 +65,9 @@ def show(ref: str, rel: str):
 
 
 def artifacts() -> list:
-    files = [SKILL / "SKILL.md", *sorted((SKILL / "references").glob("*.md")), *sorted(AGENTS.glob("*.md"))]
+    files = [SKILL / "SKILL.md", *sorted((SKILL / "references").glob("*.md"))]
+    for agent_dir in AGENT_DIRS.values():
+        files.extend(sorted(agent_dir.glob("*.md")))
     return [f for f in files if f.name != "registry.yaml"]
 
 
@@ -69,13 +75,14 @@ def owner_of(rel: str):
     """Which versioned artifact a changed path counts against."""
     p = pathlib.PurePosixPath(rel)
     skill_rel = SKILL.relative_to(ROOT).as_posix()
-    agents_rel = AGENTS.relative_to(ROOT).as_posix()
     if rel.startswith(skill_rel + "/references/") and rel.endswith(".md"):
         return rel
     if rel.startswith(skill_rel + "/"):
         return skill_rel + "/SKILL.md"
-    if rel.startswith(agents_rel + "/") and rel.endswith(".md"):
-        return rel
+    for agent_dir in AGENT_DIRS.values():
+        agents_rel = agent_dir.relative_to(ROOT).as_posix()
+        if rel.startswith(agents_rel + "/") and rel.endswith(".md"):
+            return rel
     return None
 
 
@@ -97,12 +104,32 @@ def release_checks(want: str, drift: list) -> int:
             drift.append(f"{rel}: {got} changes major.minor; minor bumps happen in unison through VERSION ({want})")
         elif gpatch < wpatch:
             drift.append(f"{rel}: {got} is below VERSION {want}")
-    reg = AGENTS / "registry.yaml"
-    if reg.exists():
+        for harness, agent_dir in AGENT_DIRS.items():
+            if f.parent == agent_dir:
+                front = FRONT_RE.match(f.read_text(encoding="utf-8"))
+                model_match = MODEL_RE.search(front.group(1)) if front else None
+                if f.name == "anchor-question-tune.md":
+                    expected = "opus" if harness == "claude" else "sol"
+                else:
+                    expected = "sonnet" if harness == "claude" else "luna"
+                if not model_match or model_match.group(1) != expected:
+                    drift.append(f"{rel}: model must be {expected} for the {harness} harness")
+    expected_agents = {f.stem for f in AGENT_DIRS["claude"].glob("*.md")}
+    for harness, agent_dir in AGENT_DIRS.items():
+        actual_agents = {f.stem for f in agent_dir.glob("*.md")}
+        if actual_agents != expected_agents:
+            drift.append(f"{agent_dir.relative_to(ROOT)}: agent files {sorted(actual_agents)} != {sorted(expected_agents)}")
+        reg = agent_dir / "registry.yaml"
+        if not reg.exists():
+            drift.append(f"{reg.relative_to(ROOT)}: missing")
+            continue
         text = reg.read_text(encoding="utf-8")
+        registered = set()
         for m in re.finditer(r"^  ([a-z0-9-]+):\n    version:\s*([0-9.]+)\n    path:\s*(\S+)", text, re.M):
             checked += 1
             name, rv, path = m.groups()
+            if name.startswith("anchor-"):
+                registered.add(name)
             target = ROOT / "skills" / path.lstrip("/")   # registry paths are project-relative (.claude/...), installed under skills/
             if target.exists():
                 fv = frontmatter_version(target.read_text(encoding="utf-8"))
@@ -110,9 +137,15 @@ def release_checks(want: str, drift: list) -> int:
                     drift.append(f"registry.yaml {name}: {rv} != {fv} in {path}")
             else:
                 drift.append(f"registry.yaml {name}: path {path} not found")
+        if registered != expected_agents:
+            drift.append(f"{reg.relative_to(ROOT)}: agents {sorted(registered)} != {sorted(expected_agents)}")
+        dependencies = set()
         for m in re.finditer(r'(anchor-[a-z-]+):\s*"([^"]+)"', text):
+            dependencies.add(m.group(1))
             if m.group(2) not in (want, f"{wmaj}.x"):
-                drift.append(f"registry.yaml depends_on {m.group(1)}: {m.group(2)} does not cover {want}")
+                drift.append(f"{reg.relative_to(ROOT)} depends_on {m.group(1)}: {m.group(2)} does not cover {want}")
+        if dependencies != expected_agents:
+            drift.append(f"{reg.relative_to(ROOT)}: depends_on {sorted(dependencies)} != {sorted(expected_agents)}")
     for manifest in [*ROOT.glob("**/.claude-plugin/plugin.json"), *ROOT.glob("**/.codex-plugin/plugin.json"),
                      *ROOT.glob("**/.cursor-plugin/plugin.json"), *ROOT.glob("**/.claude-plugin/marketplace.json"),
                      *ROOT.glob("**/.agents/plugins/marketplace.json"), *ROOT.glob("**/manifest.yaml")]:

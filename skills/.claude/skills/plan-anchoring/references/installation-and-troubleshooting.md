@@ -1,6 +1,6 @@
 ---
 name: installation-and-troubleshooting
-version: 0.3.0
+version: 0.4.0
 description: Installing and locating the CLIs and credentials plan-anchoring depends on (python3, beads bd, TypeSafe API key), minimum versions, PATH issues in Claude Code, Codex environment policy, validation, and known issues.
 ---
 
@@ -43,15 +43,19 @@ Use the full path, or `export PATH="/opt/homebrew/bin:$PATH"` for the session.
 
 **TypeSafe API key**
 
-- Create a key at typesafe.ai and export it in the shell that launches Claude Code or Codex, for example:
+- Create a key at typesafe.ai. Read it silently so it does not appear in the command line, shell history, or terminal output, then export it in the shell that launches Claude Code or Codex:
   ```bash
   mkdir -p ~/.config/typesafe && chmod 700 ~/.config/typesafe
-  printf 'export TYPESAFE_API_KEY="%s"\n' '<your key>' > ~/.config/typesafe/env && chmod 600 ~/.config/typesafe/env
+  printf 'TypeSafe API key: ' >&2
+  IFS= read -r -s TYPESAFE_API_KEY
+  printf '\n' >&2
+  export TYPESAFE_API_KEY
+  (umask 077; printf 'export TYPESAFE_API_KEY=%q\n' "$TYPESAFE_API_KEY" > ~/.config/typesafe/env)
   echo '[ -r "$HOME/.config/typesafe/env" ] && . "$HOME/.config/typesafe/env"' >> ~/.zshenv   # and ~/.bash_profile for bash
   ```
   GUI-launched apps do not read shell files; use `launchctl setenv TYPESAFE_API_KEY "$TYPESAFE_API_KEY"` (macOS, until reboot). Never commit or echo the key.
 - Under Codex, `TYPESAFE_API_KEY` matches the default `*KEY*` exclusion for command environments. If you restrict `[shell_environment_policy]` in `config.toml`, keep `ignore_default_excludes = true`, and with an allowlist under `[shell_environment_policy.filters]` add `"TYPESAFE_API_KEY" = "include"`.
-- For live gate runs also `export PLAN_ANCHOR_ALLOW_REMOTE_JUDGE=1` for that session only (`jev-api.md`).
+- For the live rubric, tuning, fixture checks, and gates also `export PLAN_ANCHOR_ALLOW_REMOTE_JUDGE=1` for that session only (`jev-api.md`). The normal skill workflow requires Jev; offline commands are diagnostics and CI support.
 
 ## Minimum versions
 

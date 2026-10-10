@@ -1,7 +1,8 @@
 ---
 name: plan-anchoring
-version: 0.3.2
 description: Capture the facts a user states while planning as numbered anchors (ANC-001...), one clear, testable requirement each, with the user's verbatim words kept as provenance, alongside existing requirements (REQ) and ADRs. Turn them into Jev-judged questions, tune and test the questions per anchor, and enforce them at two gates with a triage-apply-rerun loop. The planning gate checks each plan bead still says what the user said; the development gate checks the delivered sprint work followed it. Use when planning a phase or sprint with beads, when the user says "anchor this", "lock this", "don't let this drift", or "remember I said", when re-opening a plan after context compression, or when reviewing a sprint against its plan. Not for general code review, and not a replacement for plan hardening.
+metadata:
+  version: "0.4.0"
 ---
 
 # Plan Anchoring
@@ -29,7 +30,7 @@ for p in "/opt/homebrew/bin/bd" "$HOME/go/bin/bd" "$HOME/.local/bin/bd" "/usr/lo
 done
 ```
 
-If found off PATH, `export PATH="<dir>:$PATH"` for the session. If anything is missing, read `references/installation-and-troubleshooting.md`. Capture and locking (steps A and B) need only `python3` and `bd`; the gates (C and D) also need the API key and the opt-in in `references/jev-api.md`, because they send anchor statements and item text to TypeSafe.
+If found off PATH, `export PATH="<dir>:$PATH"` for the session. If anything is missing, read `references/installation-and-troubleshooting.md`. This skill requires Jev: capture runs the live rubric and question tuning and both gates make live judgments, so the normal workflow requires the API key and per-session opt-in in `references/jev-api.md`. Offline `--dry-run`, fixture-answer tests, lint, shape, rendering, and record maintenance remain available for development, but they are not a substitute for the Jev-backed workflow.
 
 Then resolve the script once. It sits next to this file:
 
@@ -90,21 +91,22 @@ Then create the bead tree and record its IDs with `set-beads` (`references/bead-
 
 ### B2. Tune and test the questions per anchor
 
-Read `references/question-tuning.md`. Each anchor's plan-questions and dev-questions beads start at `{}`; the generic defaults must be proven adequate per anchor. As soon as an anchor is locked with approved fixtures, spin off `anchor-question-tune` in the background (one per anchor and gate, up to three at once) with the anchor, the gate, and any known-good and known-bad beads the user can name. It measures the current wording against fixtures and known beads, rewrites one misjudging question per round, re-measures, and returns a tested override with its acceptance table, or the finding that the statement is the problem. On return: show the user the table, write the override into the question bead (`bd update <bead> --body-file`), and post the acceptance as a comment there. On a statement problem: `update --statement`, re-run the rubric, tune again. Do not run the planning gate on an anchor whose questions have not passed this step. Manual tuning follows the same procedure.
+Read `references/question-tuning.md`. Each anchor's plan-questions and dev-questions beads start at `{}`; the generic defaults must be proven adequate per anchor. As soon as an anchor is locked with approved fixtures, spin off the independent higher-reasoning `anchor-question-tune` agent (Claude: Opus; Codex: Sol), one per anchor and gate, up to three at once. Pass the approved intent and anchor, never a goal to make the current plan pass. Before its first Jev call it exercises judgment to derive and freeze an oracle of expected role answers and verdicts from the intent, anchor, fixtures, and adversarial boundary probes. It then loops over Jev calls, rewriting one misjudging question per round and retaining only changes that improve alignment with the frozen oracle. On return, show the oracle and acceptance table, verify its digest and run IDs, then write the override into the question bead (`bd update <bead> --body-file`) and post the evidence. On an ambiguous or untestable anchor, return to the user; the planner never tunes questions itself. Do not run a gate on an anchor whose questions have not passed this step.
 
 ### C. Planning gate
 
 Read `references/planning-gate.md` and `references/triage-and-iteration.md`. Jev's feedback is the measure of plan quality, and this loop is how the planner raises it: run Jev, fix the plan, run again, until every bead passes. A failing verdict or a low confidence means the bead is unclear, excessive or missing something, and the planner acts on it; it is never explained away. The usual fix is to simplify: cut work no anchor asks for, cut prose and ceremony, and state what remains plainly. Add text only where Jev found something missing.
 
-1. **Run.** Enumerate the planning beads (`bd children <epic> --json`) and delegate each to `anchor-plan-review` (see Agent Delegation). It composes the bead's title, description and acceptance criteria (design is measured by `shape`, not judged), resolves overrides from the plan-questions beads, runs the script once (one Jev request per anchor; retries and the near-threshold re-ask inside), and returns Jev's verdicts unchanged, each failing cell with `to_fix` (the sentence the weak answer concerns and the change to make). Post each report on its bead.
-2. **Fix the plan.** For each failing cell, read `to_fix` and the cell's `low_questions`, then change the bead: cut, clarify, or add what is missing. `PLAN.TOO_LARGE` is a symptom: run `shape`, remove unapproved work, cut prose and ceremony, and split only what is still too large (`references/plan-size-and-shape.md`). Never split, pad or trim to pass the gate. Work the change cannot succeed without stays in the plan even when Jev flags it as extra: add one line to the bead saying why it is required, and list the cell with that line in the planning-complete summary. Change an anchor's statement or scope, or a question bead, only when the same cell fails on beads that plainly do the right thing (`references/triage-and-iteration.md`).
-3. **Re-run** the beads you changed, `diff` each against its previous run (verdicts and `min_confidence` should rise), and recompute coverage in code, never by asking Jev:
+1. **Run.** Enumerate the planning beads (`bd children <epic> --json`) and delegate each to `anchor-plan-review` (see Agent Delegation). It composes the bead's title, description and acceptance criteria (design is measured by `shape`, not judged), resolves overrides from the plan-questions beads, runs the script once (one Jev request per anchor; retries and near-threshold confirmation inside), and returns Jev's verdicts unchanged, with `to_fix` naming the weak sentence and change for every failing cell. Post each report on its bead.
+2. **Triage** every failing verdict: re-read the sent text, then decide whether it is a plan defect (the bead), an anchor defect (statement or scope), a question defect (wording), or a Jev error. Before editing, record `to_fix` with the anchor ID, the exact weak or conflicting sentence, and one action (`cut`, `replace`, or `add`). Prefer cuts, then replacement. Adding text is allowed only for content required by a locked ANC/REQ/ADR that predates the failed run; cite that ID and its source. A reason written after the failure does not create scope. Only a plan defect is fixed in the plan. `PLAN.TOO_LARGE` is a symptom: run `shape`, remove unapproved work, cut prose and ceremony, and split only what is still too large (`references/plan-size-and-shape.md`). Never split or trim merely to pass the gate.
+3. **Apply** one class of fix per iteration: edit the bead, or `update --statement/--scope` and re-test fixtures, or tune the question bead and re-run `check-fixtures`.
+4. **Re-run** only the affected beads, `diff` each against its previous run, and recompute coverage in code, never by asking Jev. `diff.item_size` must be reviewed: a failing-to-passing edit that grew is not accepted unless every added passage cites a pre-existing locked ANC/REQ/ADR; otherwise cut or replace instead.
 
 ```bash
 python3 "$S" coverage --runs doc/plan/phase-current/anchor-runs --gate plan --format md
 ```
 
-4. **Stop** when every bead's latest run passes, other than required-work cells justified under step 2, and every locked anchor is `satisfied` by at least one bead. Report the required-work cells with their justification when planning is complete. A hard stop also ends the loop: three identical failing runs of one bead, or an anchor reworded three times. Question design: `references/plan-anchor-questions.md`. Verdict logic: `references/verdict-gating.md`.
+5. **Stop** when every bead's latest run passes and every locked anchor is `satisfied` by at least one bead. Report any allowed growth with its pre-existing authority when planning is complete. A hard stop also ends the loop: three identical failing runs of one bead, or an anchor reworded three times. Question design: `references/plan-anchor-questions.md`. Verdict logic: `references/verdict-gating.md`.
 
 ### D. Development gate (sprint review)
 
@@ -126,11 +128,11 @@ Capture (A) and locking (B) stay in the main session. Question tuning (B2) and t
 | --- | --- | --- | --- |
 | Planning gate, one bead | `anchor-plan-review` | `script`, `bead_id`, `anchor_ids` or `all`, `anchors_path`, optional `run_dir`, `threshold`, `dry_run`, `correlation_id` | fenced JSON: run path, pass flag, per-anchor verdicts, report markdown |
 | Development gate, one sprint | `anchor-sprint-review` | `script`, `sprint_id`, `evidence` paths or `pr_number`, `anchor_ids` or `all`, `anchors_path`, optional `run_dir`, `threshold`, `dry_run`, `correlation_id` | fenced JSON: run path, pass flag, per-anchor verdicts, deterministic checks to pair, report markdown |
-| Question tuning, one anchor and gate (background) | `anchor-question-tune` | `script`, `anchors_path`, `anchor_id`, `gate`, optional `known_good`, `known_bad`, `current_override`, `max_rounds`, `threshold`, `correlation_id` | fenced JSON: accepted flag, tested override JSON, baseline and final acceptance table, run IDs, or the statement problem |
+| Independent question tuning, one anchor and gate (background; Opus/Sol) | `anchor-question-tune` | `script`, `anchors_path`, `intent_path`, `anchor_id`, `gate`, optional approved calibration examples and `current_override`, `max_rounds`, `threshold`, `correlation_id` | fenced JSON: frozen oracle and digest, accepted flag, tested override JSON, baseline/final table, run IDs, or an anchor ambiguity/problem |
 
-In Claude Code, invoke with the Task tool: "Invoke `anchor-plan-review` with script `$S`, bead_id proj-a3f8, anchor_ids all, anchors_path doc/plan/phase-current/anchors.json, correlation_id proj-a3f8." Without agents (Codex, Cursor), follow `../../agents/anchor-plan-review.md` or `../../agents/anchor-sprint-review.md` (relative to this skill's directory) yourself.
+In Claude Code, invoke the harness-specific file in `.claude/agents/` with the Agent tool; gate agents specify `model: sonnet` and the independent tuner `model: opus`. In Codex, invoke the matching file in `.codex/agents/` with the Agent tool; gate agents specify `model: luna` and the tuner `model: sol`. Example gate input: "Invoke `anchor-plan-review` with script `$S`, bead_id proj-a3f8, anchor_ids all, anchors_path doc/plan/phase-current/anchors.json, correlation_id proj-a3f8." Cursor has no bundled agent definition in this release and follows the relevant gate steps inline; question tuning requires an independent higher-reasoning agent and does not fall back to the planner.
 
-Parallel runs (Claude Code only): at most 3 agents at once, `correlation_id` set to the bead ID, 300 s timeout per agent (Jev takes seconds; the budget is the agent's own turns). An agent that times out or returns unfenced or malformed JSON has produced no result: re-dispatch that bead once, passing as `run` any run file it already wrote, so Jev is not asked again. Only when the retry also fails, record `{"success": false, "canceled": true, "aborted_by": "timeout", "retried": true, "error": {"code": "EXECUTION.TIMEOUT"}}`. Aggregate in bead-ID order; never drop a failed bead. Agents never retry the script; it already makes three attempts per anchor and shortens oversize items itself.
+Parallel runs: at most 3 agents at once, `correlation_id` set to the bead ID, 300 s timeout per agent (Jev takes seconds; the budget is the agent's own turns). An agent that times out or returns unfenced or malformed JSON has produced no result: re-dispatch that bead once, passing as `run` any run file it already wrote, so Jev is not asked again. Only when the retry also fails, record `{"success": false, "canceled": true, "aborted_by": "timeout", "retried": true, "error": {"code": "EXECUTION.TIMEOUT"}}`. Aggregate in bead-ID order; never drop a failed bead. Agents never retry the script; it already makes three attempts per anchor and shortens oversize items itself.
 
 ## Design positions
 
@@ -140,11 +142,14 @@ Parallel runs (Claude Code only): at most 3 agents at once, `correlation_id` set
 - **Relationship to plan hardening**: standalone and composable; run the planning gate after hardening.
 - **Data retention**: fail closed. The gates refuse to call TypeSafe unless `PLAN_ANCHOR_ALLOW_REMOTE_JUDGE=1` is set for the session, and `--dry-run` writes exactly what would leave the machine.
 - **Fixture authorship**: the skill drafts one pass and one fail fixture per anchor at lock time; the user approves them. `check-fixtures` sends them to Jev (same opt-in) to confirm the wording lands them; `--answers-file` fixtures exercise the gating offline in CI.
+- **Question-tuning independence**: the planner cannot tune. An isolated Opus/Sol evaluator derives and freezes its oracle from approved intent and anchors before seeing Jev answers, then iterates wording against that oracle without regard to whether the current plan passes. A live gate failure alone never authorizes an override or scope change. The main session records only an override accompanied by the frozen oracle, digest, acceptance table, and run IDs.
 
 ## Hard stops
 
 - An anchor without a verbatim `quote` has no provenance; one whose statement is just the quote is not testable. Both are refused.
 - Never tune a question or reword a statement to make one bead pass. Fixtures and a known-bad bead must still fail.
+- Never tune or rescope from a live failure alone. Require a frozen, user-approved fixture or expected verdict that independently demonstrates the false result; scope changes require user approval and invalidate prior gate runs for that anchor.
+- A failing-to-passing plan edit that grows the composed item is a hard stop unless each added passage is traced to a locked ANC/REQ/ADR that predates the failed run.
 - Never split a bead, trim its text, or raise a size cap to pass `PLAN.TOO_LARGE`. Triage unapproved work, then prose and ceremony, then split.
 - Never send more than one bead or one work description per Jev request, and never the whole plan.
 - Never compute coverage, counts, or "satisfied anywhere" by asking Jev. The script does it.
