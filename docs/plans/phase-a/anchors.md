@@ -20,6 +20,10 @@ Intent: `docs/plans/phase-a/intent.md`
 | ANC-012 | locked | Secrets stay redacted | 2026-10-10 |
 | ANC-013 | locked | Realistic examples | 2026-10-10 |
 | ANC-014 | locked | Exclude sc-lint agents | 2026-10-10 |
+| ANC-015 | locked | Authoritative sprint documents | 2026-10-10 |
+| ANC-016 | locked | Dual plan sources | 2026-10-10 |
+| ANC-017 | locked | Beads only stores anchors | 2026-10-10 |
+| ANC-018 | locked | Fast br anchor-store setup | 2026-10-10 |
 
 ## ANC-001
 
@@ -300,3 +304,83 @@ Beads: anchor `pa-9wl`, plan questions `pa-9wl.1`, dev questions `pa-9wl.2`
 Fixtures:
 - pass: The plan-anchor registries list only anchor-plan-review, anchor-sprint-review, and anchor-question-tune.
 - fail: The plan-anchor skill delegates requirement review to the sc-lint req-qa agent.
+
+## ANC-015
+
+Anchor: Phase plans must consist of a phase index and separate authoritative sprint Markdown documents shaped by the plan-hardening sprint-planning guidelines.
+
+> I always break a plan into sprints.  see. /Users/randlee/github/raptor/docs/plans/phase-a/* for raptor project.  there is also a plan-hardening skill in that repo which has sprint-plan-guidelines for building your sprint
+
+Said by randlee, plan-anchor Phase A dogfood correction; live rubric pending explicit TypeSafe payload approval, 2026-10-10. Status: locked. Version 2.
+
+Summary: Authoritative sprint documents
+
+Scope: creates or reviews a phase plan, sprint plan, phase index, or planning source
+
+Deterministic check to pair with the development gate: Validate the phase index links separate sprint Markdown files and each sprint has one authoritative deliverables, acceptance, validation, and non-closure section.
+
+Beads: anchor `pa-2zo`, plan questions `pa-2zo.1`, dev questions `pa-2zo.2`
+
+Fixtures:
+- pass: The phase index links seven separate sprint documents, each with authoritative deliverables, acceptance criteria, validation, and non-closure.
+- fail: The phase plan keeps all sprint work as subsections in one monolithic Markdown file.
+
+## ANC-016
+
+Anchor: The plan-anchoring planning gate must accept equivalent Markdown sprint plans and bd or br tracker copies, normalize both sources to the same item contract, and return matching verdicts.
+
+> You should be able to run the /plan-anchor skill both against the md plan and against a copy of the plan in br database
+
+Said by randlee, plan-anchor Phase A dogfood correction; live rubric pending explicit TypeSafe payload approval, 2026-10-10. Status: locked. Version 2.
+
+Summary: Dual plan sources
+
+Scope: changes plan-source selection, sprint discovery, item composition, source digests, planning-gate invocation, or source parity tests
+
+Deterministic check to pair with the development gate: Materialize the Phase A Markdown sprints and their br copies and assert identical ordered item digests and per-anchor verdicts.
+
+Beads: anchor `pa-bxu`, plan questions `pa-bxu.1`, dev questions `pa-bxu.2`
+
+Fixtures:
+- pass: The Markdown and br-copy adapters normalize Sprint A2 to the same digest and produce matching anchor verdicts.
+- fail: The skill can review only tracker issue bodies and rejects the equivalent Markdown sprint file.
+
+## ANC-017
+
+Anchor: Markdown plan review must require no bd or br records beyond each anchor's standard three-record question tree.
+
+> at that point the only beads dependency in the plan is for holding the anchoring info and questions which can be spun up in a br database quickly for any repo
+
+Said by randlee, plan-anchor Phase A dogfood correction; live rubric pending explicit TypeSafe payload approval, 2026-10-10. Status: locked. Version 2.
+
+Summary: Beads only stores anchors
+
+Scope: changes tracker prerequisites, anchor storage, question storage, Markdown plan review, or required issue layout
+
+Deterministic check to pair with the development gate: Complete Markdown-source dry-run review in a repository whose tracker contains only anchor roots with plan-question and dev-question children.
+
+Beads: anchor `pa-885`, plan questions `pa-885.1`, dev questions `pa-885.2`
+
+Fixtures:
+- pass: Markdown review reads plan text from sprint files and uses br only for each anchor's question tree.
+- fail: Markdown review requires the phase and every sprint to exist as br issues before it can run.
+
+## ANC-018
+
+Anchor: The skill must provide a short br initialization path that creates a usable anchor and question store in any Git repository.
+
+> at that point the only beads dependency in the plan is for holding the anchoring info and questions which can be spun up in a br database quickly for any repo
+
+Said by randlee, plan-anchor Phase A dogfood correction; live rubric pending explicit TypeSafe payload approval, 2026-10-10. Status: locked. Version 2.
+
+Summary: Fast br anchor-store setup
+
+Scope: changes installation, prerequisites, br initialization, anchor tree creation, examples, or onboarding
+
+Deterministic check to pair with the development gate: Run the documented br initialization and anchor-tree creation sequence in a temporary Git repository and validate the resulting records.
+
+Beads: anchor `pa-c3t`, plan questions `pa-c3t.1`, dev questions `pa-c3t.2`
+
+Fixtures:
+- pass: A new Git repository can run the documented short br setup and immediately create a valid anchor with plan and development question children.
+- fail: Before capturing an anchor, every repository administrator must manually configure a shared tracker service and create a phase epic.

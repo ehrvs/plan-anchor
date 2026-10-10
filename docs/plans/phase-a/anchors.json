@@ -759,6 +759,222 @@
           }
         }
       ]
+    },
+    {
+      "id": "ANC-015",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Phase plans must consist of a phase index and separate authoritative sprint Markdown documents shaped by the plan-hardening sprint-planning guidelines.",
+      "quote": "I always break a plan into sprints.  see. /Users/randlee/github/raptor/docs/plans/phase-a/* for raptor project.  there is also a plan-hardening skill in that repo which has sprint-plan-guidelines for building your sprint",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-10",
+      "context": "plan-anchor Phase A dogfood correction; live rubric pending explicit TypeSafe payload approval",
+      "summary": "Authoritative sprint documents",
+      "scope": "creates or reviews a phase plan, sprint plan, phase index, or planning source",
+      "deterministic_check": "Validate the phase index links separate sprint Markdown files and each sprint has one authoritative deliverables, acceptance, validation, and non-closure section.",
+      "fixtures": {
+        "pass": [
+          "The phase index links seven separate sprint documents, each with authoritative deliverables, acceptance criteria, validation, and non-closure."
+        ],
+        "fail": [
+          "The phase plan keeps all sprint work as subsections in one monolithic Markdown file."
+        ]
+      },
+      "question_overrides": {},
+      "version": 2,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-2zo",
+        "plan_questions": "pa-2zo.1",
+        "dev_questions": "pa-2zo.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-10T21:31:03+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-10T21:31:41+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-10T21:32:21+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-2zo",
+            "plan_questions": "pa-2zo.1",
+            "dev_questions": "pa-2zo.2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ANC-016",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "The plan-anchoring planning gate must accept equivalent Markdown sprint plans and bd or br tracker copies, normalize both sources to the same item contract, and return matching verdicts.",
+      "quote": "You should be able to run the /plan-anchor skill both against the md plan and against a copy of the plan in br database",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-10",
+      "context": "plan-anchor Phase A dogfood correction; live rubric pending explicit TypeSafe payload approval",
+      "summary": "Dual plan sources",
+      "scope": "changes plan-source selection, sprint discovery, item composition, source digests, planning-gate invocation, or source parity tests",
+      "deterministic_check": "Materialize the Phase A Markdown sprints and their br copies and assert identical ordered item digests and per-anchor verdicts.",
+      "fixtures": {
+        "pass": [
+          "The Markdown and br-copy adapters normalize Sprint A2 to the same digest and produce matching anchor verdicts."
+        ],
+        "fail": [
+          "The skill can review only tracker issue bodies and rejects the equivalent Markdown sprint file."
+        ]
+      },
+      "question_overrides": {},
+      "version": 2,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-bxu",
+        "plan_questions": "pa-bxu.1",
+        "dev_questions": "pa-bxu.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-10T21:31:10+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-10T21:31:41+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-10T21:32:21+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-bxu",
+            "plan_questions": "pa-bxu.1",
+            "dev_questions": "pa-bxu.2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ANC-017",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Markdown plan review must require no bd or br records beyond each anchor's standard three-record question tree.",
+      "quote": "at that point the only beads dependency in the plan is for holding the anchoring info and questions which can be spun up in a br database quickly for any repo",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-10",
+      "context": "plan-anchor Phase A dogfood correction; live rubric pending explicit TypeSafe payload approval",
+      "summary": "Beads only stores anchors",
+      "scope": "changes tracker prerequisites, anchor storage, question storage, Markdown plan review, or required issue layout",
+      "deterministic_check": "Complete Markdown-source dry-run review in a repository whose tracker contains only anchor roots with plan-question and dev-question children.",
+      "fixtures": {
+        "pass": [
+          "Markdown review reads plan text from sprint files and uses br only for each anchor's question tree."
+        ],
+        "fail": [
+          "Markdown review requires the phase and every sprint to exist as br issues before it can run."
+        ]
+      },
+      "question_overrides": {},
+      "version": 2,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-885",
+        "plan_questions": "pa-885.1",
+        "dev_questions": "pa-885.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-10T21:31:28+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-10T21:31:41+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-10T21:32:21+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-885",
+            "plan_questions": "pa-885.1",
+            "dev_questions": "pa-885.2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ANC-018",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "The skill must provide a short br initialization path that creates a usable anchor and question store in any Git repository.",
+      "quote": "at that point the only beads dependency in the plan is for holding the anchoring info and questions which can be spun up in a br database quickly for any repo",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-10",
+      "context": "plan-anchor Phase A dogfood correction; live rubric pending explicit TypeSafe payload approval",
+      "summary": "Fast br anchor-store setup",
+      "scope": "changes installation, prerequisites, br initialization, anchor tree creation, examples, or onboarding",
+      "deterministic_check": "Run the documented br initialization and anchor-tree creation sequence in a temporary Git repository and validate the resulting records.",
+      "fixtures": {
+        "pass": [
+          "A new Git repository can run the documented short br setup and immediately create a valid anchor with plan and development question children."
+        ],
+        "fail": [
+          "Before capturing an anchor, every repository administrator must manually configure a shared tracker service and create a phase epic."
+        ]
+      },
+      "question_overrides": {},
+      "version": 2,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-c3t",
+        "plan_questions": "pa-c3t.1",
+        "dev_questions": "pa-c3t.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-10T21:31:36+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-10T21:31:41+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-10T21:32:21+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-c3t",
+            "plan_questions": "pa-c3t.1",
+            "dev_questions": "pa-c3t.2"
+          }
+        }
+      ]
     }
   ]
 }

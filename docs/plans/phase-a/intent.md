@@ -26,6 +26,11 @@ Phase A succeeds when:
 
 - a skill-level runner resolves the harness-specific agent path, registry
   version, declared model, and file hash once before invocation;
+- a Markdown phase plan/directory and a tracker epic copy normalize to the same
+  ordered sprint items and can be reviewed independently with matching verdicts;
+- Markdown remains authoritative when both forms exist, while a quickly
+  initialized `bd` or `br` database is required only for anchor and question
+  records unless the user also chooses the tracker-copy plan source;
 - each invocation supplies one fenced JSON params object and rejects malformed
   input or output at the boundary;
 - individual agents contain no installation-path search or duplicated registry
@@ -49,6 +54,8 @@ Phase A succeeds when:
   environment variable.
 - Adding `arch-qa`, `req-qa`, or any other sc-lint agent to this plugin.
 - Building a general-purpose agent runner for unrelated plugins.
+- Accepting an unstructured monolithic Markdown document as a hardened phase
+  plan; the supported form is a phase index plus authoritative sprint docs.
 - Making `bd` and `br` share a database format; Phase A normalizes their CLI
   operations while each tracker retains its own storage.
 - Redesigning the marketplace packaging completed before Phase A.
