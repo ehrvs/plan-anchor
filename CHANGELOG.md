@@ -6,6 +6,7 @@
 
 - Planning gate sends a bead whole when it fits one Jev request (`--max-item-chars`, and `--max-request-bytes` for every anchor). Otherwise blocks longer than `--max-code-lines` are reduced to signatures one at a time, longest first, until it fits. `PLAN.TOO_LARGE` is unchanged. Measured on a 13-bead plan with 6 anchors: underspecified cells went from 15 to 8, and passing beads from 1 to 6 (`docs/experiments/2026-10-10-redact-only-when-oversize.md`). SKILL.md, plan-size-and-shape, jev-api, measured-behaviour and anchor-plan-review are now 0.3.1.
 - Planning gate is a quality loop: Jev's failing verdicts and low confidence are the planner's signal to fix the bead, preferring cuts to additions, then re-run. Work the change cannot succeed without stays in the plan with a one-line justification and is listed when planning is complete. `underspecified` results carry `low_questions`, printed as `Low:` report lines. `anchor-plan-review` returns Jev's ruling unchanged plus `to_fix` (the sentence concerned and the change to make) per failing cell, and resolves question overrides with one fixed command. Agents get 300 s and one re-dispatch that reuses a written run. SKILL.md, jev-api, plan-size-and-shape and anchor-plan-review are now 0.3.2; planning-gate, report-format, triage-and-iteration and anchor-sprint-review 0.3.1.
+- Gate fix: a directive cell whose conflict answer is a low-confidence `yes` or `unclear` was `satisfied`; it is now `underspecified` (seen live: `contradicted: yes` at 0.25 passed). verdict-gating is 0.3.1.
 
 ## 0.3.0 — 2026-10-10
 
