@@ -27,7 +27,9 @@ Phase A succeeds when:
 - a skill-level runner resolves the harness-specific agent path, registry
   version, declared model, and file hash once before invocation;
 - a Markdown phase plan/directory and a tracker epic copy normalize to the same
-  ordered sprint items and can be reviewed independently with matching verdicts;
+  ordered sprint items and matching request digests, then pass independent live
+  reviews; differing answers are preserved as model instability rather than
+  source-adapter drift;
 - Markdown remains authoritative when both forms exist, while a quickly
   initialized `bd` or `br` database is required only for anchor and question
   records unless the user also chooses the tracker-copy plan source;
@@ -44,14 +46,17 @@ Phase A succeeds when:
 - harness-specific agents, independent question tuning, Jev requirements,
   secret redaction, and realistic examples remain consistent across the skill,
   README, design documents, tests, and plugin manifests; and
+- the testability rubric is independently calibrated against a frozen,
+  plan-independent oracle and reports uncertainty or disagreement without
+  mislabeling either as an anchor defect; and
 - the Phase A planning gate passes every locked anchor before implementation is
   accepted.
 
 ## Out of scope
 
-- Replacing Jev or changing verdict semantics, confidence thresholds, or the
-  anchor data model except where explicit CLI configuration replaces an
-  environment variable.
+- Replacing Jev or changing plan/development verdict semantics, confidence
+  thresholds, or the anchor data model; Phase A may correct the bootstrap
+  testability rubric's questions, confirmation, and uncertainty states.
 - Adding `arch-qa`, `req-qa`, or any other sc-lint agent to this plugin.
 - Building a general-purpose agent runner for unrelated plugins.
 - Accepting an unstructured monolithic Markdown document as a hardened phase

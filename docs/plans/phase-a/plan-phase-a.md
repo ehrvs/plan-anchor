@@ -9,6 +9,9 @@
   acceptance criteria, validation, and non-closure.
 - Intent: [intent.md](intent.md).
 - Anchors: [anchors.json](anchors.json), rendered as [anchors.md](anchors.md).
+- Dogfood evidence: [question tuning](question-tuning-evidence.md) and
+  [offline source parity](dogfood-dry-run.md). Live review evidence is added
+  only after the external Jev gate completes.
 - Tracker epic: `pa-sza`. Tracker records carry identity, dependencies, status,
   question overrides, and review evidence; they do not replace sprint plans.
 - Architectural baseline:
@@ -24,6 +27,7 @@ to follow and makes Markdown phase/sprint plans first-class gate inputs.
 phase plan/directory OR tracker epic
   -> discover sprint documents OR materialize the tracker copy
   -> normalize one complete sprint item per source entry
+  -> verify the independently calibrated testability rubric
   -> resolve trusted harness agent once
   -> select bd or br once for workflow metadata
   -> invoke the harness Agent with one fenced JSON params object
@@ -33,10 +37,12 @@ phase plan/directory OR tracker epic
 
 The resulting workflow can dogfood this Phase A plan twice: once from the
 Markdown sprint documents and once from a copy stored under the Phase A `br`
-epic. Both routes produce the same normalized sprint items and must produce the
-same gate decisions. A small `bd` or `br` database remains required only for
-anchor records and their plan/dev question records; the Markdown route does not
-require plan work to be modeled as tracker issues.
+epic. Both routes produce the same normalized sprint items and must pass the
+gate independently. Exact verdict equality is required when both routes replay
+the same recorded answers; different answers to identical live requests are
+reported as model instability, not source drift. A small `bd` or `br` database
+remains required only for anchor records and their plan/dev question records;
+the Markdown route does not require plan work to be modeled as tracker issues.
 
 ## Phase requirements
 
@@ -59,6 +65,7 @@ require plan work to be modeled as tracker issues.
 | PA-REQ-015 | Keep Jev required for the normal workflow and preserve recursive credential/bearer-token redaction in every observable or persisted output. |
 | PA-REQ-016 | Keep examples executable against current harness and tracker output shapes and repository-valid paths. |
 | PA-REQ-017 | Do not define or invoke the sc-lint agents `arch-qa` or `req-qa` from this plugin. |
+| PA-REQ-018 | Before anchors are accepted or plan/development questions are tuned, an independent Opus/Sol evaluator must calibrate the versioned testability rubric against a frozen, plan-independent oracle corpus and record stability evidence. |
 
 ## Quality requirements
 
@@ -102,11 +109,13 @@ or notes. Both return the same ordered descriptor and normalized item contract:
 ```
 
 For Markdown, the complete sprint file is the planning item. For a tracker copy,
-the normalized title, description, and acceptance criteria are the item. The
-phase index, epic, and intent frame discovery and tuning but are not concatenated
-into every Jev request. Each run records both a source-specific revision and the
-normalized item digest. The dogfood copy must match that digest before its
-verdicts are compared; drift is a source error, not a Jev disagreement.
+the issue description is an exact copy of that complete sprint file and is the
+planning item; tracker title, acceptance, design, and notes are workflow metadata
+excluded from normalization. The phase index, epic, and intent frame discovery
+and tuning but are not concatenated into every Jev request. Each run records both
+a source-specific revision and the normalized item digest. The dogfood copy must
+match that digest before results are compared; drift is a source error, while
+different answers to identical live requests are model instability.
 
 ### Runtime trust and invocation
 
@@ -146,7 +155,8 @@ transport and work without the key.
 
 | Sprint | Authoritative plan | Tracker | Relation | Closure |
 | --- | --- | --- | --- | --- |
-| A1 | [Runner contract and trust resolution](sprint-a1-runner-contract.md) | `pa-sza.1` | root | Establish the trusted runtime descriptor, fenced invocation envelope, and redacted attestation. |
+| A0 | [Bootstrap rubric calibration](sprint-a0-bootstrap-rubric.md) | `pa-sza.8` | root | Calibrate the versioned testability rubric against a frozen independent oracle and classify uncertainty honestly. |
+| A1 | [Runner contract and trust resolution](sprint-a1-runner-contract.md) | `pa-sza.1` | `must_follow` A0 | Establish the trusted runtime descriptor, fenced invocation envelope, and redacted attestation. |
 | A2 | [Markdown and tracker plan sources](sprint-a2-markdown-plan-source.md) | `pa-sza.2` | `must_follow` A1 | Normalize linked Markdown sprints and a tracker epic copy to one gate input contract. |
 | A3 | [Tracker-neutral anchor/question store](sprint-a3-tracker-neutrality.md) | `pa-sza.3` | `must_follow` A2 | Support quickly initialized `bd` or `br` anchoring state without requiring plan issues. |
 | A4 | [Configuration and offline behavior](sprint-a4-configuration-and-offline.md) | `pa-sza.4` | `must_follow` A3 | Reduce environment configuration and prove offline execution never sends. |
@@ -163,19 +173,22 @@ PR represents each implementation sprint.
 
 | Concern | Phase requirements | Locked anchors | Owning sprints |
 | --- | --- | --- | --- |
-| Guideline and Agent invocation | PA-REQ-001–004 | ANC-001–004, ANC-008 | A1, A5, A6 |
+| Bootstrap rubric | PA-REQ-018 | none | A0, A6, A7 |
+| Guideline and Agent invocation | PA-REQ-001–004 | ANC-001–002, ANC-009 | A1, A5, A6 |
 | Dual plan sources and Markdown authority | PA-REQ-005–007 | ANC-015–016 | A2, A7 |
-| Lightweight `bd`/`br` anchor store | PA-REQ-008–010 | ANC-007–008, ANC-017–018 | A3, A5, A6 |
-| Environment and offline execution | PA-REQ-011–012 | ANC-005–006 | A4, A6 |
+| Lightweight `bd`/`br` anchor store | PA-REQ-008–010 | ANC-017–018 | A3, A5, A6 |
+| Environment and offline execution | PA-REQ-011–012 | ANC-005 | A4, A6 |
 | Harness roles and independent tuning | PA-REQ-013–014 | ANC-009–010 | A5, A6, A7 |
 | Jev, redaction, examples, plugin boundary | PA-REQ-015–017 | ANC-011–014 | A4, A6, A7 |
 
 ## Phase acceptance
 
 - `/plan-anchoring` against the phase file, its directory, and the `pa-sza`
-  tracker copy discovers the same seven ordered sprint items.
-- Markdown and tracker-copy materialization have identical normalized digests;
-  separate Jev runs produce identical per-anchor verdicts for each sprint.
+  tracker copy discovers the same eight ordered sprint items.
+- Markdown and tracker-copy materialization have identical normalized request
+  digests; each source passes independently. Recorded-answer parity tests require
+  identical verdicts, while differing live answers are classified as model
+  instability and preserved rather than blamed on a source adapter.
 - Each run records source kind, source identity/revision, and normalized digest;
   tracker-copy drift fails before judging.
 - A repository with only Markdown plans can initialize `bd` or `br` solely for
@@ -187,14 +200,17 @@ PR represents each implementation sprint.
   declarations pass mechanical consistency validation.
 - Credential canaries remain absent from stdout, stderr, errors, reports,
   attestations, and run files.
-- The independently tuned planning gate passes every sprint document and phase
+- The independently calibrated testability rubric accepts every locked anchor;
+  the independently tuned planning gate passes every sprint document and phase
   coverage contains no uncovered locked anchor.
 - The existing offline test suite, new Phase A tests, documentation examples,
   version checks, and `git diff --check` all pass.
 
 ## Phase-wide non-closure
 
-- Replacing Jev or changing verdict semantics and confidence policy.
+- Replacing Jev or changing plan/development verdict semantics and confidence
+  policy outside their owning sprint; A0 owns testability-rubric confirmation
+  and uncertainty semantics only.
 - Building a general-purpose runner or tracker migration framework for other
   plugins.
 - Making `bd` and `br` share a database format.
@@ -213,6 +229,7 @@ PR represents each implementation sprint.
 | Supporting two trackers doubles agent branching | Select and normalize once in the adapter; agents consume one typed contract. |
 | Central trust resolution weakens repository-input safety | Keep workspace confinement for plan, anchor, run, and evidence paths inside agent preflight. |
 | Dogfood is biased toward passing | Independent Sol tuning freezes its oracle before gate results; every Jev failure is preserved and triaged. |
+| Bootstrap rubric rewrites anchors from sampling noise | Calibrate on a frozen external corpus, confirm semantic cells, and classify low confidence or disagreement as inconclusive/unstable. |
 
 ## Handoff after Phase A
 

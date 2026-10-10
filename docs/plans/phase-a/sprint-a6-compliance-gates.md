@@ -30,6 +30,12 @@ contracts or documentation narrative.
   handling, and command-injection cases.
 - Add credential canaries across stdout, stderr, nested errors, reports,
   attestations, run files, and timeout/retry paths.
+- Add bootstrap-rubric state-machine and recorded-answer tests for `testable`,
+  `needs_work`, `inconclusive`, `unstable`, two-call agreement, and third-call
+  disagreement resolution.
+- Add duplicate-detection regression cases proving that shared provenance does
+  not override distinct atomic statements while genuine statement overlap is
+  still rejected.
 - Preserve and run existing judge, coverage, diff, shape, redaction, and version
   suites alongside new tests.
 
@@ -58,8 +64,8 @@ contracts or documentation narrative.
 
 ## Traceability
 
-- Phase requirements: PA-REQ-001–017.
-- Anchors: ANC-001–018.
+- Phase requirements: PA-REQ-001–018.
+- Locked anchors: ANC-001–002, ANC-005, ANC-009–018.
 - Tracker: `pa-sza.6`.
 
 ## Risks and mitigations

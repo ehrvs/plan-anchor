@@ -14,7 +14,8 @@ plans, execute tracker commands, change Jev networking, or rewrite agent bodies.
 
 ## Dependency relations
 
-- Root sprint; follows the Phase A base on `main`.
+- `must_follow` Sprint A0 because the runner may attest only anchors accepted by
+  the calibrated bootstrap rubric.
 - Sprint A2 is `must_follow` because its plan-source descriptor becomes an
   operation field in this runner contract.
 
@@ -80,8 +81,8 @@ executable command string.
 
 ## Traceability
 
-- Phase requirements: PA-REQ-001–004, PA-REQ-013.
-- Anchors: ANC-001–004, ANC-008, ANC-012.
+- Phase requirements: PA-REQ-001–004, PA-REQ-013, PA-REQ-018.
+- Locked anchors: ANC-001–002, ANC-012.
 - Tracker: `pa-sza.1`.
 
 ## Risks and mitigations

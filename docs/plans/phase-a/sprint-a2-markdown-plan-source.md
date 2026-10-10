@@ -32,11 +32,14 @@ Supported user-facing targets:
 
 The directory form must resolve exactly one phase index. The phase index must
 contain one sprint table whose plan links identify ordered repository-local
-Markdown files. The tracker form must resolve one epic and its ordered planning
+Markdown files. The tracker form must resolve one epic and its planning
 children; each child description is an exact copy of one complete sprint
-Markdown file, while tracker title, acceptance, design, and notes remain workflow
-metadata. Both forms produce the copied sprint Markdown plus source metadata as
-the normalized item. Each Markdown sprint file must contain one
+Markdown file. The adapter derives the sprint identifier from that document,
+rejects missing or duplicate identifiers, and orders by the phase's sprint
+identifier rather than tracker issue ID, creation time, or API return order.
+Tracker title, acceptance, design, and notes remain workflow metadata. Both
+forms produce the copied sprint Markdown plus source metadata as the normalized
+item. Each Markdown sprint file must contain one
 authoritative section each for deliverables, acceptance criteria, and validation,
 plus explicit scope and non-closure. Paths to delete are required only when
 deletion is in scope.
@@ -82,7 +85,7 @@ deletion is in scope.
 - Golden composition tests proving equivalent Markdown and tracker copies
   normalize identically, including headings, prose, and fenced examples.
 - Digest tests proving stable output, changed-content detection, and drift refusal.
-- Dogfood discovery over `docs/plans/phase-a/plan-phase-a.md` returning A1–A7
+- Dogfood discovery over `docs/plans/phase-a/plan-phase-a.md` returning A0–A7
   in table order.
 
 ## Traceability

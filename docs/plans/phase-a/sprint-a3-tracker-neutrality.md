@@ -74,7 +74,7 @@ tracker failures. It does not require plan work to be represented as issues.
 ## Traceability
 
 - Phase requirements: PA-REQ-008–010.
-- Anchors: ANC-004, ANC-007–008, ANC-013, ANC-016–018.
+- Locked anchors: ANC-013, ANC-016–018.
 - Tracker: `pa-sza.3`.
 
 ## Risks and mitigations

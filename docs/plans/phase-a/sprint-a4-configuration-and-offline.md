@@ -59,7 +59,7 @@ semantics, retry policy, or plan/tracker discovery.
 ## Traceability
 
 - Phase requirements: PA-REQ-011–012, PA-REQ-015.
-- Anchors: ANC-005–006, ANC-011–012.
+- Locked anchors: ANC-005, ANC-011–012.
 - Tracker: `pa-sza.4`.
 
 ## Risks and mitigations

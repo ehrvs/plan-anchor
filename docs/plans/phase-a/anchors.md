@@ -8,12 +8,12 @@ Intent: `docs/plans/phase-a/intent.md`
 | --- | --- | --- | --- |
 | ANC-001 | locked | Guideline baseline | 2026-10-10 |
 | ANC-002 | locked | Agent tool only | 2026-10-10 |
-| ANC-003 | locked | Resolve agent trust once | 2026-10-10 |
-| ANC-004 | locked | Structured agent params | 2026-10-10 |
+| ANC-003 | retired | Resolve agent trust once | 2026-10-10 |
+| ANC-004 | retired | Structured agent params | 2026-10-10 |
 | ANC-005 | locked | Only API-key environment variable | 2026-10-10 |
-| ANC-006 | locked | Offline modes never send | 2026-10-10 |
-| ANC-007 | locked | Support bd and br | 2026-10-10 |
-| ANC-008 | locked | No shell commands in params | 2026-10-10 |
+| ANC-006 | retired | Offline modes never send | 2026-10-10 |
+| ANC-007 | retired | Support bd and br | 2026-10-10 |
+| ANC-008 | retired | No shell commands in params | 2026-10-10 |
 | ANC-009 | locked | Harness-specific agents | 2026-10-10 |
 | ANC-010 | locked | Independent question tuning | 2026-10-10 |
 | ANC-011 | locked | Jev remains required | 2026-10-10 |
@@ -27,11 +27,11 @@ Intent: `docs/plans/phase-a/intent.md`
 
 ## ANC-001
 
-Anchor: The plan-anchoring skill and its harness-specific agents must conform to claude-code-skills-agents-guidelines.md except where a locked anchor records a user-approved override.
+Anchor: claude-code-skills-agents-guidelines.md is the governing architecture baseline for plan-anchor.
 
-> these guidelines are my expected baseline.
+> these guidelines are my expected baseline.  I feel like we need to apply plan-anchoring to the plan-anchor skill
 
-Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: locked. Version 2.
+Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: locked. Version 5.
 
 Summary: Guideline baseline
 
@@ -47,11 +47,11 @@ Fixtures:
 
 ## ANC-002
 
-Anchor: Claude plan-anchor workflows must invoke subagents with the Agent tool and contain no instruction to invoke the superseded Task tool.
+Anchor: Claude plan-anchor workflows must invoke subagents with the Agent tool.
 
 > yes, the Task tool has been superceeded w/ Agent tool
 
-Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: locked. Version 2.
+Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: locked. Version 5.
 
 Summary: Agent tool only
 
@@ -67,11 +67,11 @@ Fixtures:
 
 ## ANC-003
 
-Anchor: The orchestration boundary must resolve each agent's registry entry, canonical path, version, model, and SHA-256 once and pass an immutable runtime descriptor to the agent.
+Anchor: The plan-anchor orchestration boundary must perform agent trust resolution once per invocation.
 
 > why does every agent need to do this?
 
-Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: locked. Version 2.
+Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: retired. Version 4.
 
 Summary: Resolve agent trust once
 
@@ -87,11 +87,11 @@ Fixtures:
 
 ## ANC-004
 
-Anchor: Each agent invocation must supply exactly one fenced JSON params object whose fields match the agent's documented Inputs contract.
+Anchor: Each plan-anchor agent invocation must receive one fenced JSON input object.
 
 > is the agent getting passed fenced json input?
 
-Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: locked. Version 2.
+Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: retired. Version 4.
 
 Summary: Structured agent params
 
@@ -107,11 +107,11 @@ Fixtures:
 
 ## ANC-005
 
-Anchor: Plan-anchor must read no application-specific environment variable except TYPESAFE_API_KEY.
+Anchor: Plan-anchor must not read runtime configuration from environment variables other than TYPESAFE_API_KEY.
 
 > My preference would be no environment variables are used outside of typesafe api key
 
-Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: locked. Version 2.
+Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: locked. Version 5.
 
 Summary: Only API-key environment variable
 
@@ -127,11 +127,11 @@ Fixtures:
 
 ## ANC-006
 
-Anchor: --dry-run and fixture-answer execution must make zero network calls, proven by transport-spy unit tests.
+Anchor: Plan-anchor --dry-run execution must make zero network calls.
 
 > yes, --dry-run is an arg that does the same thing and can be used in unit tests
 
-Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: locked. Version 2.
+Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: retired. Version 4.
 
 Summary: Offline modes never send
 
@@ -147,11 +147,11 @@ Fixtures:
 
 ## ANC-007
 
-Anchor: The skill must support both bd and br through tracker-neutral operations after selecting one installed tracker at the orchestration boundary.
+Anchor: The plan-anchoring skill must support both bd and br.
 
 > how large of a change would it be to make this skill work w/ bd and br ?
 
-Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: locked. Version 2.
+Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: retired. Version 4.
 
 Summary: Support bd and br
 
@@ -167,11 +167,11 @@ Fixtures:
 
 ## ANC-008
 
-Anchor: Agent params must omit interpolated shell command strings, carrying a tracker descriptor and operation data instead.
+Anchor: Plan-anchor agent inputs must carry tracker operation data rather than shell command strings.
 
 > so the bd/br commands would be passed in the fenced json?
 
-Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: locked. Version 2.
+Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: retired. Version 4.
 
 Summary: No shell commands in params
 
@@ -187,31 +187,31 @@ Fixtures:
 
 ## ANC-009
 
-Anchor: Harness-specific agent definitions are separate under .claude/agents and .codex/agents, declaring Sonnet/Opus for Claude and Luna/Sol for Codex.
+Anchor: Each plan-anchor agent definition must reside in its harness’s agent directory: .claude/agents or .codex/agents.
 
 > I think we should have separate agents for codex and claude (in .codex/.claude folders so agent class sonnet/luna are specified per harness).
 
-Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: locked. Version 2.
+Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: locked. Version 6.
 
 Summary: Harness-specific agents
 
 Scope: adds or changes an agent definition, registry entry, plugin manifest, or model assignment
 
-Deterministic check to pair with the development gate: Version-sync validation proves registry parity and the expected Sonnet/Opus and Luna/Sol role assignments.
+Deterministic check to pair with the development gate: Repository validation proves every Claude agent definition resides under .claude/agents and every Codex agent definition resides under .codex/agents.
 
 Beads: anchor `pa-nyp`, plan questions `pa-nyp.1`, dev questions `pa-nyp.2`
 
 Fixtures:
-- pass: Claude definitions live under .claude/agents with Sonnet and Opus roles while Codex definitions live under .codex/agents with Luna and Sol roles.
-- fail: Both harnesses load one shared agent file with an unspecified model.
+- pass: Claude definitions live under .claude/agents while Codex definitions live under .codex/agents.
+- fail: Both harnesses load one shared agent definition outside their harness agent directories.
 
 ## ANC-010
 
-Anchor: Question tuning must run in an evaluator independent from the planner, freeze an oracle from approved intent and anchors, and ignore whether the current plan passes.
+Anchor: Question tuning must be performed by an evaluator independent from the planner.
 
-> tuning should be done w/ an agent independent from the planner.
+> My feeling is that tuning should be done w/ an agent independent from the planner.  this should probably be a higher level agent i.e. opus or sol which has the responsibility for tuning against the intent/anchors w/out regard for 'getting the plan to pass'.  i.e. the tuning agent should loop over jev calls while modifying the question text and verifying the answers align with intent/anchors.  the tuning agent must exercise judgement..
 
-Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: locked. Version 2.
+Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: locked. Version 5.
 
 Summary: Independent question tuning
 
@@ -227,11 +227,11 @@ Fixtures:
 
 ## ANC-011
 
-Anchor: Documentation must identify Jev as required for the normal workflow and describe dry-run and fixture modes as development and CI aids.
+Anchor: The normal plan-anchoring workflow must require Jev.
 
 > fix README and make sure documents are consistent (this skill requires jev)
 
-Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: locked. Version 2.
+Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: locked. Version 5.
 
 Summary: Jev remains required
 
@@ -247,11 +247,11 @@ Fixtures:
 
 ## ANC-012
 
-Anchor: All script outputs and persisted run data must redact the TypeSafe API key and bearer-token forms before emission.
+Anchor: Plan-anchor script output must redact the TypeSafe API-key value.
 
-> the code-redaction change is a real issue flint fixed.
+> p2 - redact api key from script output
 
-Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: locked. Version 2.
+Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: locked. Version 5.
 
 Summary: Secrets stay redacted
 
@@ -267,11 +267,11 @@ Fixtures:
 
 ## ANC-013
 
-Anchor: Examples must use repository-valid paths, current command syntax, and JSON shapes emitted by supported tracker and harness versions.
+Anchor: Plan-anchor examples must be executable using repository-valid paths, supported commands, and supported JSON schemas.
 
 > p3 - update examples to be realistic
 
-Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: locked. Version 2.
+Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: locked. Version 4.
 
 Summary: Realistic examples
 
@@ -287,11 +287,11 @@ Fixtures:
 
 ## ANC-014
 
-Anchor: The plan-anchor plugin must not define or invoke the sc-lint agents arch-qa or req-qa.
+Anchor: The plan-anchor plugin must not define or invoke arch-qa or req-qa.
 
 > where did arch-qa and req-qa come from?  these are agents on sc-lint, not part of this skill
 
-Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: locked. Version 2.
+Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: locked. Version 5.
 
 Summary: Exclude sc-lint agents
 
@@ -307,11 +307,11 @@ Fixtures:
 
 ## ANC-015
 
-Anchor: Phase plans must consist of a phase index and separate authoritative sprint Markdown documents shaped by the plan-hardening sprint-planning guidelines.
+Anchor: The Phase A index must link separate authoritative sprint-plan documents.
 
 > I always break a plan into sprints.  see. /Users/randlee/github/raptor/docs/plans/phase-a/* for raptor project.  there is also a plan-hardening skill in that repo which has sprint-plan-guidelines for building your sprint
 
-Said by randlee, plan-anchor Phase A dogfood correction; live rubric pending explicit TypeSafe payload approval, 2026-10-10. Status: locked. Version 2.
+Said by randlee, plan-anchor Phase A dogfood correction; live rubric pending explicit TypeSafe payload approval, 2026-10-10. Status: locked. Version 6.
 
 Summary: Authoritative sprint documents
 
@@ -322,36 +322,36 @@ Deterministic check to pair with the development gate: Validate the phase index 
 Beads: anchor `pa-2zo`, plan questions `pa-2zo.1`, dev questions `pa-2zo.2`
 
 Fixtures:
-- pass: The phase index links seven separate sprint documents, each with authoritative deliverables, acceptance criteria, validation, and non-closure.
+- pass: The phase index links eight separate sprint documents, each with authoritative deliverables, acceptance criteria, validation, and non-closure.
 - fail: The phase plan keeps all sprint work as subsections in one monolithic Markdown file.
 
 ## ANC-016
 
-Anchor: The plan-anchoring planning gate must accept equivalent Markdown sprint plans and bd or br tracker copies, normalize both sources to the same item contract, and return matching verdicts.
+Anchor: The plan-anchoring gate must accept both a Markdown plan and its copy in a br database.
 
 > You should be able to run the /plan-anchor skill both against the md plan and against a copy of the plan in br database
 
-Said by randlee, plan-anchor Phase A dogfood correction; live rubric pending explicit TypeSafe payload approval, 2026-10-10. Status: locked. Version 2.
+Said by randlee, plan-anchor Phase A dogfood correction; live rubric pending explicit TypeSafe payload approval, 2026-10-10. Status: locked. Version 6.
 
 Summary: Dual plan sources
 
 Scope: changes plan-source selection, sprint discovery, item composition, source digests, planning-gate invocation, or source parity tests
 
-Deterministic check to pair with the development gate: Materialize the Phase A Markdown sprints and their br copies and assert identical ordered item digests and per-anchor verdicts.
+Deterministic check to pair with the development gate: Materialize the Phase A Markdown sprints and their br copies, assert identical ordered request digests, require both recorded-answer parity and independent live passing results, and classify differing live answers as model instability.
 
 Beads: anchor `pa-bxu`, plan questions `pa-bxu.1`, dev questions `pa-bxu.2`
 
 Fixtures:
-- pass: The Markdown and br-copy adapters normalize Sprint A2 to the same digest and produce matching anchor verdicts.
+- pass: The Markdown and br-copy adapters normalize Sprint A2 to the same request digest, pass independently, and reserve exact verdict equality for recorded-answer parity.
 - fail: The skill can review only tracker issue bodies and rejects the equivalent Markdown sprint file.
 
 ## ANC-017
 
-Anchor: Markdown plan review must require no bd or br records beyond each anchor's standard three-record question tree.
+Anchor: Markdown plan review requires tracker records only for an anchor root and its plan-question and dev-question children.
 
 > at that point the only beads dependency in the plan is for holding the anchoring info and questions which can be spun up in a br database quickly for any repo
 
-Said by randlee, plan-anchor Phase A dogfood correction; live rubric pending explicit TypeSafe payload approval, 2026-10-10. Status: locked. Version 2.
+Said by randlee, plan-anchor Phase A dogfood correction; live rubric pending explicit TypeSafe payload approval, 2026-10-10. Status: locked. Version 7.
 
 Summary: Beads only stores anchors
 
@@ -367,20 +367,20 @@ Fixtures:
 
 ## ANC-018
 
-Anchor: The skill must provide a short br initialization path that creates a usable anchor and question store in any Git repository.
+Anchor: The skill must document br initialization with no prerequisite beyond a local Git repository.
 
 > at that point the only beads dependency in the plan is for holding the anchoring info and questions which can be spun up in a br database quickly for any repo
 
-Said by randlee, plan-anchor Phase A dogfood correction; live rubric pending explicit TypeSafe payload approval, 2026-10-10. Status: locked. Version 2.
+Said by randlee, plan-anchor Phase A dogfood correction; live rubric pending explicit TypeSafe payload approval, 2026-10-10. Status: locked. Version 6.
 
 Summary: Fast br anchor-store setup
 
-Scope: changes installation, prerequisites, br initialization, anchor tree creation, examples, or onboarding
+Scope: changes br installation, local initialization prerequisites, command examples, or onboarding
 
-Deterministic check to pair with the development gate: Run the documented br initialization and anchor-tree creation sequence in a temporary Git repository and validate the resulting records.
+Deterministic check to pair with the development gate: Run the documented br initialization sequence in a temporary local Git repository without a remote service or phase epic.
 
 Beads: anchor `pa-c3t`, plan questions `pa-c3t.1`, dev questions `pa-c3t.2`
 
 Fixtures:
-- pass: A new Git repository can run the documented short br setup and immediately create a valid anchor with plan and development question children.
-- fail: Before capturing an anchor, every repository administrator must manually configure a shared tracker service and create a phase epic.
+- pass: In any local Git repository, the documented br initialization commands work without a remote tracker service or a phase epic.
+- fail: Before br can initialize, every repository must connect to a shared tracker service and create a phase epic.

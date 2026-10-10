@@ -38,6 +38,8 @@ or introduce sc-lint reviewers.
   evidence paths; keep one-operation responsibility and typed errors.
 - Keep the tuner isolated from planner objectives and active plan verdicts; it
   freezes its oracle before the first Jev answer and returns auditable evidence.
+  Preserve A0's explicit `testability` operation alongside the plan and
+  development operations without sharing their verdict objectives.
 - Measure final file sizes and split only if a definition still owns multiple
   responsibilities, not solely to satisfy a byte target.
 
@@ -67,7 +69,7 @@ or introduce sc-lint reviewers.
 ## Traceability
 
 - Phase requirements: PA-REQ-002–010, PA-REQ-013–014, PA-REQ-017.
-- Anchors: ANC-001–004, ANC-007–010, ANC-014, ANC-016–018.
+- Locked anchors: ANC-001–002, ANC-009–010, ANC-014, ANC-016–018.
 - Tracker: `pa-sza.5`.
 
 ## Risks and mitigations
@@ -80,7 +82,8 @@ or introduce sc-lint reviewers.
 ## Non-closure
 
 - Adding agents beyond the three plan-anchor roles per harness.
-- Changing question or verdict semantics.
+- Changing plan/development question or verdict semantics; A0 owns the
+  testability-rubric semantics that this sprint preserves.
 - Refactoring unrelated marketplace or sc-lint agents.
 
 ## Handoff to A6

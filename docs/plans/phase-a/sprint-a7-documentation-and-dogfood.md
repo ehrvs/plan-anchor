@@ -31,15 +31,21 @@ does not weaken anchors, questions, size limits, or verdicts to obtain a pass.
   and trackers.
 - Render `anchors.md`, keep tracker question/evidence references linked, and
   include the Markdown-authority anchors added during dogfood.
+- Verify A0's frozen bootstrap corpus and acceptance evidence, then run the
+  calibrated rubric against every locked anchor before plan-question tuning.
 - Run the independent Sol question tuner for every non-structural anchor/gate,
   record the frozen oracle digest, accepted override, acceptance table, and run
-  IDs, and apply only independently justified overrides.
+  IDs in `question-tuning-evidence.md`, and apply only independently justified
+  overrides.
 - Run one `anchor-plan-review` Agent per sprint first from Markdown and then from
   the `br` copy, preserve Jev verdicts unchanged, require matching normalized
-  digests and verdicts, triage every failure, and rerun only affected inputs.
+  request digests and independently passing results, classify differing live
+  answers as model instability, and rerun only affected inputs.
 - Compute phase coverage from the latest run per sprint and publish the final
   source paths/digests, failures corrected, size deltas, and any allowed growth
-  with pre-existing authority.
+  with pre-existing authority. Keep offline source-construction evidence in
+  `dogfood-dry-run.md` and live verdict evidence in a separate record so a dry
+  run can never be mistaken for gate acceptance.
 
 ## Authoritative acceptance criteria
 
@@ -49,8 +55,9 @@ does not weaken anchors, questions, size limits, or verdicts to obtain a pass.
   modes are accurately described as offline development/CI aids.
 - Every tuning result was produced independently from the active plan verdicts
   and meets its frozen oracle at the required confidence.
-- Every sprint's latest Markdown and tracker-copy runs pass, record matching
-  normalized digests and verdicts, and phase coverage has no uncovered anchor.
+- Every sprint's latest Markdown and tracker-copy runs pass and record matching
+  normalized request digests; recorded-answer parity runs have identical
+  verdicts, and phase coverage has no uncovered anchor.
 - Every failing-to-passing edit that grew cites a locked ANC/REQ/ADR that
   predates the failed run; otherwise the fix cuts or replaces text.
 - The full offline suite, live dogfood evidence, and `gh stack view --json`
@@ -70,8 +77,8 @@ does not weaken anchors, questions, size limits, or verdicts to obtain a pass.
 
 ## Traceability
 
-- Phase requirements: PA-REQ-001–017.
-- Anchors: ANC-001–018.
+- Phase requirements: PA-REQ-001–018.
+- Locked anchors: ANC-001–002, ANC-005, ANC-009–018.
 - Tracker: `pa-sza.7`.
 
 ## Risks and mitigations
