@@ -142,7 +142,7 @@ python3 $S judge --anchors $X/anchors.example.json --gate plan --all --item-id s
 
 ## Status
 
-Skill, references, agents, script and design documents are complete. The script has 73 offline tests (fixture answers and a stub transport) that run on Linux, macOS and Windows in CI. A live run against Jev has not yet been made; the smoke command in `references/installation-and-troubleshooting.md` is the first thing to run once `TYPESAFE_API_KEY` is in the environment. Marketplace packaging for Claude Code, Codex and Cursor is next.
+Skill, references, agents, script and design documents are complete. The script has 73 offline tests (fixture answers and a stub transport) that run on Linux, macOS and Windows in CI, and has been verified live against Jev (`jev-1.13.0`) on both gates: a from-scratch bead is `contradicted`, a copy-from-ATM bead is `satisfied`, an unrelated bead is `not_applicable`, and an unevidenced sprint report is `asserted_only`, each at confidence 0.9 or higher. One real run is kept at `assets/examples/run.live.example.json`. Marketplace packaging for Claude Code, Codex and Cursor is next.
 
 ## License
 

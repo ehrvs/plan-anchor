@@ -2,7 +2,7 @@
 
 Design document for the `plan-anchoring` skill. Companion to the [PRD](../plan-anchor-prd.md) and to [data model, gating and lifecycle](data-model-and-gating.md). Diagrams are Mermaid.
 
-Status: the skill, references, agents and the script's core subcommands are implemented and offline-tested. The retry and context-shortening behaviour, response validation, exit codes, and the `compose-item`, `update`, `retire` and `check-fixtures` subcommands described here are landing in the script revision that follows the first commit.
+Status: implemented, offline-tested (73 tests), and verified live against Jev `jev-1.13.0` on both gates with the example anchors. Marketplace packaging is pending.
 
 ## 1. Components
 
