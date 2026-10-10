@@ -4,6 +4,7 @@
 
 ## Unreleased
 
+- Planning gate sends a bead whole when it fits one Jev request (`--max-item-chars`, and `--max-request-bytes` for every anchor). Otherwise blocks longer than `--max-code-lines` are reduced to signatures one at a time, longest first, until it fits. `PLAN.TOO_LARGE` is unchanged. Measured on a 13-bead plan with 6 anchors: underspecified cells went from 15 to 8, and passing beads from 1 to 6 (`docs/experiments/2026-10-10-redact-only-when-oversize.md`). SKILL.md, plan-size-and-shape, jev-api, measured-behaviour and anchor-plan-review are now 0.3.1.
 
 ## 0.3.0 — 2026-10-10
 
