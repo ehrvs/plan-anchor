@@ -1,6 +1,6 @@
 ---
 name: code-review-questions
-version: 0.1.0
+version: 0.2.0
 description: The development-gate (sprint review) Jev question set, the evidence question, what delivered-work text to feed it, and pairing with deterministic checks.
 ---
 
@@ -16,9 +16,9 @@ Jev judges the text it is given. For the development gate that text is an accoun
 2. The PR description (title and body).
 3. `git diff --stat <base>..<head>` output, which lists the files touched.
 4. Test summary lines (names and pass/fail counts, not full logs).
-5. Titles and closing notes of the sprint's closed child beads.
+5. Titles and `close_reason` of the sprint's closed child beads, composed by `compose-item --children-json`.
 
-The account is labelled by section so Jev can tell a claim ("we copied the ATM crates") from an artifact ("crates/runtime/src/lib.rs | 412 +-"). Full diffs are not sent: they blow the state budget and add noise.
+Record what commands printed, never a paraphrase. The account is labelled by section so Jev can tell a claim ("we copied the ATM crates") from an artifact ("crates/runtime/src/lib.rs | 412 +-"). Full diffs are not sent: they blow the state budget and add noise.
 
 ## The four questions
 

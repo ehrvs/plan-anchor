@@ -175,7 +175,7 @@ flowchart LR
     R1["run: plan × bd-41"] --> M
     R2["run: plan × bd-42"] --> M
     R3["run: plan × bd-43"] --> M
-    M["coverage: latest run per (gate, item)<br/>anchors × items matrix"] --> U["uncovered anchors:<br/>no item is satisfied"]
+    M["coverage: latest run per (gate, item)<br/>anchors × items matrix, columns gate:item"] --> U["uncovered anchors:<br/>no item is satisfied"]
     Prev["run N-1 (bd-42)"] --> D["diff: changed / added / removed<br/>regressions, pass before → after"]
     Next["run N (bd-42)"] --> D
 ```

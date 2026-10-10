@@ -1,6 +1,6 @@
 ---
 name: plan-anchor-questions
-version: 0.1.0
+version: 0.2.0
 description: The planning-gate Jev question set, what each question isolates, why the set is orthogonal, and how to word overrides.
 ---
 
@@ -19,7 +19,7 @@ One anchor and one planning bead, nothing else:
 }
 ```
 
-Jev's accuracy degrades when unrelated material sits in the state, so the agent never sends several beads, the intent document, or other anchors. Items over `PLAN_ANCHOR_MAX_ITEM_CHARS` (default 24,000 characters) are truncated and the run records `item.truncated: true`.
+Jev's accuracy degrades when unrelated material sits in the state, so the agent never sends several beads, the intent document, or other anchors. The script keeps each request under 24,000 bytes by shortening the item from the tail, and halves it again if Jev reports its context window exceeded; the run records `item.truncated`, `item_chars_sent` and `item_shortened` (`jev-api.md`).
 
 ## The three questions
 
@@ -58,9 +58,8 @@ A good reason to override: an anchor whose directive is easy to satisfy in spiri
 ## Example request (dry run)
 
 ```bash
-python3 .claude/skills/plan-anchoring/scripts/jev_judge.py judge \
-  --anchors doc/plan/phase-current/anchors.json --gate plan --anchor ANC-012 \
-  --item-id bd-42 --item-title "Sprint 2 runtime" --item-file /tmp/bd-42.txt --dry-run
+python3 "$S" judge --anchors "$A" --gate plan --anchor ANC-012 \
+  --item-id bd-42 --item-title "Sprint 2 runtime" --item-file "$W/item.txt" --dry-run
 ```
 
-The output's `data.requests[0]` is the exact body that would be sent. Review it the first time a new anchor is judged.
+The run file's `requests[0]` is the exact body that would be sent and `totals.bytes` its size. Review it the first time a new anchor is judged, and run `check-fixtures --gate plan --id ANC-012` after changing wording.

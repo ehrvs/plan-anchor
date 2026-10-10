@@ -131,7 +131,7 @@ Requests stay under 24,000 bytes; an item that still exceeds Jev's context windo
 python3 -m unittest discover -s skills/.claude/skills/plan-anchoring/tests -v
 ```
 
-Tests use fixture answers and a stub transport; they cover ID allocation, gating, overrides, retries, report format, coverage and diffs, not Jev's judgment. A smoke run with no key:
+Tests use fixture answers and a stub transport; they cover ID allocation, gating, overrides, retries and context shortening, response validation, report format, coverage and diffs, not Jev's judgment. CI runs them on Linux, macOS and Windows with Python 3.9 and the latest 3.x. A smoke run with no key (exits 1 because the example gate fails by design):
 
 ```bash
 S=skills/.claude/skills/plan-anchoring/scripts/jev_judge.py
@@ -142,7 +142,7 @@ python3 $S judge --anchors $X/anchors.example.json --gate plan --all --item-id s
 
 ## Status
 
-Skill, references, agents and design documents are complete and the pipeline is offline-tested. The script revision adding retries, context shortening, response validation, exit codes and the `compose-item`, `update`, `retire` and `check-fixtures` subcommands is in review. A live run against Jev has not yet been made. Marketplace packaging for Claude Code, Codex and Cursor is next.
+Skill, references, agents, script and design documents are complete. The script has 73 offline tests (fixture answers and a stub transport) that run on Linux, macOS and Windows in CI. A live run against Jev has not yet been made; the smoke command in `references/installation-and-troubleshooting.md` is the first thing to run once `TYPESAFE_API_KEY` is in the environment. Marketplace packaging for Claude Code, Codex and Cursor is next.
 
 ## License
 

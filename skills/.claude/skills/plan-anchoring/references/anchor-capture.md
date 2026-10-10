@@ -1,6 +1,6 @@
 ---
 name: anchor-capture
-version: 0.1.0
+version: 0.2.0
 description: How the planning orchestrator detects, proposes, confirms, and words anchors while a plan is being discussed.
 ---
 
@@ -54,9 +54,9 @@ The test for granularity: can Jev answer "does this bead address the directive" 
 | `scope` | Feeds the relevance question so unrelated beads are `not_applicable` rather than failures | Name the area or kind of work the anchor governs: "the runtime crates sprint and anything that creates the core library implementation" |
 | `summary` | Table label | Under 12 words |
 | `deterministic_check` | The code-level proof the development gate should pair with | A diff, git log, grep, or test that would show the directive was literally followed |
-| `fixtures.pass` / `fixtures.fail` | One sentence each that a bead would say if it satisfied or violated the anchor | Draft them, read them back, get the user's approval. They are used with `--answers-file` fixtures in CI and never sent to Jev as plan text |
+| `fixtures.pass` / `fixtures.fail` | One sentence each that a bead would say if it satisfied or violated the anchor | Draft them, read them back, get the user's approval, then record with `update --fixture-pass/--fixture-fail`. `check-fixtures` sends them to Jev (same opt-in) to confirm the question wording lands them as expected |
 
-Record with `scripts/jev_judge.py add`; the script allocates the next ANC number so two sessions never collide on an ID. Then `validate`, `render`, and create the bead tree per `bead-layout.md`.
+Record with `add`; the script allocates the next ANC number so two sessions never collide on an ID. `scope`, `summary`, the deterministic check and fixtures can be set on `add` or later with `update`. Then `validate`, `render`, and create the bead tree per `bead-layout.md`.
 
 ## Re-opening a plan
 

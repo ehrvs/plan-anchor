@@ -1,6 +1,6 @@
 ---
 name: anchor-document
-version: 0.1.0
+version: 0.2.0
 description: The intent document, the anchors.json record of truth and its rendered anchors.md, ID rules, provenance, versioning, promotion, and retirement.
 ---
 
@@ -11,9 +11,9 @@ Two documents land in `doc/plan/phase-current/` for people, and one machine reco
 | File | Who edits | Purpose |
 | --- | --- | --- |
 | `intent.md` | you, from `assets/templates/intent.md` | One page: what the plan is for, what success looks like, what is out of scope. Frames the anchors; is never judged |
-| `anchors.json` | `scripts/jev_judge.py` only | Record of truth. Every anchor with provenance, status, question overrides, fixtures, bead IDs, history |
+| `anchors.json` | `scripts/jev_judge.py` only (`add`, `update`, `retire`, `promote`, `set-beads`) | Record of truth. Every anchor with provenance, status, question overrides, fixtures, bead IDs, history |
 | `anchors.md` | nobody; rendered by `render` | Human view of `anchors.json`. Re-render after every change |
-| `anchor-runs/*.json` | `judge` | One file per gate run, so runs can be diffed and coverage computed |
+| `anchor-runs/*.json` | `judge` (dry runs included; `check-fixtures` under `fixtures/`) | One file per gate run with the answers, attempts, bytes sent and a hash of the questions asked, so runs can be diffed and coverage computed |
 
 Keep all of them in git with the plan. They are the plan's memory.
 
@@ -34,7 +34,7 @@ Anchor record fields:
 | --- | --- | --- |
 | `id` | string | `ANC-NNN` allocated by the script, or the register ID for REQ/ADR (`REQ-014`, `ADR-0007`) |
 | `source_type` | `ANC` / `REQ` / `ADR` | Where the fact comes from |
-| `source_ref` | string or null | The register ID for REQ/ADR; null for ANC until promoted |
+| `source_ref` | string or null | The register ID for REQ/ADR; null for ANC (promotion records the ADR in `promoted_to`) |
 | `statement` | string | The verbatim words. Immutable |
 | `stated_by`, `stated_at`, `context` | string | Provenance: who, ISO date, "planning session" or register name. Quoted in every failing verdict |
 | `summary` | string | Short label for tables; never judged |
@@ -48,7 +48,7 @@ Anchor record fields:
 | `beads` | `{anchor, plan_questions, dev_questions}` | Bead IDs of the anchor tree |
 | `history` | list | Append-only events with timestamps |
 
-The full example is `assets/examples/anchors.example.json`. Run `validate` after any edit; `judge` refuses a record with problems.
+The full example is `assets/examples/anchors.example.json`. Run `validate` after any change; it fails on structural problems and warns when `intent_ref` points at a missing file or no anchor is locked. `judge` refuses a record with problems. `stated_at` defaults to today's local date.
 
 ## IDs
 
@@ -68,7 +68,7 @@ proposed  -->  locked  -->  promoted (keeps ID, gains ADR ref)
 - **proposed**: recorded so it survives compression; not judged.
 - **locked**: judged at both gates. Requires the user's confirmation.
 - **promoted**: `promote --id ANC-012 --adr ADR-0007`. The anchor keeps its ID and history; the ADR register gains the decision. Still judged.
-- **retired**: set `status` to `retired` in the record (via a small edit, then `validate` and `render`). Not judged. Record the replacement anchor ID in `history` so the chain is visible.
+- **retired**: `retire --id ANC-012 --replaced-by ANC-020 --reason "..."`. Not judged. The replacement ID and reason land in `history` so the chain is visible.
 
 ## Why the statement is immutable
 
@@ -76,4 +76,4 @@ Every past run quotes the statement it judged. If the statement could change, th
 
 ## Rendering
 
-`render` writes `anchors.md` with a status table and one section per anchor: the quote as a blockquote, provenance line, summary, scope, deterministic check, bead IDs, and fixtures. Re-render after every `add`, `set-beads`, `promote`, or manual status edit, and commit both files together.
+`render` writes `anchors.md` with a status table and one section per anchor: the quote as a blockquote, provenance line, summary, scope, deterministic check, bead IDs, and fixtures. Re-render after every `add`, `update`, `set-beads`, `promote` or `retire`, and commit both files together.
