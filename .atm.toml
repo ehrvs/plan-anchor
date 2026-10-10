@@ -1,0 +1,30 @@
+# ATM (agent team mail) configuration for the plan-anchor repo.
+#
+# Runtime identity comes from the environment, not from this file (see
+# `atm help identity`): export ATM_IDENTITY=anchor-lead ATM_TEAM=plan-anchor
+# before sending or reading. This file declares the team and default pane so
+# tooling that reads .atm.toml (rmux, herdr, launchers) agrees on the names.
+#
+# Roster (daemon-owned, registered with `atm teams add-member`):
+#   plan-anchor / anchor-lead  type=lead  harness=claude-code  model=fable
+#   home_dir=/Users/randlee/github/plan-anchor
+#
+# anchor-lead owns the plan-anchoring skill, sends and receives cross-host
+# messages about anchors and gate verdicts (for example to
+# skillrx@hermes.rand-m5), and never impersonates another team's lead.
+
+[atm]
+default_team = "plan-anchor"
+
+[rmux]
+session = "plan-anchor"
+
+[[rmux.windows]]
+name = "agents"
+layout = "even-horizontal"
+
+[[rmux.windows.panes]]
+name = "anchor-lead"
+alias = "anchor-lead"
+model = "fable"
+env = { ATM_IDENTITY = "anchor-lead", ATM_TEAM = "plan-anchor", CLAUDE_CODE_TASK_LIST_ID = "plan-anchor" }
