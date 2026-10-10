@@ -93,5 +93,5 @@ An anchor that proves durable can be promoted to an ADR; it keeps its ID and gai
 - **Anchor capture.** Does the orchestrator auto-detect candidate anchors from what you say and propose them for confirmation, or only record one when you explicitly say "lock this"?
 - **Fast-model cross-check.** Which model runs the parallel sanity check — Haiku, a local Qwen — and is its role strictly ambiguity detection (disagreement flags an underspecified anchor), not a second verdict?
 - **Relationship to existing skills.** Does plan-jev extend goal-jev / plan-hardening-solo, or stand alone?
-- **Jev data retention.** Still unresolved, and it governs whether Radiant proprietary plans can be sent to TypeSafe at all.
+- **Jev data handling (resolved for the skill).** Every live rubric, tuning, fixture, or gate call requires both a TypeSafe API key and a per-session `PLAN_ANCHOR_ALLOW_REMOTE_JUDGE=1` opt-in. The script sends one scoped item at a time, never the whole plan, and redacts credentials from output. Whether a particular proprietary plan may be sent remains the user's policy decision.
 - **Fixture authorship.** Who writes the pass/fail fixtures that define "locked" — the requirement sub-agent, with your approval?

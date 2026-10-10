@@ -4,6 +4,19 @@
 
 ## Unreleased
 
+- Package the fully qualified `sc-plan-anchor` plugin in Claude and Codex repository marketplaces. Claude declares its Sonnet/Opus agents in the plugin manifest; Codex discovers the shared skill and the skill launches its bundled Luna/Sol definitions explicitly through the Agent tool.
+
+## 0.4.0 — 2026-10-10
+
+- Split harness adapters: Claude Code gate agents use Sonnet and its independent question tuner uses Opus; Codex gate agents use Luna and its tuner uses Sol. Claude invocation now names the Agent tool, and both registries are version-checked.
+- Made question tuning independent of the planner. The tuner derives and freezes an oracle from approved intent and anchors before its first Jev call, iterates wording against role-level expectations without a plan-pass objective, and returns the oracle digest, rationales, run IDs, and acceptance table.
+- Added `agent-preflight` to canonicalize and confine agent inputs to the Git workspace, reject unsafe identifiers and PR numbers, and require the running judge to match the selected script. Agents validate harness-controlled script paths before execution.
+- Redact the live TypeSafe key and bearer credentials recursively from all script output. Installation reads the key silently instead of placing it in a command line.
+- `diff` now reports composed-item growth. Remediation defaults to cuts and replacements; a failing-to-passing edit may grow only when added text traces to a locked ANC/REQ/ADR that predates the failed run.
+- Documentation consistently treats Jev as required for the normal capture, tuning, fixture, and gate workflow while preserving offline dry-run and fixture-answer support for development and CI. Examples now use measured, non-placeholder metadata.
+- Planning gate sends a bead whole when it fits one Jev request (`--max-item-chars`, and `--max-request-bytes` for every anchor). Otherwise blocks longer than `--max-code-lines` are reduced to signatures one at a time, longest first, until it fits. `PLAN.TOO_LARGE` is unchanged. Measured on a 13-bead plan with 6 anchors: underspecified cells went from 15 to 8, and passing beads from 1 to 6 (`docs/experiments/2026-10-10-redact-only-when-oversize.md`).
+- Planning gate is a quality loop: Jev's failing verdicts and low confidence are the planner's signal to fix the bead, then re-run. `underspecified` results carry `low_questions`, printed as `Low:` report lines. `anchor-plan-review` returns Jev's ruling unchanged plus `to_fix` per failing cell, resolves overrides deterministically, and can reuse a run after one timed-out or malformed agent response without another Jev call.
+- Fixed directive gating so a low-confidence, `unclear`, or otherwise non-confident `no` conflict answer is `underspecified`; only a confident conflict `no` can reach `asserted_only` or `satisfied`.
 
 ## 0.3.0 — 2026-10-10
 
