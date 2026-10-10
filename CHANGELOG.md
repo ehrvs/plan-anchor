@@ -4,6 +4,8 @@
 
 ## Unreleased
 
+- Package the fully qualified `sc-plan-anchor` plugin in Claude and Codex repository marketplaces. Claude declares its Sonnet/Opus agents in the plugin manifest; Codex discovers the shared skill and the skill launches its bundled Luna/Sol definitions explicitly through the Agent tool.
+
 ## 0.4.0 — 2026-10-10
 
 - Split harness adapters: Claude Code gate agents use Sonnet and its independent question tuner uses Opus; Codex gate agents use Luna and its tuner uses Sol. Claude invocation now names the Agent tool, and both registries are version-checked.

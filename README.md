@@ -31,7 +31,26 @@ Not for: general code review, style review, or plan hardening without anchors. I
 
 ## Installation
 
-Copy `skills/.claude/` into your project as `.claude/` for the skill and Claude agents, and copy `skills/.codex/` as `.codex/` for the Codex agent definitions. Marketplace manifests are still pending.
+The fully qualified plugin is `sc-plan-anchor`; its skill remains `plan-anchoring`.
+
+Claude Code:
+
+```text
+/plugin marketplace add randlee/plan-anchor
+/plugin install sc-plan-anchor@plan-anchor
+```
+
+Invoke it as `/sc-plan-anchor:plan-anchoring`. Claude loads the Sonnet/Opus agent definitions declared by the plugin manifest.
+
+Codex:
+
+```bash
+codex plugin marketplace add randlee/plan-anchor
+```
+
+Then open `/plugins` and install **Plan Anchor**. Codex discovers the skill from the portable root manifest; the skill explicitly launches the bundled Luna/Sol definitions through the Agent tool because Codex does not auto-register plugin-owned custom agent profiles.
+
+For a source checkout, use the files under `plugins/sc-plan-anchor/` directly. Cursor can execute the gate procedure inline, but this release does not claim a Cursor package: independent question tuning requires a separate higher-reasoning agent. Hermes distribution is likewise deferred; it has no marketplace manifest and this package has not been landed in its registry.
 
 | Need | For | Notes |
 | --- | --- | --- |
@@ -45,7 +64,7 @@ Offline dry runs, deterministic lint/shape/render commands, fixture-answer tests
 ## Quick start
 
 ```bash
-S=.claude/skills/plan-anchoring/scripts/jev_judge.py
+S=plugins/sc-plan-anchor/skills/plan-anchoring/scripts/jev_judge.py
 A=doc/plan/phase-current/anchors.json
 
 # lock the first anchor (creates anchors.json) after the live Jev rubric, then render the human view
@@ -66,7 +85,7 @@ python3 $S report --run doc/plan/phase-current/anchor-runs/<run>.json --format m
 python3 $S coverage --runs doc/plan/phase-current/anchor-runs --gate plan --format md
 ```
 
-In a Claude Code or Codex session the skill does this for you: say "anchor this" or "lock this" while planning, then "run the planning gate on the sprint 2 beads" or "review sprint 2 against the anchors". Claude Code invokes Sonnet gate agents and an Opus tuner from `.claude/agents/`; Codex invokes Luna gate agents and a Sol tuner from `.codex/agents/`. Cursor may follow gate steps inline, but question tuning requires an independent higher-reasoning agent.
+In a Claude Code or Codex session the skill does this for you: say "anchor this" or "lock this" while planning, then "run the planning gate on the sprint 2 beads" or "review sprint 2 against the anchors". Claude Code invokes Sonnet gate agents and an Opus tuner from the plugin's `.claude/agents/`; Codex invokes Luna gate agents and a Sol tuner from `.codex/agents/`. Claude uses the Agent tool, never the Task tool. Cursor may follow gate steps inline, but question tuning requires an independent higher-reasoning agent.
 
 ## What you get back
 
@@ -87,27 +106,19 @@ Every run is stored in `anchor-runs/` so edits can be diffed against the last ru
 docs/
 ├── plan-anchor-prd.md                     product requirements
 └── design/                                architecture, call graphs, data model, gating
-skills/
-├── .claude/
-│   ├── agents/                            Claude gates: Sonnet; independent tuner: Opus
-│   └── skills/plan-anchoring/
-│       ├── SKILL.md                       entry point and table of contents
-│       ├── references/                    one document per aspect
-│       │   ├── anchor-capture.md          detecting, proposing, confirming, wording anchors
-│       │   ├── anchor-document.md         intent.md, anchors.json, anchors.md, IDs, lifecycle
-│       │   ├── bead-layout.md             anchor bead tree and bd commands
-│       │   ├── plan-anchor-questions.md   planning-gate question set
-│       │   ├── code-review-questions.md   development-gate questions and evidence
-│       │   ├── verdict-gating.md          answers to verdicts, coverage, diffs
-│       │   ├── report-format.md           provenance-quoting report
-│       │   ├── jev-api.md                 endpoint, limits, retries, privacy opt-in
-│       │   └── installation-and-troubleshooting.md
-│       ├── scripts/jev_judge.py           deterministic core (see below)
-│       ├── assets/questions/              plan, dev, testability, and dedupe wording
-│       ├── assets/templates/              intent and question-bead templates
-│       └── assets/examples/               worked anchors and fixture answers
-└── .codex/
-    └── agents/                            Codex gates: Luna; independent tuner: Sol
+.claude-plugin/marketplace.json            Claude marketplace catalog
+.agents/plugins/marketplace.json           Codex repository marketplace catalog
+plugins/sc-plan-anchor/
+├── plugin.json                            portable Agent Plugins manifest
+├── .claude-plugin/plugin.json             Claude manifest and agent registration
+├── .codex-plugin/plugin.json              Codex compatibility/presentation overlay
+├── .claude/agents/                        Claude gates: Sonnet; independent tuner: Opus
+├── .codex/agents/                         Codex gates: Luna; independent tuner: Sol
+└── skills/plan-anchoring/
+    ├── SKILL.md                           entry point and table of contents
+    ├── references/                        capture, gates, tuning, reports, Jev API
+    ├── scripts/jev_judge.py               deterministic core (see below)
+    └── assets/                            questions, templates, and realistic fixtures
 ```
 
 ### The script
@@ -131,14 +142,14 @@ Planning-gate requests stay under 24,000 bytes: fitting beads are sent whole, an
 ## Development
 
 ```bash
-python3 -m unittest discover -s skills/.claude/skills/plan-anchoring/tests -v
+python3 -m unittest discover -s plugins/sc-plan-anchor/skills/plan-anchoring/tests -v
 ```
 
 Tests use fixture answers and a stub transport; they cover ID allocation, gating, overrides, retries and context shortening, response validation, report format, coverage and diffs, not Jev's judgment. CI runs them on Linux, macOS and Windows with Python 3.9 and the latest 3.x. A smoke run with no key (exits 1 because the example gate fails by design):
 
 ```bash
-S=skills/.claude/skills/plan-anchoring/scripts/jev_judge.py
-X=skills/.claude/skills/plan-anchoring/assets/examples
+S=plugins/sc-plan-anchor/skills/plan-anchoring/scripts/jev_judge.py
+X=plugins/sc-plan-anchor/skills/plan-anchoring/assets/examples
 python3 $S judge --anchors $X/anchors.example.json --gate plan --all --item-id smoke --item-file README.md \
   --answers-file $X/answers.fixture.json --out /tmp/anchor-smoke.json && python3 $S report --run /tmp/anchor-smoke.json --format md
 ```
@@ -153,11 +164,11 @@ Revision 0.4 builds on the first real multi-sprint use and 245 live Jev requests
 - Per-anchor question tuning is an independent higher-reasoning agent's job. It freezes an intent-derived oracle before its first Jev call and iterates wording without access to a plan-pass objective.
 - Near-threshold cells are re-asked once because run-to-run noise flipped one cell in six; every cell reports its leaning.
 
-The offline suite runs on Linux, macOS and Windows in CI. Harness-specific Claude Code and Codex agents are included; marketplace manifests remain pending.
+The offline suite runs on Linux, macOS and Windows in CI. The repository is a Claude and Codex marketplace containing the `sc-plan-anchor` plugin; the shared skill body is packaged once, with separate harness-owned agent definitions.
 
 ## Versioning
 
-One release line covers `SKILL.md` metadata, every reference, both harnesses' agents and registries, and the plugin and marketplace manifests once they exist. `VERSION` holds it; `scripts/check_version_sync.py` runs in CI and fails on drift or on a release without a `CHANGELOG.md` entry.
+One release line covers `SKILL.md` metadata, every reference, both harnesses' agents and registries, and all plugin and marketplace manifests. `VERSION` holds it; `scripts/check_version_sync.py` runs in CI and fails on identity, path, version, or changelog drift.
 
 ## License
 

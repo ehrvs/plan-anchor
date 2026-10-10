@@ -1,0 +1,21 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "plan-anchor",
+  "description": "Plan anchoring for Claude Code and Codex, with independent Jev question tuning and two evidence-backed gates.",
+  "owner": {
+    "name": "randlee"
+  },
+  "plugins": [
+    {
+      "name": "sc-plan-anchor",
+      "displayName": "Plan Anchor",
+      "description": "Keep plans and delivered work aligned with user-approved anchors.",
+      "author": {
+        "name": "randlee"
+      },
+      "category": "workflow",
+      "source": "./plugins/sc-plan-anchor",
+      "homepage": "https://github.com/randlee/plan-anchor"
+    }
+  ]
+}

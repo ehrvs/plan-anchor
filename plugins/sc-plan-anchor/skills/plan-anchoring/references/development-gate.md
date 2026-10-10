@@ -24,7 +24,7 @@ One anchor and the account: the sprint bead's title and fields, `## Closed beads
 
 ## Run
 
-Delegate to `anchor-sprint-review` (Claude Code) or follow `../../agents/anchor-sprint-review.md` inline. The agent runs once:
+Delegate to the harness-specific `anchor-sprint-review` definition (Claude Code and Codex). Cursor may follow these gate steps inline. The agent runs once:
 
 ```bash
 python3 "$S" judge --anchors "$A" --gate dev --all --item-id <sprint epic> --item-title "<sprint title>" \

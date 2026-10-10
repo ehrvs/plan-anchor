@@ -23,7 +23,7 @@ One anchor (`id`, `statement`, `scope`; the quote is not sent), one bead's text 
 
 ## Run
 
-Delegate per bead (Claude Code) or follow `../../agents/anchor-plan-review.md` inline (Codex, Cursor). The agent runs once:
+Delegate per bead using the harness-specific `anchor-plan-review` definition (Claude Code and Codex). Cursor may follow these steps inline, but cannot substitute the planner for independent question tuning. The gate agent runs once:
 
 ```bash
 python3 "$S" judge --anchors "$A" --gate plan --all --item-id <bead> --item-title "<title>" \

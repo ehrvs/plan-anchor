@@ -5,10 +5,10 @@ plan-anchoring is a general-purpose skill. Anyone, human or agent, may propose a
 ## What a good change looks like
 
 - **One aspect per pull request.** The skill is a table of contents (`SKILL.md`) with one reference per aspect. Change the reference that owns the aspect; add a new reference only for a new aspect, and list it in `SKILL.md`.
-- **General wording.** No project names, people, issue numbers, crate names or team-specific process. Use neutral examples (the "legacy repo" example is the house one). `grep -rniE "<your repo>|<your team>" skills/.claude/` must return nothing.
+- **General wording.** No project names, people, issue numbers, crate names or team-specific process. Use neutral examples (the "legacy repo" example is the house one). `grep -rniE "<your repo>|<your team>" plugins/sc-plan-anchor/` must return nothing.
 - **Concise.** One idea per sentence. State a rule once, where it is defined; elsewhere cite it. Justify numbers from `references/measured-behaviour.md`; a behaviour change that rests on how Jev judges comes with measurements (see `docs/experiments/` for the protocol).
 - **Script and docs together.** A new flag, field, verdict, error code or exit code lands with its reference text, its agent text if an agent uses it, and a test. Existing names are never renamed or removed in a patch; add only.
-- **Tests green.** `python3 -m unittest discover -s skills/.claude/skills/plan-anchoring/tests` and `python3 scripts/check_version_sync.py --base origin/main` both pass before you open the PR.
+- **Tests green.** `python3 -m unittest discover -s plugins/sc-plan-anchor/skills/plan-anchoring/tests` and `python3 scripts/check_version_sync.py --base origin/main` both pass before you open the PR.
 - **Never a secret.** No keys, no live run output containing private plan text. Fixture answers and dry runs are how tests touch Jev.
 
 ## Versioning

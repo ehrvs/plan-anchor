@@ -33,10 +33,11 @@ import subprocess
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-SKILL = ROOT / "skills" / ".claude" / "skills" / "plan-anchoring"
+PLUGIN = ROOT / "plugins" / "sc-plan-anchor"
+SKILL = PLUGIN / "skills" / "plan-anchoring"
 AGENT_DIRS = {
-    "claude": ROOT / "skills" / ".claude" / "agents",
-    "codex": ROOT / "skills" / ".codex" / "agents",
+    "claude": PLUGIN / ".claude" / "agents",
+    "codex": PLUGIN / ".codex" / "agents",
 }
 FRONT_RE = re.compile(r"^---\n(.*?)\n---", re.S)
 VER_RE = re.compile(r'^\s*version:\s*["\']?([0-9]+\.[0-9]+\.[0-9]+)["\']?\s*$', re.M)
@@ -130,7 +131,7 @@ def release_checks(want: str, drift: list) -> int:
             name, rv, path = m.groups()
             if name.startswith("anchor-"):
                 registered.add(name)
-            target = ROOT / "skills" / path.lstrip("/")   # registry paths are project-relative (.claude/...), installed under skills/
+            target = PLUGIN / path.lstrip("/")
             if target.exists():
                 fv = frontmatter_version(target.read_text(encoding="utf-8"))
                 if fv != rv:
@@ -146,9 +147,10 @@ def release_checks(want: str, drift: list) -> int:
                 drift.append(f"{reg.relative_to(ROOT)} depends_on {m.group(1)}: {m.group(2)} does not cover {want}")
         if dependencies != expected_agents:
             drift.append(f"{reg.relative_to(ROOT)}: depends_on {sorted(dependencies)} != {sorted(expected_agents)}")
-    for manifest in [*ROOT.glob("**/.claude-plugin/plugin.json"), *ROOT.glob("**/.codex-plugin/plugin.json"),
+    manifests = [PLUGIN / "plugin.json", *ROOT.glob("**/.claude-plugin/plugin.json"), *ROOT.glob("**/.codex-plugin/plugin.json"),
                      *ROOT.glob("**/.cursor-plugin/plugin.json"), *ROOT.glob("**/.claude-plugin/marketplace.json"),
-                     *ROOT.glob("**/.agents/plugins/marketplace.json"), *ROOT.glob("**/manifest.yaml")]:
+                     *ROOT.glob("**/.agents/plugins/marketplace.json"), *ROOT.glob("**/manifest.yaml")]
+    for manifest in manifests:
         if "/.git/" in str(manifest) or "node_modules" in str(manifest):
             continue
         checked += 1
@@ -167,6 +169,41 @@ def release_checks(want: str, drift: list) -> int:
             m = re.search(r"^version:\s*([0-9.]+)", manifest.read_text(), re.M)
             if m and m.group(1) != want:
                 drift.append(f"{rel}: {m.group(1)} != VERSION {want}")
+    plugin_manifests = [
+        PLUGIN / "plugin.json",
+        PLUGIN / ".claude-plugin" / "plugin.json",
+        PLUGIN / ".codex-plugin" / "plugin.json",
+    ]
+    for manifest in plugin_manifests:
+        if not manifest.exists():
+            drift.append(f"{manifest.relative_to(ROOT)}: missing")
+            continue
+        data = json.loads(manifest.read_text())
+        if data.get("name") != "sc-plan-anchor":
+            drift.append(f"{manifest.relative_to(ROOT)}: name must be sc-plan-anchor")
+    claude_manifest = json.loads((PLUGIN / ".claude-plugin" / "plugin.json").read_text())
+    expected_claude_agents = {f"./.claude/agents/{name}.md" for name in expected_agents}
+    if set(claude_manifest.get("agents", [])) != expected_claude_agents:
+        drift.append("Claude manifest agents do not match .claude/agents")
+    catalogs = [
+        ROOT / ".claude-plugin" / "marketplace.json",
+        ROOT / ".agents" / "plugins" / "marketplace.json",
+    ]
+    for catalog in catalogs:
+        if not catalog.exists():
+            drift.append(f"{catalog.relative_to(ROOT)}: missing")
+            continue
+        data = json.loads(catalog.read_text())
+        entries = [p for p in data.get("plugins", []) if p.get("name") == "sc-plan-anchor"]
+        if len(entries) != 1:
+            drift.append(f"{catalog.relative_to(ROOT)}: expected one sc-plan-anchor entry")
+            continue
+        source = entries[0].get("source")
+        source_path = source.get("path") if isinstance(source, dict) else source
+        if source_path != "./plugins/sc-plan-anchor":
+            drift.append(f"{catalog.relative_to(ROOT)}: source must be ./plugins/sc-plan-anchor")
+        elif not (ROOT / source_path[2:]).is_dir():
+            drift.append(f"{catalog.relative_to(ROOT)}: source path does not exist")
     changelog = ROOT / "CHANGELOG.md"
     if not changelog.exists() or f"## {want}" not in changelog.read_text():
         drift.append(f"CHANGELOG.md has no '## {want}' entry")
