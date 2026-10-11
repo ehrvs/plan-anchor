@@ -4,6 +4,8 @@
 
 ## Unreleased
 
+- Declare the JSON Schema test dependency in CI and keep strict template
+  contract tests portable when the optional `sc-compose` binary is absent.
 - Calibrate the five-question anchor-testability rubric against a frozen,
   plan-independent 17-case oracle: 85/85 semantic cells and 4/4 statement-only
   duplicate cases matched across byte-identical live Jev repeats. Requirement
