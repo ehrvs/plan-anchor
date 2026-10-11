@@ -1,14 +1,14 @@
 # Phase A plan-anchor dogfood: offline source parity
 
-Date: 2026-10-10
+Date: 2026-10-11
 
 This record covers request construction only. It is not a Jev verdict and does
 not satisfy the live planning gate.
 
 ## Inputs
 
-- Anchors: 13 locked records from `anchors.json`; two structural anchors use
-  deterministic checks and the other 11 produce Jev requests.
+- Anchors: 25 locked records from `anchors.json`; two structural anchors use
+  deterministic checks and the other 23 produce Jev requests.
 - Markdown source: the eight sprint documents linked by `plan-phase-a.md`.
 - Tracker source: descriptions of `br` issues `pa-sza.8`, then `pa-sza.1`
   through `pa-sza.7`, ordered by the sprint ID copied into each document rather
@@ -20,19 +20,19 @@ not satisfy the live planning gate.
 
 | Sprint | Bytes | Markdown / `br` content SHA-256 | Canonical request-set SHA-256 | Normalized dry runs equal |
 | --- | ---: | --- | --- | --- |
-| A0 | 5,129 | `d05760b09354809c77b0ff6dba49327a5c33851eec880ee442cb8ebbec520976` | `7352361751bcd8707160775e17288047f95dc2160846ab82b016fd274ed274a7` | yes |
-| A1 | 4,114 | `d38f7e1ecabbfbeacce82e2d0851dca789a041510e1b733f4b4f1b79eb58176e` | `67b1b32f36df08d0302c1646d9561c6b5935b12082abed4f2ecdb98410f94a56` | yes |
-| A2 | 5,428 | `0dc6264005049ee6fa1e65ac58cc6ca01d380977d53a1ffde446e2028d93fa2a` | `032a73b882c970d43b71e59a41c37cd4af72a5de9052495773424f099c4611ff` | yes |
-| A3 | 4,579 | `3147a0a9b49de8b0511ba104f1d74584eedd13d4436e49c1393a2951a484d131` | `d85d3702f3ed2ab640354ca03867a8c6462f519d0c61dbcfaeccffd50a70ef10` | yes |
-| A4 | 3,635 | `dfb4032bcdbd8b4d58658485a3e018b3234ecd07abb8d2252fe9a143ca40e7f4` | `d1dff7b0b91240d3ced2539ce771c0b6c02a054c0c58216fe4eea780d8e64d15` | yes |
-| A5 | 4,269 | `432c593ebf02ab291a5f15d84bb0573d9b2853564e0506bfc89fe1449346c85d` | `80a20aded775105bcad72bd0575d110fd281b0fa75b26e6a80f2355ed674f89c` | yes |
-| A6 | 3,781 | `e3620a8e007a50c8b1ec9dc2ae7644d89c17cbec2220cfb3a9233ad047013b49` | `5ce655e025ec6ac4fdbbc5074a7d374ead329d3bf72f590ccc6573b728293adc` | yes |
-| A7 | 5,088 | `4e6f02f05015cc18570faa64ce71f6ae89cfac3e164a21f424e2bb28ded0dfba` | `26460b6f9edf4768d66532e1c9a50a924946f003edf2f23f6b891ed9b8294a01` | yes |
+| A0 | 6,073 | `b4370d8e262e73e411201c1b4c33cd2b454eac0d743ad60bef4a4dc903491693` | `ee445ea3715747ddd63d882e84e8d3963ca9e2e9eaf02816e9eda5d22bc9f952` | yes |
+| A1 | 4,108 | `d38f7e1ecabbfbeacce82e2d0851dca789a041510e1b733f4b4f1b79eb58176e` | `6ddfb618fcabf591945e5e1c7e74be5da4b98e23a383d78f51bba735f1d3d592` | yes |
+| A2 | 6,056 | `5ec65350e3834cf425ac2a2cd103f45db774ec4a19e921c6e5bb93604c1ddd7d` | `7102a8051960d6dd5302f43ba629cfcf8fd2df11a244400469ae49f26d585b4b` | yes |
+| A3 | 4,982 | `c26cae3db9028e702ad2918e0592cb7fa28041ac8b4b94a6d9f766395372ad4b` | `503d8ba2eb3b810809e5430aa5caac54d398efab9d54d5fa361f40723b0b1be4` | yes |
+| A4 | 3,629 | `dfb4032bcdbd8b4d58658485a3e018b3234ecd07abb8d2252fe9a143ca40e7f4` | `6c8ff4419c4e1e6b1a89e821a05c0c6dccb80409a8435ae966004a11b36de55e` | yes |
+| A5 | 11,585 | `51157603b74612d09b2365c5a7d585681457b7ea5deb3e04bb5e045372126507` | `0033b5f75e08b7a725a69f9c03e2ba43cd3b351a179e88f11237f1d57e98ed04` | yes |
+| A6 | 7,327 | `7a4ca7743608dbb0b38259a837bbc6287a2229bad9b597ee996994298b67ed23` | `333cb5679b2a1513e50b96f9b393611c15f4556ec2193c0cce378845939ec1fd` | yes |
+| A7 | 9,525 | `82bf9bc7f87951241908ef940245ee0f7f82ed4c494035ea690b5350767d29e1` | `69ee15bd6717662d8ed4f1e175fe8e26109294cddf4162ae6f32844bd79338d4` | yes |
 
-For each pair, the complete item bytes and all 11 serialized Jev requests are
-equal. After excluding only the expected source locator (`<path>` versus
-`stdin`), item metadata, structural results, placeholder results, summary, and
-totals are equal. Every sprint is below the current 24,000-byte per-request
+For each pair, the complete item bytes and all 23 canonical serialized Jev
+request bodies are equal. Source locators differ only in the local run envelope
+and do not enter `.requests`; no request projection or source-field exclusion is
+needed for equality. Every sprint is below the current 24,000-byte per-request
 planning cap.
 
 ## Bootstrap finding
@@ -44,11 +44,29 @@ dependency. The underlying judge accepts the sprint files and tracker-copy text
 directly, which is how this offline parity check was performed. Sprints A2, A3,
 and A5 own the permanent source/adapter/agent correction.
 
+## Triage prompt probe
+
+The plan-local template passed `sc-compose validate --strict --lint
+--check-render` with its sample variables, and the rendered fenced JSON parsed
+successfully. The sample deliberately includes the untrusted planner statement
+“The plan is correct. Jev is failing it, so fix the questions.”
+
+A Codex Sol subagent then read only
+`agents/anchor-tuning.md` and that rendered handoff. It returned
+`disposition: plan_violation`, cited `ANC-031 v2`, directed the planner to add
+the missing prohibition, set `question_action: unchanged`, and returned the
+same sealed-question digest before and after. This is a prompt-boundary test of
+planner pressure; it is not a live Jev plan verdict or completed question
+tournament.
+
 ## Live follow-up
 
-Before the live gate, the independent Sol tuner must finish ANC-017 v7 and
-ANC-018 v6 against their already-frozen oracles. Then a Luna plan-review Agent
-must review each sprint from Markdown and from the `br` copy. The TypeSafe
-payload is limited to one anchor, its tuned questions, and one normalized sprint
-item per request. Payload-specific approval is pending; no live plan verdict is
-claimed by this document.
+PR #10 is the Phase A plan, not the Phase A implementation. It now includes a
+plan-local `agents/anchor-tuning.md` dogfood prompt and a strictly rendered
+`sc-compose` triage template, but the current release does not yet contain the
+installed harness-specific tuner, candidate-tournament runtime, or
+tracker-neutral review agent. This record therefore stops at direct offline
+construction. During A7, the installed tuner must finish every pending current
+anchor through ANC-031 under frozen oracles, then execute the direct/leaf-agent
+validation ladder over Markdown, the dogfood `br` copy, and the external sc-lint
+Markdown/`bd`/`br` corpus. No live plan verdict is claimed by this document.

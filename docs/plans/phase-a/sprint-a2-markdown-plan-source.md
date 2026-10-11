@@ -57,6 +57,9 @@ deletion is in scope.
   validation section in every sprint and for unique phase/sprint identifiers.
 - Planning-item composition from the complete sprint file or tracker copy with
   a shared normalization function and no source-specific semantic rewriting.
+- Canonical outbound-body construction that keeps source locators, tracker IDs,
+  run IDs, and revisions outside the Jev request so equivalent Markdown and
+  tracker items produce byte-identical JSON bodies.
 - A copy/parity command that writes or verifies each complete sprint document in
   the tracker description, records the source path/digest, and refuses
   destructive overwrite when the target changed independently.
@@ -73,6 +76,9 @@ deletion is in scope.
   source; independent drift fails parity before Jev is called.
 - Every Jev request contains one normalized sprint item and one anchor, never
   the phase index/epic, intent, or another sprint.
+- Direct, Markdown-agent, and tracker-agent construction of an equivalent item
+  yields byte-identical canonical Jev JSON; equality is checked on the body that
+  reaches the transport boundary, not on a lossy projection after execution.
 - Invalid or ambiguous phase structures return typed errors before delegation.
 - A sprint exceeding the reliable limit produces `PLAN.TOO_LARGE` plus shape
   evidence; no implementation truncates prose or raises the cap to pass.
@@ -84,6 +90,9 @@ deletion is in scope.
   path; symlink escape; missing authoritative section; duplicate checklist.
 - Golden composition tests proving equivalent Markdown and tracker copies
   normalize identically, including headings, prose, and fenced examples.
+- Differential request fixtures that materialize one item through Markdown,
+  `bd`, and `br`, compare the exact serialized Jev body, and fail on source
+  locator or tracker metadata leakage.
 - Digest tests proving stable output, changed-content detection, and drift refusal.
 - Dogfood discovery over `docs/plans/phase-a/plan-phase-a.md` returning A0–A7
   in table order.

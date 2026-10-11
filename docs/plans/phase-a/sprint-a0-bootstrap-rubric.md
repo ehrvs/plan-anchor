@@ -41,11 +41,24 @@ active Phase A plan, or change plan/development verdict semantics.
   that receives approved intent and the frozen corpus but no active-plan
   verdict, and returns corpus/rubric digests, rationales, attempts, disagreement
   data, and an acceptance table.
+- Parallel candidate evaluation for the rubric questions: the tuning subagent tests
+  more candidate wordings than the released rubric will use, ranks each against
+  the same frozen corpus, and down-selects a role-complete final set using both
+  measured evidence and independent semantic judgment.
+- Neutral mutation cases derived only from intent/ANC authority: disposable
+  plan-shaped text adds explicit ceremony for a required fact or removes a
+  required statement/deliverable, proving the rubric recognizes both presence
+  and absence without editing or taking sides on an authoritative plan.
 
 ## Authoritative acceptance criteria
 
 - The frozen corpus and expected labels are hashed before the first Jev call;
   no case is added, removed, or relabeled after a response.
+- Candidate questions are evaluated in parallel against identical frozen cases;
+  the record preserves every candidate, score component, rejection rationale,
+  and the tuning subagent's reason for the final down-selection.
+- Hashes prove all mutation cases were temporary and no authoritative plan or
+  tracker record changed during calibration.
 - Every accepted rubric cell has two confident agreeing answers matching the
   oracle, with a third call used only to resolve disagreement.
 - Confirmed `no` or `unclear` yields `needs_work`; low confidence yields

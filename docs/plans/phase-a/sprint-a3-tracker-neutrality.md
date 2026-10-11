@@ -42,6 +42,9 @@ tracker failures. It does not require plan work to be represented as issues.
   from agent params.
 - `bd` and `br` fixture suites plus installed-binary integration tests guarded
   by binary availability.
+- Disposable import/materialization helpers for differential tests that copy an
+  authoritative Markdown sprint into `bd` and `br` without semantic rewriting
+  or touching an existing project's production tracker database.
 - Fast, documented initialization for a repository that needs only anchor and
   question records, without unrelated agent/hook installation side effects.
 - Optional tracker plan-copy records carrying the source path and digest defined
@@ -70,6 +73,9 @@ tracker failures. It does not require plan work to be represented as issues.
   update / comment lifecycle when the corresponding tracker is available.
 - Regression proving the current `br` Phase A workspace no longer fails through
   a hard-coded `bd show` path.
+- Known-plan regression that copies selected sc-lint sprint documents into
+  disposable `bd` and `br` stores and proves both normalize to the same item
+  bytes and ordering as Markdown.
 
 ## Traceability
 

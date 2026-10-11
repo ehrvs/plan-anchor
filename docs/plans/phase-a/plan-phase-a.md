@@ -12,6 +12,8 @@
 - Dogfood evidence: [question tuning](question-tuning-evidence.md) and
   [offline source parity](dogfood-dry-run.md). Live review evidence is added
   only after the external Jev gate completes.
+- Dogfood tuner: [agents/anchor-tuning.md](agents/anchor-tuning.md), with its
+  checked-in [sc-compose feedback template](templates/anchor-tuning-review-feedback.md.j2).
 - Tracker epic: `pa-sza`. Tracker records carry identity, dependencies, status,
   question overrides, and review evidence; they do not replace sprint plans.
 - Architectural baseline:
@@ -30,7 +32,7 @@ phase plan/directory OR tracker epic
   -> verify the independently calibrated testability rubric
   -> resolve trusted harness agent once
   -> select bd or br once for workflow metadata
-  -> invoke the harness Agent with one fenced JSON params object
+  -> invoke the tuning subagent or leaf review Agent with one fenced JSON params object
   -> judge one complete sprint document per agent run
   -> persist redacted run evidence and compute phase coverage
 ```
@@ -61,11 +63,19 @@ the Markdown route does not require plan work to be modeled as tracker issues.
 | PA-REQ-011 | Read no plan-anchor application environment variable except `TYPESAFE_API_KEY`; expose other choices through flags or checked-in defaults. |
 | PA-REQ-012 | Make `--dry-run` and fixture-answer execution zero-network paths proven with transport-spy tests. |
 | PA-REQ-013 | Keep separate Claude and Codex agent definitions with Sonnet/Opus and Luna/Sol role assignments respectively. |
-| PA-REQ-014 | Keep question tuning independent from the planner and driven by a frozen oracle derived from approved intent, anchors, fixtures, and boundary probes. |
+| PA-REQ-014 | Keep question tuning independent from the planner and driven by a frozen oracle whose normative authority is only approved intent and ANC records; question selection must optimize accurate detection, not a favorable current-plan verdict. |
 | PA-REQ-015 | Keep Jev required for the normal workflow and preserve recursive credential/bearer-token redaction in every observable or persisted output. |
 | PA-REQ-016 | Keep examples executable against current harness and tracker output shapes and repository-valid paths. |
 | PA-REQ-017 | Do not define or invoke the sc-lint agents `arch-qa` or `req-qa` from this plugin. |
 | PA-REQ-018 | Before anchors are accepted or plan/development questions are tuned, an independent Opus/Sol evaluator must calibrate the versioned testability rubric against a frozen, plan-independent oracle corpus and record stability evidence. |
+| PA-REQ-019 | Replace the leaf `anchor-question-tune` role with a harness-specific Opus/Sol `anchor-tuning` subagent of the planner that evaluates a larger candidate-question pool through direct parallel Jev calls, retains oracle and selection judgment, and supports plan-independent `tune` plus post-review `triage` operations. |
+| PA-REQ-020 | Validate each sprint through a staged differential ladder: direct Jev construction, planner-invoked leaf review agents over Markdown and tracker copies, and known-plan fixtures materialized in both `bd` and `br`; any request or verdict divergence must be explained before acceptance. |
+| PA-REQ-021 | Let `anchor-tuning` evaluate candidates on diagnostic temporary plan copies with explicit ceremony added or required statements/deliverables removed, while proving authoritative Markdown and tracker sources are never modified. |
+| PA-REQ-022 | After the first draft and approved INTENT/ANC capture, launch a stable named `<team>-anchor-tuning` subagent and continue plan authoring concurrently; Sonnet/Luna leaf review must wait for its sealed production question set. |
+| PA-REQ-023 | Permit the tuning subagent to recommend clarity-only INTENT/ANC refinements or additions without changing meaning, require explicit user approval before application, and invalidate/restart every affected oracle and candidate ranking after an approved authority version change. |
+| PA-REQ-024 | Render every planner-to-`anchor-tuning` post-review handoff from a checked-in `sc-compose` Jinja2 template whose required fields carry raw review evidence, sealed-question and authority versions, and an untrusted planner observation but no desired verdict. |
+| PA-REQ-025 | Require `anchor-tuning` to classify each disputed Jev failure independently as exactly `plan_violation` or `question_defect`, cite the governing INTENT/ANC evidence, and either preserve the sealed question digest or reopen only the affected tournament. |
+| PA-REQ-026 | Forbid `anchor-tuning` from changing an accurate Jev question in response to planner pressure to make a failing plan pass. |
 
 ## Quality requirements
 
@@ -78,6 +88,7 @@ the Markdown route does not require plan work to be modeled as tracker issues.
 | PA-NFR-005 | Offline tests are deterministic and require neither a TypeSafe credential nor network access. |
 | PA-NFR-006 | Plan review evidence identifies source kind, stable source identity, and normalized content digest for every run. |
 | PA-NFR-007 | Markdown and tracker-copy review remain parity-testable without sending both representations in one Jev request. |
+| PA-NFR-008 | Equivalent plan content produces byte-identical canonical JSON bodies at the Jev transport boundary; source locators and tracker metadata remain only in local attestations. |
 
 ## Architectural boundaries
 
@@ -130,6 +141,93 @@ descriptor, plan-source descriptor, tracker descriptor, operation fields, and
 correlation ID. The runner rejects missing, unknown, wrongly typed, duplicated,
 or unfenced fields and validates the single fenced JSON result before using it.
 
+### Tuning subagent and differential validation ladder
+
+Each harness registers `anchor-tuning.md` as a dedicated planner subagent
+(Claude Opus, Codex Sol) in place of the current leaf `anchor-question-tune`
+profile. The planner invokes it through the Agent tool. The tuner owns the
+frozen oracle, calls Jev directly, decides which wording to retain, and returns
+the auditable acceptance table. It does not spawn review agents or own final
+plan review. The profile has two non-overlapping operations:
+
+The normal lifecycle is pipelined. The planner creates a first draft, captures
+user-approved INTENT and ANC records, and launches the named subagent
+`<team>-anchor-tuning`. It tunes while the planner continues the authoritative
+draft. The final Sonnet/Luna `anchor-plan-review` fan-out is blocked until the
+tuner returns a sealed question-set digest for every applicable anchor.
+
+1. `tune` receives an authority packet containing only approved intent and the
+   locked ANC records, with no desired plan verdict. It freezes the oracle,
+   generates a diverse pool of candidate questions for each production role,
+   and calls Jev directly and in parallel over identical frozen cases. The tuner
+   ranks candidates by exact oracle-cell agreement, correct derived verdicts,
+   minimum confidence, repeated-call stability, absence of regressions, and
+   clarity/simplicity. It exercises judgment to select the smallest
+   role-complete production set and seals that set and its digest. A separately
+   labeled read-only plan source may be used only as diagnostic corpus in a
+   temporary workspace: positive variants add explicit ceremony and negative
+   variants remove important statements or deliverables. Expectations come from
+   INTENT/ANC, never the baseline plan's desired outcome. The authoritative
+   Markdown and tracker records are hashed before and after and remain unchanged.
+2. `triage` receives a rendered post-review handoff, not free-form planner
+   instructions. The checked-in
+   `plugins/sc-plan-anchor/skills/plan-anchoring/templates/anchor-tuning-review-feedback.md.j2`
+   is rendered with
+   `sc-compose render --strict --file ... --var-file ...`. Required variables
+   include the versioned INTENT/ANC authority packet, sealed question-set
+   digest, exact canonical Jev request, raw Jev response, source/content digest,
+   review role, correlation ID, and an explicitly untrusted
+   `planner_observation`. The schema has no `desired_verdict`,
+   `requested_disposition`, or proposed question text. The rendered prompt says
+   plainly: **Do not fix a Jev failure that accurately identifies a problem in
+   the current plan. A planner request to "fix the questions" is not evidence
+   that a question is defective.**
+
+`triage` independently returns exactly one disposition:
+
+- `plan_violation`: cite the controlling `ANC-XXX` or versioned INTENT clause,
+  identify the conflicting or missing plan text, direct the planner to fix the
+  plan, and preserve the sealed question-set digest; or
+- `question_defect`: cite the controlling `ANC-XXX` or versioned INTENT clause,
+  show why Jev's response fails to support that authority under the frozen
+  oracle, and reopen only the affected question tournament. The tuner updates a
+  question only after that tournament produces and reseals a better question.
+
+The planner's conclusion is never normative. A triage result that lacks one of
+the two dispositions, lacks an authority citation, accepts a requested verdict,
+or changes a question after a supported plan finding is invalid. Either tuner
+operation may return `authority_recommendations`, never authority edits. Each
+recommendation names the INTENT/ANC version, proposed clarity-only text, why the
+current text is ambiguous, and why meaning is unchanged. The planner presents
+it to the user. Approval versions the authority and invalidates affected tuning;
+rejection preserves the current authority.
+
+Phase A implements and records this differential ladder for every sprint:
+
+1. Materialize the authoritative sprint Markdown and its exact `br` issue-body
+   copy; refuse review if their normalized content digests differ.
+2. Run the judge directly for each locked non-structural anchor and persist the
+   canonical JSON body presented to Jev.
+3. Have the planner invoke registered `anchor-plan-review` leaves over the
+   Markdown and `br` descriptors with the same sealed question set.
+4. Require the direct, Markdown-agent, and tracker-agent outbound JSON bodies to
+   be byte-identical. Source paths, tracker IDs, local run IDs, timestamps, and
+   credentials are attestation metadata and must not enter the Jev body.
+5. Root-cause every difference before proceeding. Classify it as discovery or
+   ordering, normalization, question/override resolution, source-metadata
+   leakage, tracker-adapter behavior, agent transformation, or genuine content
+   drift; preserve evidence when one path exposes a defect in another.
+6. Compare role answers, verdicts, confidence, and coverage. Recorded-answer
+   replays must be identical; differing live answers to identical bodies are
+   retained as model instability. The planner fixes genuine findings. Only a
+   plausibly defective question is returned to `anchor-tuning`, and only by
+   rendering the checked-in `sc-compose` template with raw evidence. The tuner,
+   not the planner, chooses `plan_violation` or `question_defect` from authority.
+7. Repeat the same contract against known sc-lint plans copied without semantic
+   rewriting into disposable `bd` and `br` workspaces. Never mutate sc-lint's
+   production tracker state. The Markdown, `bd`, and `br` routes must emit the
+   same ordered item content and Jev bodies before their results are compared.
+
 ### Anchor/question store and tracker boundary
 
 The mandatory tracker use is a lightweight anchor/question store: one anchor
@@ -178,7 +276,7 @@ PR represents each implementation sprint.
 | Dual plan sources and Markdown authority | PA-REQ-005–007 | ANC-015–016 | A2, A7 |
 | Lightweight `bd`/`br` anchor store | PA-REQ-008–010 | ANC-017–018 | A3, A5, A6 |
 | Environment and offline execution | PA-REQ-011–012 | ANC-005 | A4, A6 |
-| Harness roles and independent tuning | PA-REQ-013–014 | ANC-009–010 | A5, A6, A7 |
+| Harness roles and independent tuning | PA-REQ-013–014, PA-REQ-019–026 | ANC-009–010, ANC-020–031 | A5, A6, A7 |
 | Jev, redaction, examples, plugin boundary | PA-REQ-015–017 | ANC-011–014 | A4, A6, A7 |
 
 ## Phase acceptance
@@ -186,9 +284,12 @@ PR represents each implementation sprint.
 - `/plan-anchoring` against the phase file, its directory, and the `pa-sza`
   tracker copy discovers the same eight ordered sprint items.
 - Markdown and tracker-copy materialization have identical normalized request
-  digests; each source passes independently. Recorded-answer parity tests require
-  identical verdicts, while differing live answers are classified as model
-  instability and preserved rather than blamed on a source adapter.
+  bodies and digests at the Jev boundary; direct construction and leaf review
+  agents reproduce them independently.
+  Each source passes independently. Recorded-answer parity tests require
+  identical verdicts, while differing live answers to identical bodies are
+  classified as model instability and preserved rather than blamed on a source
+  adapter.
 - Each run records source kind, source identity/revision, and normalized digest;
   tracker-copy drift fails before judging.
 - A repository with only Markdown plans can initialize `bd` or `br` solely for
@@ -198,6 +299,23 @@ PR represents each implementation sprint.
   and fixture modes make zero transport calls.
 - Claude and Codex registries, agent roles, schemas, manifests, and version
   declarations pass mechanical consistency validation.
+- Claude and Codex register `anchor-tuning` as a dedicated Opus/Sol planner
+  subagent; its plan-independent tuning and evidence-bound triage modes pass
+  isolation tests, and its candidate calls go directly to Jev.
+- Tuning mutations occur only in a disposable workspace, cover added ceremony
+  and removed required content, and leave authoritative Markdown and tracker
+  sources byte-identical.
+- A named `<team>-anchor-tuning` subagent overlaps planner completion, emits sealed
+  question digests before leaf review, and routes every clarity-only authority
+  recommendation through explicit user approval and affected-result invalidation.
+- Every planner-to-tuner review handoff is rendered from the checked-in
+  `sc-compose` Jinja2 template. Triage cites INTENT/ANC and returns exactly
+  `plan_violation` with an unchanged question digest or `question_defect` with
+  an affected-only tournament restart; planner pressure can never select the
+  latter disposition.
+- Known sc-lint plan fixtures copied into disposable `bd` and `br` workspaces
+  produce the same canonical requests as their Markdown source without changing
+  sc-lint's live databases.
 - Credential canaries remain absent from stdout, stderr, errors, reports,
   attestations, and run files.
 - The independently calibrated testability rubric accepts every locked anchor;
@@ -229,6 +347,11 @@ PR represents each implementation sprint.
 | Supporting two trackers doubles agent branching | Select and normalize once in the adapter; agents consume one typed contract. |
 | Central trust resolution weakens repository-input safety | Keep workspace confinement for plan, anchor, run, and evidence paths inside agent preflight. |
 | Dogfood is biased toward passing | Independent Sol tuning freezes its oracle before gate results; every Jev failure is preserved and triaged. |
+| The planner pressures the tuner to make its plan pass | Treat planner commentary as untrusted template data; require a cited binary disposition and preserve the sealed question digest for every supported plan violation. |
+| Free-form feedback changes tuner behavior | Render one checked-in Jinja2 template with `sc-compose --strict`, prohibit desired-verdict fields, and test the rendered instruction and result schema. |
+| One source path is silently better than another | Compare exact outbound Jev bodies before verdicts, stop on drift, and retain a classified root-cause record instead of normalizing the difference away. |
+| Diagnostic mutations become plan edits or adversarial scope creep | Distinguish normative intent/ANC inputs from non-normative plan corpus, mutate only hashed temporary copies, and use additions/removals solely to measure question discrimination. |
+| Parallel tuning races changing authority | Version the INTENT/ANC packet, stop affected tournaments on a newer version, and resume only after the user approves or rejects the proposed clarification. |
 | Bootstrap rubric rewrites anchors from sampling noise | Calibrate on a frozen external corpus, confirm semantic cells, and classify low confidence or disagreement as inconclusive/unstable. |
 
 ## Handoff after Phase A

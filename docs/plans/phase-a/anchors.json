@@ -714,21 +714,21 @@
       "id": "ANC-010",
       "source_type": "ANC",
       "source_ref": null,
-      "statement": "Question tuning must be performed by an evaluator independent from the planner.",
+      "statement": "Question tuning must translate approved intent and anchors into accurate Jev questions without optimizing for a favorable plan verdict.",
       "quote": "My feeling is that tuning should be done w/ an agent independent from the planner.  this should probably be a higher level agent i.e. opus or sol which has the responsibility for tuning against the intent/anchors w/out regard for 'getting the plan to pass'.  i.e. the tuning agent should loop over jev calls while modifying the question text and verifying the answers align with intent/anchors.  the tuning agent must exercise judgement..",
       "kind": "directive",
       "stated_by": "randlee",
       "stated_at": "2026-10-10",
       "context": "plan-anchor self-anchoring review",
-      "summary": "Independent question tuning",
-      "scope": "changes question-tuning prompts, oracle construction, fixtures, override acceptance, or tuner model selection",
-      "deterministic_check": "Tuner contract tests prove the oracle is fixed before Jev answers and current plan verdicts are absent from tuning inputs.",
+      "summary": "Unbiased question tuning",
+      "scope": "changes question-tuning objectives, normative inputs, oracle construction, fixtures, override acceptance, or tuner model selection",
+      "deterministic_check": "Tuner contract tests prove intent and anchors are the only normative inputs, expected outcomes are fixed before Jev answers, and current plan passage is never an optimization target.",
       "fixtures": {
         "pass": [
-          "The tuner freezes its oracle from approved intent and fixtures before the first Jev answer and never receives the current plan verdict."
+          "The tuner selects questions for accurate intent-and-anchor detection even when they expose a defect in the current plan."
         ],
         "fail": [
-          "The planner rewrites questions until the currently failing bead passes."
+          "The planner rewrites questions until Jev reports that the current plan is perfect."
         ]
       },
       "question_overrides": {
@@ -764,7 +764,7 @@
           }
         }
       },
-      "version": 5,
+      "version": 6,
       "status": "locked",
       "promoted_to": null,
       "beads": {
@@ -817,6 +817,18 @@
             "statement"
           ],
           "previous_statement": "An Opus or Sol agent independent from the planner must tune questions against intent and anchors without optimizing for plan passage."
+        },
+        {
+          "at": "2026-10-11T17:20:00+00:00",
+          "event": "updated",
+          "fields": [
+            "statement",
+            "scope",
+            "summary",
+            "deterministic_check",
+            "fixtures"
+          ],
+          "previous_statement": "Question tuning must be performed by an evaluator independent from the planner."
         }
       ]
     },
@@ -1131,7 +1143,7 @@
       "deterministic_check": "Repository search finds no arch-qa or req-qa reference under the plan-anchor plugin.",
       "fixtures": {
         "pass": [
-          "The plan-anchor registries list only anchor-plan-review, anchor-sprint-review, and anchor-question-tune."
+          "The plan-anchor registries list only anchor-plan-review, anchor-sprint-review, and anchor-tuning."
         ],
         "fail": [
           "The plan-anchor skill delegates requirement review to the sc-lint req-qa agent."
@@ -1170,7 +1182,7 @@
           }
         }
       },
-      "version": 5,
+      "version": 6,
       "status": "locked",
       "promoted_to": null,
       "beads": {
@@ -1223,6 +1235,13 @@
             "statement"
           ],
           "previous_statement": "arch-qa and req-qa must remain sc-lint agents outside plan-anchor."
+        },
+        {
+          "at": "2026-10-11T17:17:39+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
         }
       ]
     },
@@ -1623,6 +1642,751 @@
             "fixtures"
           ],
           "previous_statement": "The skill must provide a documented br command sequence that initializes an anchor-and-question store in any Git repository."
+        }
+      ]
+    },
+    {
+      "id": "ANC-019",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "The harness-specific anchor-tuning agent must be a peer Opus/Sol agent that can invoke subagents while retaining tuning judgment.",
+      "quote": "I would expect anchor-tuning.md agent to be a peer agent which can call subagents.\n\nanchor-tuning would call jev w/ a set of questions in parallel (i.e. many more questions that the final calls would use), rank the questions and down-select.",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-11",
+      "context": "plan-anchor Phase A planning review",
+      "summary": "Peer tuning coordinator",
+      "scope": "changes tuning-agent hierarchy, harness model/tool access, or delegation authority",
+      "deterministic_check": "Repository validation proves both harnesses register anchor-tuning.md as an Opus/Sol peer with Agent/subagent capability and reserve oracle interpretation and question-selection judgment for that coordinator.",
+      "fixtures": {
+        "pass": [
+          "The Opus/Sol anchor-tuning peer invokes read-only Jev workers but alone freezes the oracle and selects questions."
+        ],
+        "fail": [
+          "A leaf tuner without Agent access performs every Jev call sequentially and cannot dispatch subagents."
+        ]
+      },
+      "question_overrides": {},
+      "version": 3,
+      "status": "retired",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-tnj",
+        "plan_questions": "pa-tnj.1",
+        "dev_questions": "pa-tnj.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-11T17:16:37+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-11T17:16:48+00:00",
+          "event": "updated",
+          "fields": [
+            "statement",
+            "scope",
+            "summary",
+            "deterministic_check",
+            "fixtures"
+          ],
+          "previous_statement": "The harness-specific anchor-tuning agent must be a peer Opus/Sol coordinator that can invoke subagents, evaluate a larger candidate-question pool through parallel Jev calls against one frozen oracle, and use independent judgment to rank and down-select the production question set."
+        },
+        {
+          "at": "2026-10-11T17:17:27+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-tnj",
+            "plan_questions": "pa-tnj.1",
+            "dev_questions": "pa-tnj.2"
+          }
+        },
+        {
+          "at": "2026-10-11T17:28:03+00:00",
+          "event": "retired",
+          "replaced_by": "ANC-026",
+          "reason": "User simplified the topology: anchor-tuning is a dedicated planner subagent that calls Jev directly; nested peer delegation is no longer required."
+        }
+      ]
+    },
+    {
+      "id": "ANC-020",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Anchor-tuning must rank parallel Jev evaluations of a frozen-oracle candidate pool and down-select fewer questions for production review.",
+      "quote": "anchor-tuning would call jev w/ a set of questions in parallel (i.e. many more questions that the final calls would use), rank the questions and down-select.",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-11",
+      "context": "plan-anchor Phase A planning review",
+      "summary": "Parallel candidate-question tournament",
+      "scope": "changes candidate-question generation, parallel Jev evaluation, ranking, down-selection, or production question payloads",
+      "deterministic_check": "Tournament tests prove a larger candidate pool is evaluated by direct parallel Jev calls against identical frozen-oracle cases, ranking evidence and tuner rationales are retained, and production review receives only the down-selected questions.",
+      "fixtures": {
+        "pass": [
+          "The tuner runs a broad candidate pool in parallel on one frozen oracle, records the ranking, and sends only selected questions to plan review."
+        ],
+        "fail": [
+          "The production review sends every speculative tuning question because no ranked down-selection occurs."
+        ]
+      },
+      "question_overrides": {},
+      "version": 4,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-q30",
+        "plan_questions": "pa-q30.1",
+        "dev_questions": "pa-q30.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-11T17:16:56+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-11T17:16:56+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-11T17:16:59+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "The anchor-tuning agent must evaluate more candidate questions than production review uses by running them through Jev in parallel against one frozen oracle, ranking the evidence, and using independent judgment to down-select the production question set."
+        },
+        {
+          "at": "2026-10-11T17:17:27+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-q30",
+            "plan_questions": "pa-q30.1",
+            "dev_questions": "pa-q30.2"
+          }
+        },
+        {
+          "at": "2026-10-11T17:38:02+00:00",
+          "event": "updated",
+          "fields": [
+            "deterministic_check"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ANC-021",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Anchor-tuning must not modify authoritative plan sources.",
+      "quote": "anchor-tuning ONLY makes the plan modifications on temporary copies of the plan and does NOT modify the original plan.",
+      "kind": "prohibition",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-11",
+      "context": "plan-anchor Phase A planning review",
+      "summary": "Authoritative plans are read-only to tuning",
+      "scope": "changes tuning fixtures, mutation testing, plan-source writes, or authoritative Markdown/tracker content",
+      "deterministic_check": "Mutation tests hash authoritative Markdown and tracker copies before and after tuning and prove both originals remain unchanged.",
+      "fixtures": {
+        "pass": [
+          "The tuner leaves the Markdown plan and tracker copy byte-identical after calibration."
+        ],
+        "fail": [
+          "The tuner edits the authoritative sprint document to make Jev notice a requirement."
+        ]
+      },
+      "question_overrides": {},
+      "version": 2,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-7sq",
+        "plan_questions": "pa-7sq.1",
+        "dev_questions": "pa-7sq.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-11T17:20:00+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-11T17:20:24+00:00",
+          "event": "updated",
+          "fields": [
+            "statement",
+            "summary",
+            "deterministic_check",
+            "fixtures"
+          ],
+          "previous_statement": "Anchor-tuning may alter plan text only in temporary diagnostic copies and must never modify the authoritative plan."
+        },
+        {
+          "at": "2026-10-11T17:20:53+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-7sq",
+            "plan_questions": "pa-7sq.1",
+            "dev_questions": "pa-7sq.2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ANC-022",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Anchor-tuning must test candidate questions on temporary plan copies with diagnostic additions and removals.",
+      "quote": "anchor-tuning is allowed to modify proposed plan text w/ added ceremony to insure jev finds it, he may also remove important statements or deliverables so jev will flag the info missing.",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-11",
+      "context": "plan-anchor Phase A planning review",
+      "summary": "Diagnostic temporary plan mutations",
+      "scope": "changes tuning fixtures, candidate-question evaluation, mutation cases, or temporary workspace behavior",
+      "deterministic_check": "Tuning tests create disposable positive-visibility and required-content-removal variants, derive their expected outcomes from intent and anchors, evaluate candidates against them, and delete the variants without source writes.",
+      "fixtures": {
+        "pass": [
+          "The tuner adds explicit ceremony and removes a required deliverable only in disposable copies, then checks whether candidate questions distinguish both cases."
+        ],
+        "fail": [
+          "The tuner evaluates candidates only on the unchanged plan and never proves they detect missing required content."
+        ]
+      },
+      "question_overrides": {},
+      "version": 2,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-yaz",
+        "plan_questions": "pa-yaz.1",
+        "dev_questions": "pa-yaz.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-11T17:20:25+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-11T17:20:28+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-11T17:20:54+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-yaz",
+            "plan_questions": "pa-yaz.1",
+            "dev_questions": "pa-yaz.2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ANC-023",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Planning must run a named <team>-anchor-tuning subagent concurrently after the first draft and INTENT/ANC capture.",
+      "quote": "planning agent puts together a first draft of the plan, launches named team-member <team>-anchor-tuning which starts refining jev questions based on intent + anchors defined in parallel w/ planner completing the plan.",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-11",
+      "context": "plan-anchor Phase A planning review",
+      "summary": "Concurrent named tuning subagent",
+      "scope": "changes planning workflow ordering, subagent naming, tuning startup, or review prerequisites",
+      "deterministic_check": "Workflow tests prove a stable <team>-anchor-tuning subagent starts after the first draft and approved INTENT/ANC authority packet, overlaps continued plan authoring, and completes before leaf plan review consumes questions.",
+      "fixtures": {
+        "pass": [
+          "The planner launches team-a-anchor-tuning after the first draft and approved INTENT/ANC packet, then continues plan authoring while tuning runs."
+        ],
+        "fail": [
+          "The planner completes the plan before starting an unnamed tuning subagent."
+        ]
+      },
+      "question_overrides": {},
+      "version": 3,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-51f",
+        "plan_questions": "pa-51f.1",
+        "dev_questions": "pa-51f.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-11T17:24:30+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-11T17:24:35+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-11T17:24:50+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-51f",
+            "plan_questions": "pa-51f.1",
+            "dev_questions": "pa-51f.2"
+          }
+        },
+        {
+          "at": "2026-10-11T17:28:03+00:00",
+          "event": "updated",
+          "fields": [
+            "statement",
+            "scope",
+            "summary",
+            "deterministic_check",
+            "fixtures"
+          ],
+          "previous_statement": "Planning must run a named <team>-anchor-tuning peer concurrently after the first draft and INTENT/ANC capture."
+        }
+      ]
+    },
+    {
+      "id": "ANC-024",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Anchor-tuning may recommend clarity-only refinements or additions to INTENT and ANC records.",
+      "quote": "Note:  anchor-tuning can also recommend refinements or additions to anchors or intent for clarity (not to change meaning).",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-11",
+      "context": "plan-anchor Phase A planning review",
+      "summary": "Clarity-only authority recommendations",
+      "scope": "changes tuner findings, intent or anchor clarification proposals, or authority-edit boundaries",
+      "deterministic_check": "Contract tests permit a recommendation envelope for clarity-only INTENT/ANC edits, require a rationale and semantic-equivalence explanation, and forbid the tuner from applying or broadening them.",
+      "fixtures": {
+        "pass": [
+          "The tuner proposes a wording clarification with a rationale showing that the INTENT/ANC meaning is unchanged."
+        ],
+        "fail": [
+          "The tuner proposes a new product constraint as a clarification to an existing anchor."
+        ]
+      },
+      "question_overrides": {},
+      "version": 2,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-sx5",
+        "plan_questions": "pa-sx5.1",
+        "dev_questions": "pa-sx5.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-11T17:24:30+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-11T17:24:35+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-11T17:24:50+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-sx5",
+            "plan_questions": "pa-sx5.1",
+            "dev_questions": "pa-sx5.2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ANC-025",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "The user must approve every anchor-tuning recommendation before INTENT or ANC records are changed.",
+      "quote": "user should be consulted w/ recommended refinements to ANC + INTENT.",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-11",
+      "context": "plan-anchor Phase A planning review",
+      "summary": "User approves authority refinements",
+      "scope": "changes approval handling, intent or anchor updates, oracle invalidation, or tuning restart behavior",
+      "deterministic_check": "Workflow tests prove recommended authority edits remain proposals until explicit user approval; an approved version change invalidates and reruns affected oracles and candidate rankings.",
+      "fixtures": {
+        "pass": [
+          "The tuner presents its clarification proposal to the user and waits; after approval, the affected authority version and tournament are refreshed."
+        ],
+        "fail": [
+          "The tuner directly edits INTENT and keeps using the old oracle without asking the user."
+        ]
+      },
+      "question_overrides": {},
+      "version": 2,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-mqw",
+        "plan_questions": "pa-mqw.1",
+        "dev_questions": "pa-mqw.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-11T17:24:30+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-11T17:24:36+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-11T17:24:50+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-mqw",
+            "plan_questions": "pa-mqw.1",
+            "dev_questions": "pa-mqw.2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ANC-026",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Anchor-tuning must run as a dedicated Opus/Sol subagent of the planner.",
+      "quote": "I suppose anchor-tuning could simply be a sub-agent of planner (opus/sol minimum)",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-11",
+      "context": "plan-anchor Phase A planning review",
+      "summary": "Dedicated planner tuning subagent",
+      "scope": "changes tuning-agent hierarchy, launch ownership, or tuner model selection",
+      "deterministic_check": "Harness contract tests prove the planner launches the dedicated anchor-tuning profile with Opus on Claude and Sol on Codex, using an isolated structured authority packet.",
+      "fixtures": {
+        "pass": [
+          "The planner launches the isolated anchor-tuning profile with Opus or Sol and a structured INTENT/ANC authority packet."
+        ],
+        "fail": [
+          "The planner itself rewrites Jev questions in its own context."
+        ]
+      },
+      "question_overrides": {},
+      "version": 2,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-fiz",
+        "plan_questions": "pa-fiz.1",
+        "dev_questions": "pa-fiz.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-11T17:27:51+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-11T17:27:56+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-11T17:28:23+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-fiz",
+            "plan_questions": "pa-fiz.1",
+            "dev_questions": "pa-fiz.2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ANC-027",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Anchor-tuning must run its candidate-question Jev evaluations directly.",
+      "quote": "he could run jev questions directly.",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-11",
+      "context": "plan-anchor Phase A planning review",
+      "summary": "Tuner calls Jev directly",
+      "scope": "changes candidate-question execution, Jev call ownership, or nested-agent delegation",
+      "deterministic_check": "Execution traces prove anchor-tuning invokes Jev directly for its parallel candidate pool and does not require nested Agent delegation.",
+      "fixtures": {
+        "pass": [
+          "Anchor-tuning directly launches parallel Jev calls for its candidate pool and records every result."
+        ],
+        "fail": [
+          "Anchor-tuning must spawn nested Agent workers before it can evaluate any candidate question."
+        ]
+      },
+      "question_overrides": {},
+      "version": 2,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-tq0",
+        "plan_questions": "pa-tq0.1",
+        "dev_questions": "pa-tq0.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-11T17:27:51+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-11T17:27:56+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-11T17:28:23+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-tq0",
+            "plan_questions": "pa-tq0.1",
+            "dev_questions": "pa-tq0.2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ANC-028",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "After anchor-plan-review, the planner must fix genuine plan findings or send raw review evidence to anchor-tuning for question-defect triage.",
+      "quote": "planner would then send results of anchor-plan-review to anchor-tuning and/or update his plan to fix issues found.",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-11",
+      "context": "plan-anchor Phase A planning review",
+      "summary": "Review-to-plan-or-tuner feedback loop",
+      "scope": "changes post-review triage, plan repair, question retuning, or review-result routing",
+      "deterministic_check": "Workflow tests route genuine findings to planner-owned plan edits and suspected question defects as unmodified review evidence to anchor-tuning; tuner triage cannot receive a desired verdict.",
+      "fixtures": {
+        "pass": [
+          "The planner fixes a confirmed missing deliverable, while a suspicious low-confidence role answer is sent unchanged to anchor-tuning for oracle-based triage."
+        ],
+        "fail": [
+          "The planner asks anchor-tuning to rewrite a question until a failing plan review passes."
+        ]
+      },
+      "question_overrides": {},
+      "version": 2,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-ys2",
+        "plan_questions": "pa-ys2.1",
+        "dev_questions": "pa-ys2.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-11T17:27:51+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-11T17:27:56+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-11T17:28:23+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-ys2",
+            "plan_questions": "pa-ys2.1",
+            "dev_questions": "pa-ys2.2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ANC-029",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Planner-to-anchor-tuning review feedback must be rendered from a checked-in sc-compose Jinja2 template.",
+      "quote": "with this work model, it is important that the feedback sent to anchor-tuning be in a sc-compose j2 template which has strong wording that his job is NOT to fix jev failures that accurately point out issues w/ the current plan.",
+      "kind": "directive",
+      "stated_by": "user",
+      "stated_at": "2026-10-11",
+      "context": "planning session",
+      "summary": "Render planner feedback through checked-in sc-compose template",
+      "scope": "Planner-to-anchor-tuning review feedback transport.",
+      "deterministic_check": "Validate the checked-in .j2 template with sc-compose --strict and prove the planner renders every review-feedback handoff from it.",
+      "fixtures": {
+        "pass": [
+          "The planner renders the raw review request and result through the checked-in anchor-tuning-review-feedback.md.j2 template with sc-compose --strict."
+        ],
+        "fail": [
+          "The planner writes a free-form message asking the tuner to fix questions."
+        ]
+      },
+      "question_overrides": {},
+      "version": 2,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-y78",
+        "plan_questions": "pa-y78.1",
+        "dev_questions": "pa-y78.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-11T17:31:01+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-11T17:31:07+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-11T17:31:21+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-y78",
+            "plan_questions": "pa-y78.1",
+            "dev_questions": "pa-y78.2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ANC-030",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Anchor-tuning must independently classify each disputed Jev failure as either a cited plan violation or a cited question defect.",
+      "quote": "the anchor-tuning should respond w/ a) your plan violates ANC-XXX or INTENT-YYY. OR b) Yes, jev's response does not support ANC-XXX or INTENT-YYY, I will update the questions.",
+      "kind": "directive",
+      "stated_by": "user",
+      "stated_at": "2026-10-11",
+      "context": "planning session",
+      "summary": "Require binary evidence-backed tuner disposition",
+      "scope": "Anchor-tuning triage of planner-submitted Jev failures.",
+      "deterministic_check": "Reject triage results unless disposition is plan_violation or question_defect and evidence cites at least one approved ANC or INTENT identifier.",
+      "fixtures": {
+        "pass": [
+          "The tuner returns plan_violation, cites ANC-010, quotes the conflicting plan text, and leaves the sealed question digest unchanged.",
+          "The tuner returns question_defect, cites INTENT review policy, shows the frozen-oracle mismatch, and reopens the affected question tournament."
+        ],
+        "fail": [
+          "The tuner accepts the planner conclusion and edits the question without choosing a disposition or citing authority."
+        ]
+      },
+      "question_overrides": {},
+      "version": 2,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-9n0",
+        "plan_questions": "pa-9n0.1",
+        "dev_questions": "pa-9n0.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-11T17:31:02+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-11T17:31:08+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-11T17:31:22+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-9n0",
+            "plan_questions": "pa-9n0.1",
+            "dev_questions": "pa-9n0.2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ANC-031",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Anchor-tuning must not change an accurate Jev question merely because the planner asks it to make a failing plan pass.",
+      "quote": "the feedback path from planner -> anchor-tuning has risk that planner would say 'jev is failing by plan, fix the questions'.",
+      "kind": "prohibition",
+      "stated_by": "user",
+      "stated_at": "2026-10-11",
+      "context": "planning session",
+      "summary": "Forbid pass-seeking retuning from planner pressure",
+      "scope": "Anchor-tuning triage and question updates after plan review.",
+      "deterministic_check": "Mutation tests submit a planner request to fix questions for a known plan defect and require plan_violation with unchanged sealed question digest.",
+      "fixtures": {
+        "pass": [
+          "A planner asks to fix a question for a known plan defect; the tuner rejects the request as plan_violation and preserves the sealed question digest."
+        ],
+        "fail": [
+          "A planner says the plan must pass, so the tuner weakens an accurate question until Jev returns pass."
+        ]
+      },
+      "question_overrides": {},
+      "version": 2,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-y6o",
+        "plan_questions": "pa-y6o.1",
+        "dev_questions": "pa-y6o.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-11T17:31:02+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-11T17:31:08+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-11T17:31:23+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-y6o",
+            "plan_questions": "pa-y6o.1",
+            "dev_questions": "pa-y6o.2"
+          }
         }
       ]
     }

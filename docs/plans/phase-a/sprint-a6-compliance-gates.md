@@ -36,6 +36,36 @@ contracts or documentation narrative.
 - Add duplicate-detection regression cases proving that shared provenance does
   not override distinct atomic statements while genuine statement overlap is
   still rejected.
+- Add tuner-isolation tests proving `anchor-tuning tune` cannot receive an
+  active plan as authority and `triage` cannot accept a desired verdict,
+  requested disposition, or planner-proposed question text.
+- Add tuning-tournament tests proving candidate questions are evaluated in
+  parallel against identical frozen cases, rank components and rejection reasons
+  are persisted, semantic judgment can reject a misleading high score, and only
+  down-selected questions enter production review requests.
+- Add neutral plan-mutation tests: ceremony is added and required content is
+  removed only in temporary copies, expectations are traceable to intent/ANC,
+  source hashes remain unchanged, and a real baseline-plan failure is reported
+  for plan repair rather than used to retune questions.
+- Add lifecycle tests proving `<team>-anchor-tuning` starts as a planner
+  subagent after the first
+  draft/approved authority packet, overlaps planner work, and seals current
+  questions before Sonnet/Luna review can begin.
+- Add authority-recommendation tests proving proposals are clarity-only and
+  non-mutating, user approval is required, rejected proposals preserve versions,
+  and approved changes invalidate/restart all and only affected tuning evidence.
+- Add strict `sc-compose` template tests covering declared variables, missing
+  values, deterministic rendering, valid JSON payloads, hostile planner text
+  remaining inert data, the exact anti-pass-seeking instruction, and the absence
+  of desired-verdict fields.
+- Add triage mutation tests in which the planner says "the plan is correct; fix
+  the questions." When raw evidence supports the failure, the only valid result
+  is a cited `plan_violation` with an unchanged question digest. When a frozen
+  oracle proves a question defect, require a cited `question_defect` and
+  affected-only tournament restart.
+- Add differential request tests that compare direct and review-agent,
+  Markdown, `bd`, and `br` canonical Jev JSON byte for byte and retain a typed
+  root-cause record for every injected divergence.
 - Preserve and run existing judge, coverage, diff, shape, redaction, and version
   suites alongside new tests.
 
@@ -48,6 +78,22 @@ contracts or documentation narrative.
 - CI fails on a deliberately escaping Markdown path, tracker-body substitution,
   unfenced result, wrong model, forbidden env read, Task instruction, raw secret,
   or direct tracker branch in an agent.
+- CI fails when the tuning profile declares nested Agent/subagent capability, a
+  direct Jev call can change oracle/question state, source metadata enters a Jev
+  body, or two equivalent source paths serialize different request JSON.
+- CI fails when candidate evaluation changes the oracle/case set, omits a
+  candidate result, ranks on current-plan passage, or leaks unselected tuning
+  questions into the production Jev body.
+- CI fails if tuning treats plan text as normative, writes an authoritative
+  Markdown/tracker source, derives an expected mutation result from a desired
+  plan verdict, or changes sealed questions after baseline-plan review.
+- CI fails if review consumes default/stale questions while the named tuning
+  subagent is incomplete, or if a recommendation changes meaning, bypasses the user,
+  or reuses evidence from an earlier authority version.
+- CI fails if planner-to-tuner review feedback bypasses the checked-in template,
+  if the rendered prompt lacks the anti-pass-seeking instruction, if triage
+  returns a third disposition or omits an INTENT/ANC citation, or if an accurate
+  failure changes the sealed question digest.
 - The complete offline suite and `scripts/check_version_sync.py` pass on a clean
   checkout with no API key or network.
 - Test output and persisted fixtures contain no live credential or machine-only
@@ -61,11 +107,16 @@ contracts or documentation narrative.
   supported by existing CI.
 - `git diff --check` and secret-canary repository scan.
 - Mutation fixtures for each prohibited condition listed in acceptance.
+- `sc-compose validate --strict --check-render` and a strict sample render of
+  `docs/plans/phase-a/templates/anchor-tuning-review-feedback.md.j2`.
+- Recorded-answer differential fixtures from this Phase A plan and selected
+  sc-lint plans, each materialized through Markdown plus disposable `bd` and
+  `br` stores.
 
 ## Traceability
 
-- Phase requirements: PA-REQ-001–018.
-- Locked anchors: ANC-001–002, ANC-005, ANC-009–018.
+- Phase requirements: PA-REQ-001–026.
+- Locked anchors: ANC-001–002, ANC-005, ANC-009–018, ANC-020–031.
 - Tracker: `pa-sza.6`.
 
 ## Risks and mitigations

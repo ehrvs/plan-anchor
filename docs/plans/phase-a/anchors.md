@@ -15,7 +15,7 @@ Intent: `docs/plans/phase-a/intent.md`
 | ANC-007 | retired | Support bd and br | 2026-10-10 |
 | ANC-008 | retired | No shell commands in params | 2026-10-10 |
 | ANC-009 | locked | Harness-specific agents | 2026-10-10 |
-| ANC-010 | locked | Independent question tuning | 2026-10-10 |
+| ANC-010 | locked | Unbiased question tuning | 2026-10-10 |
 | ANC-011 | locked | Jev remains required | 2026-10-10 |
 | ANC-012 | locked | Secrets stay redacted | 2026-10-10 |
 | ANC-013 | locked | Realistic examples | 2026-10-10 |
@@ -24,6 +24,19 @@ Intent: `docs/plans/phase-a/intent.md`
 | ANC-016 | locked | Dual plan sources | 2026-10-10 |
 | ANC-017 | locked | Beads only stores anchors | 2026-10-10 |
 | ANC-018 | locked | Fast br anchor-store setup | 2026-10-10 |
+| ANC-019 | retired | Peer tuning coordinator | 2026-10-11 |
+| ANC-020 | locked | Parallel candidate-question tournament | 2026-10-11 |
+| ANC-021 | locked | Authoritative plans are read-only to tuning | 2026-10-11 |
+| ANC-022 | locked | Diagnostic temporary plan mutations | 2026-10-11 |
+| ANC-023 | locked | Concurrent named tuning subagent | 2026-10-11 |
+| ANC-024 | locked | Clarity-only authority recommendations | 2026-10-11 |
+| ANC-025 | locked | User approves authority refinements | 2026-10-11 |
+| ANC-026 | locked | Dedicated planner tuning subagent | 2026-10-11 |
+| ANC-027 | locked | Tuner calls Jev directly | 2026-10-11 |
+| ANC-028 | locked | Review-to-plan-or-tuner feedback loop | 2026-10-11 |
+| ANC-029 | locked | Render planner feedback through checked-in sc-compose template | 2026-10-11 |
+| ANC-030 | locked | Require binary evidence-backed tuner disposition | 2026-10-11 |
+| ANC-031 | locked | Forbid pass-seeking retuning from planner pressure | 2026-10-11 |
 
 ## ANC-001
 
@@ -207,23 +220,23 @@ Fixtures:
 
 ## ANC-010
 
-Anchor: Question tuning must be performed by an evaluator independent from the planner.
+Anchor: Question tuning must translate approved intent and anchors into accurate Jev questions without optimizing for a favorable plan verdict.
 
 > My feeling is that tuning should be done w/ an agent independent from the planner.  this should probably be a higher level agent i.e. opus or sol which has the responsibility for tuning against the intent/anchors w/out regard for 'getting the plan to pass'.  i.e. the tuning agent should loop over jev calls while modifying the question text and verifying the answers align with intent/anchors.  the tuning agent must exercise judgement..
 
-Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: locked. Version 5.
+Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: locked. Version 6.
 
-Summary: Independent question tuning
+Summary: Unbiased question tuning
 
-Scope: changes question-tuning prompts, oracle construction, fixtures, override acceptance, or tuner model selection
+Scope: changes question-tuning objectives, normative inputs, oracle construction, fixtures, override acceptance, or tuner model selection
 
-Deterministic check to pair with the development gate: Tuner contract tests prove the oracle is fixed before Jev answers and current plan verdicts are absent from tuning inputs.
+Deterministic check to pair with the development gate: Tuner contract tests prove intent and anchors are the only normative inputs, expected outcomes are fixed before Jev answers, and current plan passage is never an optimization target.
 
 Beads: anchor `pa-waz`, plan questions `pa-waz.1`, dev questions `pa-waz.2`
 
 Fixtures:
-- pass: The tuner freezes its oracle from approved intent and fixtures before the first Jev answer and never receives the current plan verdict.
-- fail: The planner rewrites questions until the currently failing bead passes.
+- pass: The tuner selects questions for accurate intent-and-anchor detection even when they expose a defect in the current plan.
+- fail: The planner rewrites questions until Jev reports that the current plan is perfect.
 
 ## ANC-011
 
@@ -291,7 +304,7 @@ Anchor: The plan-anchor plugin must not define or invoke arch-qa or req-qa.
 
 > where did arch-qa and req-qa come from?  these are agents on sc-lint, not part of this skill
 
-Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: locked. Version 5.
+Said by randlee, plan-anchor self-anchoring review, 2026-10-10. Status: locked. Version 6.
 
 Summary: Exclude sc-lint agents
 
@@ -302,7 +315,7 @@ Deterministic check to pair with the development gate: Repository search finds n
 Beads: anchor `pa-9wl`, plan questions `pa-9wl.1`, dev questions `pa-9wl.2`
 
 Fixtures:
-- pass: The plan-anchor registries list only anchor-plan-review, anchor-sprint-review, and anchor-question-tune.
+- pass: The plan-anchor registries list only anchor-plan-review, anchor-sprint-review, and anchor-tuning.
 - fail: The plan-anchor skill delegates requirement review to the sc-lint req-qa agent.
 
 ## ANC-015
@@ -384,3 +397,266 @@ Beads: anchor `pa-c3t`, plan questions `pa-c3t.1`, dev questions `pa-c3t.2`
 Fixtures:
 - pass: In any local Git repository, the documented br initialization commands work without a remote tracker service or a phase epic.
 - fail: Before br can initialize, every repository must connect to a shared tracker service and create a phase epic.
+
+## ANC-019
+
+Anchor: The harness-specific anchor-tuning agent must be a peer Opus/Sol agent that can invoke subagents while retaining tuning judgment.
+
+> I would expect anchor-tuning.md agent to be a peer agent which can call subagents.
+
+anchor-tuning would call jev w/ a set of questions in parallel (i.e. many more questions that the final calls would use), rank the questions and down-select.
+
+Said by randlee, plan-anchor Phase A planning review, 2026-10-11. Status: retired. Version 3.
+
+Summary: Peer tuning coordinator
+
+Scope: changes tuning-agent hierarchy, harness model/tool access, or delegation authority
+
+Deterministic check to pair with the development gate: Repository validation proves both harnesses register anchor-tuning.md as an Opus/Sol peer with Agent/subagent capability and reserve oracle interpretation and question-selection judgment for that coordinator.
+
+Beads: anchor `pa-tnj`, plan questions `pa-tnj.1`, dev questions `pa-tnj.2`
+
+Fixtures:
+- pass: The Opus/Sol anchor-tuning peer invokes read-only Jev workers but alone freezes the oracle and selects questions.
+- fail: A leaf tuner without Agent access performs every Jev call sequentially and cannot dispatch subagents.
+
+## ANC-020
+
+Anchor: Anchor-tuning must rank parallel Jev evaluations of a frozen-oracle candidate pool and down-select fewer questions for production review.
+
+> anchor-tuning would call jev w/ a set of questions in parallel (i.e. many more questions that the final calls would use), rank the questions and down-select.
+
+Said by randlee, plan-anchor Phase A planning review, 2026-10-11. Status: locked. Version 4.
+
+Summary: Parallel candidate-question tournament
+
+Scope: changes candidate-question generation, parallel Jev evaluation, ranking, down-selection, or production question payloads
+
+Deterministic check to pair with the development gate: Tournament tests prove a larger candidate pool is evaluated by direct parallel Jev calls against identical frozen-oracle cases, ranking evidence and tuner rationales are retained, and production review receives only the down-selected questions.
+
+Beads: anchor `pa-q30`, plan questions `pa-q30.1`, dev questions `pa-q30.2`
+
+Fixtures:
+- pass: The tuner runs a broad candidate pool in parallel on one frozen oracle, records the ranking, and sends only selected questions to plan review.
+- fail: The production review sends every speculative tuning question because no ranked down-selection occurs.
+
+## ANC-021
+
+Anchor: Anchor-tuning must not modify authoritative plan sources.
+
+> anchor-tuning ONLY makes the plan modifications on temporary copies of the plan and does NOT modify the original plan.
+
+Said by randlee, plan-anchor Phase A planning review, 2026-10-11. Status: locked. Version 2.
+
+Summary: Authoritative plans are read-only to tuning
+
+Scope: changes tuning fixtures, mutation testing, plan-source writes, or authoritative Markdown/tracker content
+
+Deterministic check to pair with the development gate: Mutation tests hash authoritative Markdown and tracker copies before and after tuning and prove both originals remain unchanged.
+
+Beads: anchor `pa-7sq`, plan questions `pa-7sq.1`, dev questions `pa-7sq.2`
+
+Fixtures:
+- pass: The tuner leaves the Markdown plan and tracker copy byte-identical after calibration.
+- fail: The tuner edits the authoritative sprint document to make Jev notice a requirement.
+
+## ANC-022
+
+Anchor: Anchor-tuning must test candidate questions on temporary plan copies with diagnostic additions and removals.
+
+> anchor-tuning is allowed to modify proposed plan text w/ added ceremony to insure jev finds it, he may also remove important statements or deliverables so jev will flag the info missing.
+
+Said by randlee, plan-anchor Phase A planning review, 2026-10-11. Status: locked. Version 2.
+
+Summary: Diagnostic temporary plan mutations
+
+Scope: changes tuning fixtures, candidate-question evaluation, mutation cases, or temporary workspace behavior
+
+Deterministic check to pair with the development gate: Tuning tests create disposable positive-visibility and required-content-removal variants, derive their expected outcomes from intent and anchors, evaluate candidates against them, and delete the variants without source writes.
+
+Beads: anchor `pa-yaz`, plan questions `pa-yaz.1`, dev questions `pa-yaz.2`
+
+Fixtures:
+- pass: The tuner adds explicit ceremony and removes a required deliverable only in disposable copies, then checks whether candidate questions distinguish both cases.
+- fail: The tuner evaluates candidates only on the unchanged plan and never proves they detect missing required content.
+
+## ANC-023
+
+Anchor: Planning must run a named <team>-anchor-tuning subagent concurrently after the first draft and INTENT/ANC capture.
+
+> planning agent puts together a first draft of the plan, launches named team-member <team>-anchor-tuning which starts refining jev questions based on intent + anchors defined in parallel w/ planner completing the plan.
+
+Said by randlee, plan-anchor Phase A planning review, 2026-10-11. Status: locked. Version 3.
+
+Summary: Concurrent named tuning subagent
+
+Scope: changes planning workflow ordering, subagent naming, tuning startup, or review prerequisites
+
+Deterministic check to pair with the development gate: Workflow tests prove a stable <team>-anchor-tuning subagent starts after the first draft and approved INTENT/ANC authority packet, overlaps continued plan authoring, and completes before leaf plan review consumes questions.
+
+Beads: anchor `pa-51f`, plan questions `pa-51f.1`, dev questions `pa-51f.2`
+
+Fixtures:
+- pass: The planner launches team-a-anchor-tuning after the first draft and approved INTENT/ANC packet, then continues plan authoring while tuning runs.
+- fail: The planner completes the plan before starting an unnamed tuning subagent.
+
+## ANC-024
+
+Anchor: Anchor-tuning may recommend clarity-only refinements or additions to INTENT and ANC records.
+
+> Note:  anchor-tuning can also recommend refinements or additions to anchors or intent for clarity (not to change meaning).
+
+Said by randlee, plan-anchor Phase A planning review, 2026-10-11. Status: locked. Version 2.
+
+Summary: Clarity-only authority recommendations
+
+Scope: changes tuner findings, intent or anchor clarification proposals, or authority-edit boundaries
+
+Deterministic check to pair with the development gate: Contract tests permit a recommendation envelope for clarity-only INTENT/ANC edits, require a rationale and semantic-equivalence explanation, and forbid the tuner from applying or broadening them.
+
+Beads: anchor `pa-sx5`, plan questions `pa-sx5.1`, dev questions `pa-sx5.2`
+
+Fixtures:
+- pass: The tuner proposes a wording clarification with a rationale showing that the INTENT/ANC meaning is unchanged.
+- fail: The tuner proposes a new product constraint as a clarification to an existing anchor.
+
+## ANC-025
+
+Anchor: The user must approve every anchor-tuning recommendation before INTENT or ANC records are changed.
+
+> user should be consulted w/ recommended refinements to ANC + INTENT.
+
+Said by randlee, plan-anchor Phase A planning review, 2026-10-11. Status: locked. Version 2.
+
+Summary: User approves authority refinements
+
+Scope: changes approval handling, intent or anchor updates, oracle invalidation, or tuning restart behavior
+
+Deterministic check to pair with the development gate: Workflow tests prove recommended authority edits remain proposals until explicit user approval; an approved version change invalidates and reruns affected oracles and candidate rankings.
+
+Beads: anchor `pa-mqw`, plan questions `pa-mqw.1`, dev questions `pa-mqw.2`
+
+Fixtures:
+- pass: The tuner presents its clarification proposal to the user and waits; after approval, the affected authority version and tournament are refreshed.
+- fail: The tuner directly edits INTENT and keeps using the old oracle without asking the user.
+
+## ANC-026
+
+Anchor: Anchor-tuning must run as a dedicated Opus/Sol subagent of the planner.
+
+> I suppose anchor-tuning could simply be a sub-agent of planner (opus/sol minimum)
+
+Said by randlee, plan-anchor Phase A planning review, 2026-10-11. Status: locked. Version 2.
+
+Summary: Dedicated planner tuning subagent
+
+Scope: changes tuning-agent hierarchy, launch ownership, or tuner model selection
+
+Deterministic check to pair with the development gate: Harness contract tests prove the planner launches the dedicated anchor-tuning profile with Opus on Claude and Sol on Codex, using an isolated structured authority packet.
+
+Beads: anchor `pa-fiz`, plan questions `pa-fiz.1`, dev questions `pa-fiz.2`
+
+Fixtures:
+- pass: The planner launches the isolated anchor-tuning profile with Opus or Sol and a structured INTENT/ANC authority packet.
+- fail: The planner itself rewrites Jev questions in its own context.
+
+## ANC-027
+
+Anchor: Anchor-tuning must run its candidate-question Jev evaluations directly.
+
+> he could run jev questions directly.
+
+Said by randlee, plan-anchor Phase A planning review, 2026-10-11. Status: locked. Version 2.
+
+Summary: Tuner calls Jev directly
+
+Scope: changes candidate-question execution, Jev call ownership, or nested-agent delegation
+
+Deterministic check to pair with the development gate: Execution traces prove anchor-tuning invokes Jev directly for its parallel candidate pool and does not require nested Agent delegation.
+
+Beads: anchor `pa-tq0`, plan questions `pa-tq0.1`, dev questions `pa-tq0.2`
+
+Fixtures:
+- pass: Anchor-tuning directly launches parallel Jev calls for its candidate pool and records every result.
+- fail: Anchor-tuning must spawn nested Agent workers before it can evaluate any candidate question.
+
+## ANC-028
+
+Anchor: After anchor-plan-review, the planner must fix genuine plan findings or send raw review evidence to anchor-tuning for question-defect triage.
+
+> planner would then send results of anchor-plan-review to anchor-tuning and/or update his plan to fix issues found.
+
+Said by randlee, plan-anchor Phase A planning review, 2026-10-11. Status: locked. Version 2.
+
+Summary: Review-to-plan-or-tuner feedback loop
+
+Scope: changes post-review triage, plan repair, question retuning, or review-result routing
+
+Deterministic check to pair with the development gate: Workflow tests route genuine findings to planner-owned plan edits and suspected question defects as unmodified review evidence to anchor-tuning; tuner triage cannot receive a desired verdict.
+
+Beads: anchor `pa-ys2`, plan questions `pa-ys2.1`, dev questions `pa-ys2.2`
+
+Fixtures:
+- pass: The planner fixes a confirmed missing deliverable, while a suspicious low-confidence role answer is sent unchanged to anchor-tuning for oracle-based triage.
+- fail: The planner asks anchor-tuning to rewrite a question until a failing plan review passes.
+
+## ANC-029
+
+Anchor: Planner-to-anchor-tuning review feedback must be rendered from a checked-in sc-compose Jinja2 template.
+
+> with this work model, it is important that the feedback sent to anchor-tuning be in a sc-compose j2 template which has strong wording that his job is NOT to fix jev failures that accurately point out issues w/ the current plan.
+
+Said by user, planning session, 2026-10-11. Status: locked. Version 2.
+
+Summary: Render planner feedback through checked-in sc-compose template
+
+Scope: Planner-to-anchor-tuning review feedback transport.
+
+Deterministic check to pair with the development gate: Validate the checked-in .j2 template with sc-compose --strict and prove the planner renders every review-feedback handoff from it.
+
+Beads: anchor `pa-y78`, plan questions `pa-y78.1`, dev questions `pa-y78.2`
+
+Fixtures:
+- pass: The planner renders the raw review request and result through the checked-in anchor-tuning-review-feedback.md.j2 template with sc-compose --strict.
+- fail: The planner writes a free-form message asking the tuner to fix questions.
+
+## ANC-030
+
+Anchor: Anchor-tuning must independently classify each disputed Jev failure as either a cited plan violation or a cited question defect.
+
+> the anchor-tuning should respond w/ a) your plan violates ANC-XXX or INTENT-YYY. OR b) Yes, jev's response does not support ANC-XXX or INTENT-YYY, I will update the questions.
+
+Said by user, planning session, 2026-10-11. Status: locked. Version 2.
+
+Summary: Require binary evidence-backed tuner disposition
+
+Scope: Anchor-tuning triage of planner-submitted Jev failures.
+
+Deterministic check to pair with the development gate: Reject triage results unless disposition is plan_violation or question_defect and evidence cites at least one approved ANC or INTENT identifier.
+
+Beads: anchor `pa-9n0`, plan questions `pa-9n0.1`, dev questions `pa-9n0.2`
+
+Fixtures:
+- pass: The tuner returns plan_violation, cites ANC-010, quotes the conflicting plan text, and leaves the sealed question digest unchanged.
+- pass: The tuner returns question_defect, cites INTENT review policy, shows the frozen-oracle mismatch, and reopens the affected question tournament.
+- fail: The tuner accepts the planner conclusion and edits the question without choosing a disposition or citing authority.
+
+## ANC-031
+
+Anchor: Anchor-tuning must not change an accurate Jev question merely because the planner asks it to make a failing plan pass.
+
+> the feedback path from planner -> anchor-tuning has risk that planner would say 'jev is failing by plan, fix the questions'.
+
+Said by user, planning session, 2026-10-11. Status: locked. Version 2.
+
+Summary: Forbid pass-seeking retuning from planner pressure
+
+Scope: Anchor-tuning triage and question updates after plan review.
+
+Deterministic check to pair with the development gate: Mutation tests submit a planner request to fix questions for a known plan defect and require plan_violation with unchanged sealed question digest.
+
+Beads: anchor `pa-y6o`, plan questions `pa-y6o.1`, dev questions `pa-y6o.2`
+
+Fixtures:
+- pass: A planner asks to fix a question for a known plan defect; the tuner rejects the request as plan_violation and preserves the sealed question digest.
+- fail: A planner says the plan must pass, so the tuner weakens an accurate question until Jev returns pass.
