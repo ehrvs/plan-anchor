@@ -146,6 +146,11 @@ Reports quote the user's own words back (`references/report-format.md`). Post th
 
 Capture (A) and locking (B) stay in the main session. Question tuning (B2) and the gates (C, D) run in isolated agents that return fenced JSON; the tuner runs in the background. The skill presents results and makes every write to beads and the record.
 
+Before invoking any bundled agent, resolve it once and use the single-envelope
+boundary in `references/agent-runner-contract.md`. The planner owns trust
+resolution and attestation. Leaf agents receive the immutable descriptor; they
+do not search installation paths or repeat registry/frontmatter validation.
+
 | Operation | Agent | Inputs | Returns |
 | --- | --- | --- | --- |
 | Planning gate, one bead | `anchor-plan-review` | `script`, `bead_id`, `anchor_ids` or `all`, `anchors_path`, optional `run_dir`, `threshold`, `dry_run`, `correlation_id` | fenced JSON: run path, pass flag, per-anchor verdicts, report markdown |
@@ -195,6 +200,7 @@ Parallel runs: at most 3 agents at once, `correlation_id` set to the bead ID, 30
 - `references/report-format.md` - the provenance-quoting report and what to do with each verdict
 - `references/jev-api.md` - endpoint, request and response, limits, retries, privacy opt-in, every flag and error code
 - `references/installation-and-troubleshooting.md` - installing python3, bd, and the API key; PATH; Codex
+- `references/agent-runner-contract.md` - one trusted agent resolution, strict fenced envelopes, and redacted attestation
 - `assets/questions/plan.json`, `assets/questions/dev.json`, `assets/questions/testability.json`, `assets/questions/dedupe.json` - the question wording of record
 - `assets/templates/intent.md`, `assets/templates/anchor-questions-bead.md`, `assets/examples/` - starting points and a worked example
 - `tests/test_jev_judge.py` - offline test suite; `python3 -m unittest discover -s <skill dir>/tests`
