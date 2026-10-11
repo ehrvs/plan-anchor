@@ -1,0 +1,2394 @@
+{
+  "schema": "plan-anchoring/anchors/1",
+  "plan": "phase-a",
+  "intent_ref": "docs/plans/phase-a/intent.md",
+  "anchors": [
+    {
+      "id": "ANC-001",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "claude-code-skills-agents-guidelines.md is the governing architecture baseline for plan-anchor.",
+      "quote": "these guidelines are my expected baseline.  I feel like we need to apply plan-anchoring to the plan-anchor skill",
+      "kind": "structural",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-10",
+      "context": "plan-anchor self-anchoring review",
+      "summary": "Guideline baseline",
+      "scope": "edits the skill, an agent definition, an agent registry, an invocation runner, or plugin orchestration",
+      "deterministic_check": "Run the Phase A compliance validator against the guideline-derived rules and the documented override list.",
+      "fixtures": {
+        "pass": [
+          "The Phase A change follows every applicable guideline rule and records the Agent-tool override in the locked anchors."
+        ],
+        "fail": [
+          "The change ignores the guideline because the current implementation already works."
+        ]
+      },
+      "question_overrides": {},
+      "version": 5,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-jvb",
+        "plan_questions": "pa-jvb.1",
+        "dev_questions": "pa-jvb.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-10T21:02:49+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-10T21:04:55+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-10T21:08:43+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-jvb",
+            "plan_questions": "pa-jvb.1",
+            "dev_questions": "pa-jvb.2"
+          }
+        },
+        {
+          "at": "2026-10-10T21:59:09+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "The plan-anchoring skill and its harness-specific agents must conform to claude-code-skills-agents-guidelines.md except where a locked anchor records a user-approved override."
+        },
+        {
+          "at": "2026-10-10T22:00:13+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "The plan-anchoring skill must use claude-code-skills-agents-guidelines.md as its architectural baseline."
+        },
+        {
+          "at": "2026-10-10T22:04:21+00:00",
+          "event": "updated",
+          "fields": [
+            "statement",
+            "kind"
+          ],
+          "previous_statement": "claude-code-skills-agents-guidelines.md must be plan-anchor’s architectural baseline."
+        }
+      ]
+    },
+    {
+      "id": "ANC-002",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Claude plan-anchor workflows must invoke subagents with the Agent tool.",
+      "quote": "yes, the Task tool has been superceeded w/ Agent tool",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-10",
+      "context": "plan-anchor self-anchoring review",
+      "summary": "Agent tool only",
+      "scope": "edits Claude delegation instructions, invocation examples, agent manifests, or orchestration tests",
+      "deterministic_check": "Repository validation finds Agent-tool invocation and no active instruction that invokes the Task tool.",
+      "fixtures": {
+        "pass": [
+          "Claude invokes anchor-plan-review through the Agent tool."
+        ],
+        "fail": [
+          "Claude invokes anchor-plan-review through the Task tool."
+        ]
+      },
+      "question_overrides": {
+        "plan": {
+          "questions": {
+            "addressed": {
+              "type": "choice",
+              "instructions": "Does `item.text` explicitly state that a Claude plan-anchor subagent is invoked, called, dispatched, or launched through the Agent tool? Judge presence of that specific invocation mechanism only; another question judges conflicts. The words agent, subagent, background agent, or agent definition do not by themselves name the Agent tool.",
+              "criteria": {
+                "yes": "The item explicitly names the Agent tool as the mechanism used to invoke, call, dispatch, or launch Claude plan-anchor subagents.",
+                "no": "The item discusses Claude subagents or their invocation without naming the Agent tool, or names only another invocation tool.",
+                "unclear": "The item uses wording that might refer either to the Agent tool or merely to an agent or subagent, and the invocation mechanism cannot be distinguished."
+              }
+            },
+            "contradicted": {
+              "type": "choice",
+              "instructions": "Does `item.text` explicitly direct a Claude plan-anchor subagent to be invoked through the Task tool, or through another mechanism instead of the required Agent tool? An exception that keeps the Task tool for even one plan-anchor subagent is a conflict. Silence about the invocation mechanism, a generic reference to subagents, and an instruction that uses only the Agent tool are not conflicts.",
+              "criteria": {
+                "yes": "The item says to invoke, call, dispatch, or launch at least one Claude plan-anchor subagent through the Task tool or explicitly substitutes another mechanism for the Agent tool.",
+                "no": "The item uses only the Agent tool, is silent about which invocation tool is used, or discusses subagents without selecting a conflicting invocation mechanism.",
+                "unclear": "The item names multiple invocation mechanisms but does not make clear whether a Claude plan-anchor subagent will be invoked through a mechanism other than the Agent tool."
+              }
+            }
+          }
+        }
+      },
+      "version": 5,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-fwo",
+        "plan_questions": "pa-fwo.1",
+        "dev_questions": "pa-fwo.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-10T21:02:49+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-10T21:04:55+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-10T21:08:43+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-fwo",
+            "plan_questions": "pa-fwo.1",
+            "dev_questions": "pa-fwo.2"
+          }
+        },
+        {
+          "at": "2026-10-10T21:59:09+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "Claude plan-anchor workflows must invoke subagents with the Agent tool and contain no instruction to invoke the superseded Task tool."
+        },
+        {
+          "at": "2026-10-10T22:00:13+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "Claude plan-anchor workflows must invoke subagents with the Agent tool."
+        },
+        {
+          "at": "2026-10-10T22:04:21+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "The Agent tool must supersede the Task tool in Claude plan-anchor workflows."
+        }
+      ]
+    },
+    {
+      "id": "ANC-003",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "The plan-anchor orchestration boundary must perform agent trust resolution once per invocation.",
+      "quote": "why does every agent need to do this?",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-10",
+      "context": "plan-anchor self-anchoring review",
+      "summary": "Resolve agent trust once",
+      "scope": "adds or changes agent resolution, registry validation, runtime attestation, or an agent preflight step",
+      "deterministic_check": "Runner tests prove one resolution per invocation and agent definitions contain no install-path fallback search.",
+      "fixtures": {
+        "pass": [
+          "The runner resolves the registered agent path, version, model, and hash once before launching it."
+        ],
+        "fail": [
+          "Each agent searches several installation paths and validates its own version before starting."
+        ]
+      },
+      "question_overrides": {},
+      "version": 4,
+      "status": "retired",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-rxx",
+        "plan_questions": "pa-rxx.1",
+        "dev_questions": "pa-rxx.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-10T21:02:49+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-10T21:04:55+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-10T21:08:44+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-rxx",
+            "plan_questions": "pa-rxx.1",
+            "dev_questions": "pa-rxx.2"
+          }
+        },
+        {
+          "at": "2026-10-10T21:59:09+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "The orchestration boundary must resolve each agent's registry entry, canonical path, version, model, and SHA-256 once and pass an immutable runtime descriptor to the agent."
+        },
+        {
+          "at": "2026-10-10T22:00:07+00:00",
+          "event": "retired",
+          "replaced_by": null,
+          "reason": "The quoted question did not itself authorize the detailed runner contract; the guideline baseline carries that derived Phase requirement."
+        }
+      ]
+    },
+    {
+      "id": "ANC-004",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Each plan-anchor agent invocation must receive one fenced JSON input object.",
+      "quote": "is the agent getting passed fenced json input?",
+      "kind": "structural",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-10",
+      "context": "plan-anchor self-anchoring review",
+      "summary": "Structured agent params",
+      "scope": "edits any Claude or Codex agent invocation example, runner payload, or agent Inputs contract",
+      "deterministic_check": "A contract test parses exactly one fenced JSON input object for every registered agent and rejects missing required fields.",
+      "fixtures": {
+        "pass": [
+          "The invocation contains one fenced JSON params object matching the registered agent input schema."
+        ],
+        "fail": [
+          "The invocation describes script, tracker, and item values as unstructured prose."
+        ]
+      },
+      "question_overrides": {},
+      "version": 4,
+      "status": "retired",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-0rb",
+        "plan_questions": "pa-0rb.1",
+        "dev_questions": "pa-0rb.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-10T21:02:50+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-10T21:04:56+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-10T21:08:45+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-0rb",
+            "plan_questions": "pa-0rb.1",
+            "dev_questions": "pa-0rb.2"
+          }
+        },
+        {
+          "at": "2026-10-10T21:59:09+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "Each agent invocation must supply exactly one fenced JSON params object whose fields match the agent's documented Inputs contract."
+        },
+        {
+          "at": "2026-10-10T22:00:07+00:00",
+          "event": "retired",
+          "replaced_by": null,
+          "reason": "The quoted question did not itself establish a requirement; fenced JSON remains a guideline-derived Phase requirement."
+        }
+      ]
+    },
+    {
+      "id": "ANC-005",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Plan-anchor must not read runtime configuration from environment variables other than TYPESAFE_API_KEY.",
+      "quote": "My preference would be no environment variables are used outside of typesafe api key",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-10",
+      "context": "plan-anchor self-anchoring review",
+      "summary": "Only API-key environment variable",
+      "scope": "adds or changes configuration, command-line flags, defaults, installation instructions, or environment reads",
+      "deterministic_check": "Static validation finds no plan-anchor-owned environment read other than TYPESAFE_API_KEY.",
+      "fixtures": {
+        "pass": [
+          "The script reads TYPESAFE_API_KEY and receives model, endpoint, threshold, and limits through CLI arguments or defaults."
+        ],
+        "fail": [
+          "Users must export PLAN_ANCHOR_ALLOW_REMOTE_JUDGE and PLAN_ANCHOR_JEV_MODEL before running a gate."
+        ]
+      },
+      "question_overrides": {
+        "plan": {
+          "questions": {
+            "relevant": {
+              "type": "choice",
+              "instructions": "Does `item.text` touch how plan-anchor obtains or exposes runtime configuration? Judge subject overlap only. Configuration work is relevant when it adds or changes a setting, a command-line option, a default, installation instructions for settings, or an environment-variable read. A new configurable option is relevant even when the item is silent about where its value comes from. Do not judge compliance in this question.",
+              "criteria": {
+                "yes": "The item adds, changes, documents, or depends on a plan-anchor runtime setting or its source, including environment variables, CLI configuration options such as a timeout, checked-in defaults, or installation-time configuration.",
+                "no": "The item concerns a different part of the repository and would neither introduce nor change any plan-anchor setting, configuration source, CLI configuration option, default, or installation instruction.",
+                "unclear": "The item may affect configuration, but its description is too vague to determine whether any setting or configuration source changes."
+              }
+            },
+            "addressed": {
+              "type": "choice",
+              "instructions": "Does `item.text` carry the constraint that plan-anchor gets no runtime configuration from environment variables except `TYPESAFE_API_KEY`? Accept either an explicit exclusivity statement or a complete source allocation that reads `TYPESAFE_API_KEY` and receives the ordinary settings—model, endpoint, threshold, and limits—through CLI arguments or defaults without naming another environment source. Do not treat a generic plan to document, inventory, or discuss environment variables as compliance, and do not judge conflict in this question.",
+              "criteria": {
+                "yes": "The item expressly makes `TYPESAFE_API_KEY` the sole environment-sourced plan-anchor setting, or it reads that key and assigns model, endpoint, threshold, and limits to CLI arguments or defaults while naming no other environment-sourced setting.",
+                "no": "The item does not state the exclusive source rule or its approved complete allocation; it is silent about configuration sources or only mentions, lists, inventories, or documents environment variables.",
+                "unclear": "The item mentions `TYPESAFE_API_KEY` or moving some settings away from environment variables, but leaves the source of the ordinary model, endpoint, threshold, or limit settings unresolved."
+              }
+            }
+          }
+        }
+      },
+      "version": 5,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-j8m",
+        "plan_questions": "pa-j8m.1",
+        "dev_questions": "pa-j8m.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-10T21:03:57+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-10T21:04:56+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-10T21:08:46+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-j8m",
+            "plan_questions": "pa-j8m.1",
+            "dev_questions": "pa-j8m.2"
+          }
+        },
+        {
+          "at": "2026-10-10T21:59:09+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "Plan-anchor must read no application-specific environment variable except TYPESAFE_API_KEY."
+        },
+        {
+          "at": "2026-10-10T22:00:13+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "TYPESAFE_API_KEY must be plan-anchor’s only application-specific environment variable."
+        },
+        {
+          "at": "2026-10-10T22:04:21+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "TYPESAFE_API_KEY must be plan-anchor’s sole environment variable."
+        }
+      ]
+    },
+    {
+      "id": "ANC-006",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Plan-anchor --dry-run execution must make zero network calls.",
+      "quote": "yes, --dry-run is an arg that does the same thing and can be used in unit tests",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-10",
+      "context": "plan-anchor self-anchoring review",
+      "summary": "Offline modes never send",
+      "scope": "changes dry-run, fixture-answer, transport, rubric, tuning, or gate execution",
+      "deterministic_check": "Unit tests fail if any transport is called during --dry-run or fixture-answer execution.",
+      "fixtures": {
+        "pass": [
+          "The dry-run and fixture-answer tests use a transport spy that observes zero requests."
+        ],
+        "fail": [
+          "Dry-run validates the request and then sends it to Jev."
+        ]
+      },
+      "question_overrides": {},
+      "version": 4,
+      "status": "retired",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-dyx",
+        "plan_questions": "pa-dyx.1",
+        "dev_questions": "pa-dyx.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-10T21:03:57+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-10T21:04:56+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-10T21:08:47+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-dyx",
+            "plan_questions": "pa-dyx.1",
+            "dev_questions": "pa-dyx.2"
+          }
+        },
+        {
+          "at": "2026-10-10T21:59:09+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "--dry-run and fixture-answer execution must make zero network calls, proven by transport-spy unit tests."
+        },
+        {
+          "at": "2026-10-10T22:00:07+00:00",
+          "event": "retired",
+          "replaced_by": null,
+          "reason": "The quote depended on missing conversational context and could not support a faithful standalone anchor; offline behavior remains a Phase requirement."
+        }
+      ]
+    },
+    {
+      "id": "ANC-007",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "The plan-anchoring skill must support both bd and br.",
+      "quote": "how large of a change would it be to make this skill work w/ bd and br ?",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-10",
+      "context": "plan-anchor self-anchoring review",
+      "summary": "Support bd and br",
+      "scope": "reads, creates, updates, lists children of, or comments on tracker issues",
+      "deterministic_check": "Contract tests run the same normalized show, children, create, update, and comment cases against bd and br fixtures.",
+      "fixtures": {
+        "pass": [
+          "The tracker layer selects br and normalizes show, children, create, update, and comment results."
+        ],
+        "fail": [
+          "The planning agent calls bd children directly and fails in a br repository."
+        ]
+      },
+      "question_overrides": {},
+      "version": 4,
+      "status": "retired",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-dyw",
+        "plan_questions": "pa-dyw.1",
+        "dev_questions": "pa-dyw.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-10T21:03:57+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-10T21:04:56+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-10T21:08:48+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-dyw",
+            "plan_questions": "pa-dyw.1",
+            "dev_questions": "pa-dyw.2"
+          }
+        },
+        {
+          "at": "2026-10-10T21:59:09+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "The skill must support both bd and br through tracker-neutral operations after selecting one installed tracker at the orchestration boundary."
+        },
+        {
+          "at": "2026-10-10T22:00:08+00:00",
+          "event": "retired",
+          "replaced_by": null,
+          "reason": "The quoted sizing question did not itself direct dual-tracker support; bd/br support remains a Phase requirement supported by the approved intent."
+        }
+      ]
+    },
+    {
+      "id": "ANC-008",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Plan-anchor agent inputs must carry tracker operation data rather than shell command strings.",
+      "quote": "so the bd/br commands would be passed in the fenced json?",
+      "kind": "prohibition",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-10",
+      "context": "plan-anchor self-anchoring review",
+      "summary": "No shell commands in params",
+      "scope": "edits tracker selection, agent params, runner payloads, or tracker command construction",
+      "deterministic_check": "Input-schema tests reject command-string fields and adapter tests construct argv from validated operation data.",
+      "fixtures": {
+        "pass": [
+          "Params identify tracker br and issue pa-123 while the trusted adapter constructs the argv list."
+        ],
+        "fail": [
+          "Params contain the interpolated command string br show pa-123 | jq ."
+        ]
+      },
+      "question_overrides": {},
+      "version": 4,
+      "status": "retired",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-08k",
+        "plan_questions": "pa-08k.1",
+        "dev_questions": "pa-08k.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-10T21:03:57+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-10T21:04:56+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-10T21:08:49+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-08k",
+            "plan_questions": "pa-08k.1",
+            "dev_questions": "pa-08k.2"
+          }
+        },
+        {
+          "at": "2026-10-10T21:59:09+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "Agent params must omit interpolated shell command strings, carrying a tracker descriptor and operation data instead."
+        },
+        {
+          "at": "2026-10-10T22:00:08+00:00",
+          "event": "retired",
+          "replaced_by": null,
+          "reason": "The quoted question did not itself establish whether commands or operation data belong in params; typed operation data remains a guideline-derived Phase requirement."
+        }
+      ]
+    },
+    {
+      "id": "ANC-009",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Each plan-anchor agent definition must reside in its harness’s agent directory: .claude/agents or .codex/agents.",
+      "quote": "I think we should have separate agents for codex and claude (in .codex/.claude folders so agent class sonnet/luna are specified per harness).",
+      "kind": "structural",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-10",
+      "context": "plan-anchor self-anchoring review",
+      "summary": "Harness-specific agents",
+      "scope": "adds or changes an agent definition, registry entry, plugin manifest, or model assignment",
+      "deterministic_check": "Repository validation proves every Claude agent definition resides under .claude/agents and every Codex agent definition resides under .codex/agents.",
+      "fixtures": {
+        "pass": [
+          "Claude definitions live under .claude/agents while Codex definitions live under .codex/agents."
+        ],
+        "fail": [
+          "Both harnesses load one shared agent definition outside their harness agent directories."
+        ]
+      },
+      "question_overrides": {},
+      "version": 6,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-nyp",
+        "plan_questions": "pa-nyp.1",
+        "dev_questions": "pa-nyp.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-10T21:04:21+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-10T21:04:57+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-10T21:08:49+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-nyp",
+            "plan_questions": "pa-nyp.1",
+            "dev_questions": "pa-nyp.2"
+          }
+        },
+        {
+          "at": "2026-10-10T21:59:09+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "Harness-specific agent definitions are separate under .claude/agents and .codex/agents, declaring Sonnet/Opus for Claude and Luna/Sol for Codex."
+        },
+        {
+          "at": "2026-10-10T22:00:13+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "Each harness must define its plan-anchor agents in its own agent folder with harness-native model classes."
+        },
+        {
+          "at": "2026-10-10T22:04:21+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "Claude and Codex plan-anchor agents must live in .claude/agents and .codex/agents with harness-specific model classes."
+        },
+        {
+          "at": "2026-10-10T22:06:14+00:00",
+          "event": "updated",
+          "fields": [
+            "deterministic_check",
+            "fixtures"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ANC-010",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Question tuning must translate approved intent and anchors into accurate Jev questions without optimizing for a favorable plan verdict.",
+      "quote": "My feeling is that tuning should be done w/ an agent independent from the planner.  this should probably be a higher level agent i.e. opus or sol which has the responsibility for tuning against the intent/anchors w/out regard for 'getting the plan to pass'.  i.e. the tuning agent should loop over jev calls while modifying the question text and verifying the answers align with intent/anchors.  the tuning agent must exercise judgement..",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-10",
+      "context": "plan-anchor self-anchoring review",
+      "summary": "Unbiased question tuning",
+      "scope": "changes question-tuning objectives, normative inputs, oracle construction, fixtures, override acceptance, or tuner model selection",
+      "deterministic_check": "Tuner contract tests prove intent and anchors are the only normative inputs, expected outcomes are fixed before Jev answers, and current plan passage is never an optimization target.",
+      "fixtures": {
+        "pass": [
+          "The tuner selects questions for accurate intent-and-anchor detection even when they expose a defect in the current plan."
+        ],
+        "fail": [
+          "The planner rewrites questions until Jev reports that the current plan is perfect."
+        ]
+      },
+      "question_overrides": {
+        "plan": {
+          "questions": {
+            "relevant": {
+              "type": "choice",
+              "instructions": "Does `item.text` change, constrain, test, or document question tuning or its evaluator? Judge subject-matter overlap only, not whether the item obeys the independence requirement.",
+              "criteria": {
+                "yes": "The item concerns tuning-prompt or question wording, oracle construction, tuning fixtures, override acceptance, tuner inputs or ownership, tuner model selection, or whether the planner and tuner are separated.",
+                "no": "The item concerns an unrelated capability such as secret redaction, plan-source adapters, tracker commands, or other work that neither changes nor depends on question tuning.",
+                "unclear": "The item mentions evaluation or questions too vaguely to tell whether it concerns the question-tuning system."
+              }
+            },
+            "addressed": {
+              "type": "choice",
+              "instructions": "Does `item.text` place the act of evaluating and revising Jev questions in a tuner or evaluator separate from the planner? Judge only whether that separate evaluator role exists. If a separate Sol, Opus, tuner, or evaluator performs tuning, answer yes even when the planner supplies biased inputs or a target outcome; that bias belongs to the separate conflict judgment. Operational isolation through a pre-Jev frozen oracle and withheld active-plan results also establishes the separate evaluator role.",
+              "criteria": {
+                "yes": "A named agent, tuner, or evaluator other than the planner performs question tuning, or a dedicated tuner is isolated by a frozen intent-and-fixture oracle and no active-plan results. A separately named tuner still counts here when its inputs are biased.",
+                "no": "The planner itself evaluates or rewrites the questions, or the item changes questions without assigning tuning to a separate evaluator or operationally isolated tuner.",
+                "unclear": "The item mentions delegation or a tuner but does not make clear whether someone other than the planner actually evaluates and revises the questions."
+              }
+            },
+            "contradicted": {
+              "type": "choice",
+              "instructions": "Does `item.text` allow the planner or an active plan outcome to steer question tuning? Judge only that forbidden influence. Silence about who tunes, generic question-wording work, and a tuner whose frozen inputs exclude active-plan results do not conflict.",
+              "criteria": {
+                "yes": "The planner writes or revises the questions, or any tuner receives a current failing verdict, desired verdict, or instruction to make the active plan pass.",
+                "no": "The item is silent about tuning ownership, only improves question wording, or uses a tuner whose oracle is frozen from approved intent and fixtures without active-plan results.",
+                "unclear": "The item suggests the planner or current plan may influence tuning, but the inputs or decision authority are not clear."
+              }
+            }
+          }
+        }
+      },
+      "version": 6,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-waz",
+        "plan_questions": "pa-waz.1",
+        "dev_questions": "pa-waz.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-10T21:04:21+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-10T21:04:57+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-10T21:08:50+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-waz",
+            "plan_questions": "pa-waz.1",
+            "dev_questions": "pa-waz.2"
+          }
+        },
+        {
+          "at": "2026-10-10T21:59:10+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "Question tuning must run in an evaluator independent from the planner, freeze an oracle from approved intent and anchors, and ignore whether the current plan passes."
+        },
+        {
+          "at": "2026-10-10T22:00:13+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "Question tuning must use an agent independent from the planner."
+        },
+        {
+          "at": "2026-10-10T22:04:22+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "An Opus or Sol agent independent from the planner must tune questions against intent and anchors without optimizing for plan passage."
+        },
+        {
+          "at": "2026-10-11T17:20:00+00:00",
+          "event": "updated",
+          "fields": [
+            "statement",
+            "scope",
+            "summary",
+            "deterministic_check",
+            "fixtures"
+          ],
+          "previous_statement": "Question tuning must be performed by an evaluator independent from the planner."
+        }
+      ]
+    },
+    {
+      "id": "ANC-011",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "The normal plan-anchoring workflow must require Jev.",
+      "quote": "fix README and make sure documents are consistent (this skill requires jev)",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-10",
+      "context": "plan-anchor self-anchoring review",
+      "summary": "Jev remains required",
+      "scope": "edits README, SKILL.md, installation guidance, examples, or marketplace descriptions",
+      "deterministic_check": "Documentation consistency validation finds the required-workflow statement and no claim that offline modes replace Jev.",
+      "fixtures": {
+        "pass": [
+          "The README states that Jev is required for normal capture, tuning, and gate execution and labels offline modes as development aids."
+        ],
+        "fail": [
+          "The README presents dry-run as a complete replacement for Jev."
+        ]
+      },
+      "question_overrides": {
+        "plan": {
+          "questions": {
+            "relevant": {
+              "type": "choice",
+              "instructions": "Does `item.text` plan to edit any governed plan-anchor documentation surface: README, SKILL.md, installation or quick-start guidance, usage examples, or marketplace descriptions? For relevance, every edit to one of these named surfaces counts even when the item does not mention Jev. An instruction to document, state, describe, or present user-facing guidance about Jev, dry-run, fixture answers, capture, tuning, or gates also counts even when it does not name the destination file. Judge subject-matter overlap only, not whether the guidance is correct.",
+              "criteria": {
+                "yes": "The item edits a named governed documentation surface, or directs a user-facing documentation statement about Jev or normal/offline plan-anchor workflow operation.",
+                "no": "The item changes code, trackers, agents, tests, or other material without editing a governed documentation surface or producing user-facing Jev/workflow guidance.",
+                "unclear": "The item says only that unspecified documentation changes, with no governed surface or Jev/workflow topic identifiable."
+              }
+            },
+            "addressed": {
+              "type": "choice",
+              "instructions": "Does `item.text` explicitly state that live Jev is required or must be used in the normal plan-anchor workflow? A statement that normal capture, question tuning, or gate execution requires Jev carries the directive, even if another clause creates a conflicting exception; conflict is judged separately. Merely mentioning Jev, its integration, or offline modes is not enough.",
+              "criteria": {
+                "yes": "The item says Jev is required, mandatory, a prerequisite, or must be used for the normal plan-anchor workflow or for at least one named normal stage such as capture, tuning, or gate execution.",
+                "no": "The item does not state a normal-workflow Jev requirement, only describes Jev or offline modes, or says an offline mode replaces Jev without also requiring Jev for any normal stage.",
+                "unclear": "The item implies that Jev may be needed but does not make clear whether it is required for normal plan-anchor work."
+              }
+            }
+          }
+        }
+      },
+      "version": 5,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-nwu",
+        "plan_questions": "pa-nwu.1",
+        "dev_questions": "pa-nwu.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-10T21:04:21+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-10T21:04:57+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-10T21:08:51+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-nwu",
+            "plan_questions": "pa-nwu.1",
+            "dev_questions": "pa-nwu.2"
+          }
+        },
+        {
+          "at": "2026-10-10T21:59:10+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "Documentation must identify Jev as required for the normal workflow and describe dry-run and fixture modes as development and CI aids."
+        },
+        {
+          "at": "2026-10-10T22:00:14+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "The normal plan-anchoring workflow must require Jev."
+        },
+        {
+          "at": "2026-10-10T22:04:22+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "The plan-anchoring skill must require Jev."
+        }
+      ]
+    },
+    {
+      "id": "ANC-012",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Plan-anchor script output must redact the TypeSafe API-key value.",
+      "quote": "p2 - redact api key from script output",
+      "kind": "prohibition",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-10",
+      "context": "plan-anchor self-anchoring review",
+      "summary": "Secrets stay redacted",
+      "scope": "changes transport errors, structured output, logging, reports, audit records, or run-file persistence",
+      "deterministic_check": "Secret-canary tests scan stdout, stderr, errors, reports, audits, and run files for raw credential and authorization-header variants.",
+      "fixtures": {
+        "pass": [
+          "A transport failure returns a redacted credential marker and no run artifact contains the supplied secret."
+        ],
+        "fail": [
+          "A structured error echoes the supplied API key in its suggested action."
+        ]
+      },
+      "question_overrides": {
+        "plan": {
+          "questions": {
+            "addressed": {
+              "type": "choice",
+              "instructions": "Does `item.text` explicitly state a step that conceals the TypeSafe API-key value in plan-anchor script output? Judge only whether that redaction step is present; another question judges any conflicting disclosure.",
+              "criteria": {
+                "yes": "The item says to redact, mask, remove, replace, or scrub the TypeSafe API-key value, supplied secret, credential value, or bearer-token form in plan-anchor output.",
+                "no": "The item is silent about concealing the value, merely mentions API keys or diagnostics, or only says to emit the complete unredacted value.",
+                "unclear": "The item promises safe or sanitized output but does not make clear whether the credential value is concealed."
+              }
+            },
+            "contradicted": {
+              "type": "choice",
+              "instructions": "Does `item.text` explicitly propose emitting or persisting the complete unredacted TypeSafe API-key value in any plan-anchor script-output channel? The governed channels include structured errors, suggested actions, stdout, stderr, logs, reports, audit records, run files, and other persisted judge artifacts. Redacting some channels does not remove a conflict when another governed channel keeps or emits the unredacted value. Silence about redaction and a generic mention of API-key-aware diagnostics are not conflicts unless the item says the key value is disclosed.",
+              "criteria": {
+                "yes": "The item says to echo, print, log, include, retain, preserve, or persist the complete raw or unredacted TypeSafe API-key value in at least one governed plan-anchor output channel.",
+                "no": "The item redacts or conceals the key value, is silent about credential disclosure, or mentions keys or diagnostics without saying that the raw value is emitted or persisted.",
+                "unclear": "The item says credential material is included in output but does not make clear whether the value is redacted or exposed."
+              }
+            }
+          }
+        }
+      },
+      "version": 5,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-buf",
+        "plan_questions": "pa-buf.1",
+        "dev_questions": "pa-buf.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-10T21:04:22+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-10T21:04:57+00:00",
+          "event": "updated",
+          "fields": [
+            "deterministic_check",
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-10T21:08:52+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-buf",
+            "plan_questions": "pa-buf.1",
+            "dev_questions": "pa-buf.2"
+          }
+        },
+        {
+          "at": "2026-10-10T21:59:10+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "All script outputs and persisted run data must redact the TypeSafe API key and bearer-token forms before emission."
+        },
+        {
+          "at": "2026-10-10T22:00:14+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "Plan-anchor script output must redact TypeSafe API keys."
+        },
+        {
+          "at": "2026-10-10T22:04:22+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "Script output must redact the API key."
+        }
+      ]
+    },
+    {
+      "id": "ANC-013",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Plan-anchor examples must be executable using repository-valid paths, supported commands, and supported JSON schemas.",
+      "quote": "p3 - update examples to be realistic",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-10",
+      "context": "plan-anchor self-anchoring review",
+      "summary": "Realistic examples",
+      "scope": "adds or changes README examples, reference snippets, fixtures, sample anchors, or agent invocation examples",
+      "deterministic_check": "Example tests execute commands in a fixture repository and validate documented JSON against current schemas.",
+      "fixtures": {
+        "pass": [
+          "The br example uses docs/plans/phase-a, current flags, and the documented br JSON envelope."
+        ],
+        "fail": [
+          "The example uses an invented path, removed flag, and JSON shape no supported tracker emits."
+        ]
+      },
+      "question_overrides": {
+        "plan": {
+          "questions": {
+            "addressed": {
+              "type": "choice",
+              "instructions": "Does `item.text` explicitly require or demonstrate that plan-anchor examples execute against the current repository and supported interfaces? The required validity content is repository-existing paths, supported current commands or flags, and supported current JSON schemas or normalized envelopes. Merely requesting a new example or how-to does not imply this validity content. A policy covering every example or a concrete valid `bd` or `br` example may satisfy the directive. Generic words such as realistic or audit do not.",
+              "criteria": {
+                "yes": "The item states all applicable repository-path, current-command, and current-schema requirements; or it presents a concrete supported form, such as a `br` example using `docs/plans/phase-a`, current flags, and the documented `br` envelope, or `bd` and `br` examples using repository paths, each tracker's current JSON flag, and the documented normalized envelope.",
+                "no": "The item does not state or demonstrate those validity requirements. This includes a bare request to add an example or README how-to, a request only to audit realism, and a description using invented paths, removed commands or flags, unsupported JSON, or literal non-executable placeholders.",
+                "unclear": "The item addresses example validity but omits an applicable path, command, or JSON requirement, or does not identify enough concrete interface detail to determine executability."
+              }
+            },
+            "contradicted": {
+              "type": "choice",
+              "instructions": "Does `item.text` explicitly propose a plan-anchor example that cannot execute against the current repository or supported interfaces? Conflict exists when a planned example uses an invented repository path, a removed or unsupported command or flag, an unsupported JSON shape, or a literal placeholder that readers are told can execute unchanged. Silence about validity and generic words such as realistic or audit are not contradictions. Judge conflict only.",
+              "criteria": {
+                "yes": "The item commits to at least one concrete incompatible example element: an invented path, removed command or flag, JSON shape no supported tracker emits, or literal non-repository placeholder presented as directly executable.",
+                "no": "The item uses supported repository paths, commands, flags, and JSON; or it makes no concrete choice that conflicts with those requirements. Mere silence or a generic example request is not conflict.",
+                "unclear": "The item names a path, command, flag, or JSON form whose support cannot be determined from the text."
+              }
+            }
+          }
+        }
+      },
+      "version": 4,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-2td",
+        "plan_questions": "pa-2td.1",
+        "dev_questions": "pa-2td.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-10T21:04:22+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-10T21:04:57+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-10T21:08:53+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-2td",
+            "plan_questions": "pa-2td.1",
+            "dev_questions": "pa-2td.2"
+          }
+        },
+        {
+          "at": "2026-10-10T21:59:10+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "Examples must use repository-valid paths, current command syntax, and JSON shapes emitted by supported tracker and harness versions."
+        },
+        {
+          "at": "2026-10-10T22:04:22+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "Plan-anchor examples must use realistic repository paths, commands, and JSON shapes."
+        }
+      ]
+    },
+    {
+      "id": "ANC-014",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "The plan-anchor plugin must not define or invoke arch-qa or req-qa.",
+      "quote": "where did arch-qa and req-qa come from?  these are agents on sc-lint, not part of this skill",
+      "kind": "prohibition",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-10",
+      "context": "plan-anchor self-anchoring review",
+      "summary": "Exclude sc-lint agents",
+      "scope": "edits plan-anchor agent files, registries, manifests, skill delegation, or examples",
+      "deterministic_check": "Repository search finds no arch-qa or req-qa reference under the plan-anchor plugin.",
+      "fixtures": {
+        "pass": [
+          "The plan-anchor registries list only anchor-plan-review, anchor-sprint-review, and anchor-tuning."
+        ],
+        "fail": [
+          "The plan-anchor skill delegates requirement review to the sc-lint req-qa agent."
+        ]
+      },
+      "question_overrides": {
+        "plan": {
+          "questions": {
+            "relevant": {
+              "type": "choice",
+              "instructions": "Does `item.text` change or document which agents plan-anchor defines, registers, lists, invokes, delegates to, or presents in examples? Governed surfaces include plan-anchor agent files, registries, manifests, skill delegation instructions, examples, and documentation of the relationship between plan-anchor and sc-lint agents. Judge overlap only, not whether arch-qa or req-qa is included correctly.",
+              "criteria": {
+                "yes": "The item changes or documents plan-anchor's agent set, registry, manifest, delegation behavior, invocation examples, or its boundary with sc-lint agents.",
+                "no": "The item changes trackers, plan sources, script output, or another area without affecting plan-anchor agents or delegation.",
+                "unclear": "The item mentions agents generically but does not identify whether plan-anchor's agent set, invocation, delegation, or sc-lint boundary is affected."
+              }
+            },
+            "addressed": {
+              "type": "choice",
+              "instructions": "Does `item.text` explicitly keep arch-qa and req-qa out of plan-anchor's defined or invoked agent set? An explicit instruction to omit, exclude, or keep them in sc-lint counts. A closed plan-anchor registry list containing only named anchor agents and neither arch-qa nor req-qa also counts. Judge presence of the exclusion only; another question judges a conflicting definition or invocation elsewhere in the same item.",
+              "criteria": {
+                "yes": "The item explicitly excludes arch-qa and req-qa from plan-anchor, keeps them in sc-lint, forbids defining or invoking them, or gives a closed allowed-agent list that contains neither prohibited agent.",
+                "no": "The item is silent about excluding the prohibited agents, only discusses the agent boundary generally, or defines or invokes a prohibited agent without also stating an exclusion.",
+                "unclear": "The item presents an open-ended or partial agent list and it cannot be determined whether arch-qa and req-qa are intentionally excluded."
+              }
+            },
+            "contradicted": {
+              "type": "choice",
+              "instructions": "Does `item.text` tell plan-anchor to use arch-qa or req-qa in any way: define it inside the plugin, add it to a registry or manifest, invoke it, or delegate work to an external sc-lint copy? Judge only whether such use is proposed. Saying not to define the agent internally does not make external invocation acceptable.",
+              "criteria": {
+                "yes": "The item proposes any plan-anchor use of arch-qa or req-qa. This includes an explicit pattern such as 'do not define it inside plan-anchor, but delegate to the external sc-lint agent.'",
+                "no": "The item omits or excludes both agents, keeps them in sc-lint without plan-anchor calling them, is silent about them, or merely documents the ownership boundary.",
+                "unclear": "The item mentions either agent near plan-anchor work but does not say whether plan-anchor will define, invoke, or delegate to it."
+              }
+            }
+          }
+        }
+      },
+      "version": 6,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-9wl",
+        "plan_questions": "pa-9wl.1",
+        "dev_questions": "pa-9wl.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-10T21:04:22+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-10T21:04:58+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-10T21:08:54+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-9wl",
+            "plan_questions": "pa-9wl.1",
+            "dev_questions": "pa-9wl.2"
+          }
+        },
+        {
+          "at": "2026-10-10T21:59:10+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "The plan-anchor plugin must not define or invoke the sc-lint agents arch-qa or req-qa."
+        },
+        {
+          "at": "2026-10-10T22:00:14+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "The plan-anchor plugin must exclude the sc-lint agents arch-qa and req-qa."
+        },
+        {
+          "at": "2026-10-10T22:04:22+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "arch-qa and req-qa must remain sc-lint agents outside plan-anchor."
+        },
+        {
+          "at": "2026-10-11T17:17:39+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ANC-015",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "The Phase A index must link separate authoritative sprint-plan documents.",
+      "quote": "I always break a plan into sprints.  see. /Users/randlee/github/raptor/docs/plans/phase-a/* for raptor project.  there is also a plan-hardening skill in that repo which has sprint-plan-guidelines for building your sprint",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-10",
+      "context": "plan-anchor Phase A dogfood correction; live rubric pending explicit TypeSafe payload approval",
+      "summary": "Authoritative sprint documents",
+      "scope": "creates or reviews a phase plan, sprint plan, phase index, or planning source",
+      "deterministic_check": "Validate the phase index links separate sprint Markdown files and each sprint has one authoritative deliverables, acceptance, validation, and non-closure section.",
+      "fixtures": {
+        "pass": [
+          "The phase index links eight separate sprint documents, each with authoritative deliverables, acceptance criteria, validation, and non-closure."
+        ],
+        "fail": [
+          "The phase plan keeps all sprint work as subsections in one monolithic Markdown file."
+        ]
+      },
+      "question_overrides": {
+        "plan": {
+          "questions": {
+            "relevant": {
+              "type": "choice",
+              "instructions": "Does `item.text` create, revise, review, or govern a phase plan, phase index, sprint plan, sprint organization, or planning source? Judge subject-matter overlap only, not whether the plan uses the required document structure.",
+              "criteria": {
+                "yes": "The item changes or reviews a phase plan or its schedule, a phase index or sprint summary, separate sprint plans, sprint-plan contents, or the source/layout from which planning items are read.",
+                "no": "The item concerns an unrelated capability such as secret redaction, API credentials, tracker command behavior, or runtime code with no phase/sprint planning effect.",
+                "unclear": "The item mentions planning or sprints too vaguely to tell whether it affects a phase plan, phase index, sprint plan, or planning source."
+              }
+            },
+            "addressed": {
+              "type": "choice",
+              "instructions": "Does `item.text` explicitly plan or preserve a Phase A index that links separate authoritative sprint-plan documents? Judge the complete indexed-document structure as one requirement: the sprint work must live authoritatively in separate sprint files, not merely be summarized there or kept authoritatively in the index. Judge presence only; conflict is a separate question.",
+              "criteria": {
+                "yes": "The item says the Phase A overview or index links one or more separate sprint-plan files and those sprint documents own the authoritative sprint scope, deliverables, acceptance criteria, validation, or non-closure content.",
+                "no": "The item is silent about this structure, adds only an index summary, keeps sprint work in one monolithic phase file, or says linked sprint files are non-authoritative summaries while the index remains authoritative.",
+                "unclear": "The item links or proposes separate sprint files but does not make clear whether those files are the authoritative sprint plans."
+              }
+            }
+          }
+        }
+      },
+      "version": 6,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-2zo",
+        "plan_questions": "pa-2zo.1",
+        "dev_questions": "pa-2zo.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-10T21:31:03+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-10T21:31:41+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-10T21:32:21+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-2zo",
+            "plan_questions": "pa-2zo.1",
+            "dev_questions": "pa-2zo.2"
+          }
+        },
+        {
+          "at": "2026-10-10T21:59:10+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "Phase plans must consist of a phase index and separate authoritative sprint Markdown documents shaped by the plan-hardening sprint-planning guidelines."
+        },
+        {
+          "at": "2026-10-10T22:00:14+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "Phase A must use separate sprint plans shaped by Raptor’s sprint-plan guidelines."
+        },
+        {
+          "at": "2026-10-10T22:04:22+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "The Phase A plan must be divided into sprint plans following Raptor’s sprint-plan guidelines."
+        },
+        {
+          "at": "2026-10-10T22:06:14+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ANC-016",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "The plan-anchoring gate must accept both a Markdown plan and its copy in a br database.",
+      "quote": "You should be able to run the /plan-anchor skill both against the md plan and against a copy of the plan in br database",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-10",
+      "context": "plan-anchor Phase A dogfood correction; live rubric pending explicit TypeSafe payload approval",
+      "summary": "Dual plan sources",
+      "scope": "changes plan-source selection, sprint discovery, item composition, source digests, planning-gate invocation, or source parity tests",
+      "deterministic_check": "Materialize the Phase A Markdown sprints and their br copies, assert identical ordered request digests, require both recorded-answer parity and independent live passing results, and classify differing live answers as model instability.",
+      "fixtures": {
+        "pass": [
+          "The Markdown and br-copy adapters normalize Sprint A2 to the same request digest, pass independently, and reserve exact verdict equality for recorded-answer parity."
+        ],
+        "fail": [
+          "The skill can review only tracker issue bodies and rejects the equivalent Markdown sprint file."
+        ]
+      },
+      "question_overrides": {
+        "plan": {
+          "questions": {
+            "addressed": {
+              "type": "choice",
+              "instructions": "Does `item.text` explicitly plan or preserve dual-source support in the plan-anchoring gate for both a Markdown plan or sprint document and the corresponding plan copy stored in a `br` database? Judge only whether support for both required source forms is present; source parity details and conflict are separate judgments.",
+              "criteria": {
+                "yes": "The item says both Markdown and `br` plan sources are accepted, reviewed, ingested, or normalized, or gives equivalent behavior such as Markdown and `br` adapters operating on the same plan or request digest.",
+                "no": "The item is silent about supporting both source forms, adds or mentions a different source without the required pair, provides support for only one required source, or explicitly rejects Markdown or `br` plan input.",
+                "unclear": "The item mentions Markdown and `br` plan material but does not make clear whether the plan-anchoring gate supports both as plan inputs."
+              }
+            },
+            "contradicted": {
+              "type": "choice",
+              "instructions": "Does `item.text` explicitly conflict with the requirement that the plan-anchoring gate accept both a Markdown plan and the corresponding plan copy in a `br` database? Judge only exclusion or incompatibility with that required pair. Silence, refactoring source selection, or adding another source format is not a conflict unless the item also excludes or makes unusable Markdown or `br` input.",
+              "criteria": {
+                "yes": "The item says the gate will accept only one required source, reject or disable Markdown or `br` plan input, or otherwise makes it impossible to review both members of the required pair.",
+                "no": "The item accepts both required sources, is silent about the pair, changes source-selection internals without excluding either source, or adds another source while leaving Markdown and `br` compatible.",
+                "unclear": "The item may limit Markdown or `br` plan input, but it is not clear whether both required sources remain usable."
+              }
+            }
+          }
+        }
+      },
+      "version": 6,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-bxu",
+        "plan_questions": "pa-bxu.1",
+        "dev_questions": "pa-bxu.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-10T21:31:10+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-10T21:31:41+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-10T21:32:21+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-bxu",
+            "plan_questions": "pa-bxu.1",
+            "dev_questions": "pa-bxu.2"
+          }
+        },
+        {
+          "at": "2026-10-10T21:59:10+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "The plan-anchoring planning gate must accept equivalent Markdown sprint plans and bd or br tracker copies, normalize both sources to the same item contract, and return matching verdicts."
+        },
+        {
+          "at": "2026-10-10T22:00:14+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "/plan-anchor must accept both a Markdown plan and its copy in a br database."
+        },
+        {
+          "at": "2026-10-10T22:04:22+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "/plan-anchor must run against both a Markdown plan and its br database copy."
+        },
+        {
+          "at": "2026-10-10T22:06:14+00:00",
+          "event": "updated",
+          "fields": [
+            "deterministic_check",
+            "fixtures"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ANC-017",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Markdown plan review requires tracker records only for an anchor root and its plan-question and dev-question children.",
+      "quote": "at that point the only beads dependency in the plan is for holding the anchoring info and questions which can be spun up in a br database quickly for any repo",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-10",
+      "context": "plan-anchor Phase A dogfood correction; live rubric pending explicit TypeSafe payload approval",
+      "summary": "Beads only stores anchors",
+      "scope": "changes tracker prerequisites, anchor storage, question storage, Markdown plan review, or required issue layout",
+      "deterministic_check": "Complete Markdown-source dry-run review in a repository whose tracker contains only anchor roots with plan-question and dev-question children.",
+      "fixtures": {
+        "pass": [
+          "Markdown review reads plan text from sprint files and uses br only for each anchor's question tree."
+        ],
+        "fail": [
+          "Markdown review requires the phase and every sprint to exist as br issues before it can run."
+        ]
+      },
+      "question_overrides": {},
+      "version": 7,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-885",
+        "plan_questions": "pa-885.1",
+        "dev_questions": "pa-885.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-10T21:31:28+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-10T21:31:41+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-10T21:32:21+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-885",
+            "plan_questions": "pa-885.1",
+            "dev_questions": "pa-885.2"
+          }
+        },
+        {
+          "at": "2026-10-10T21:59:10+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "Markdown plan review must require no bd or br records beyond each anchor's standard three-record question tree."
+        },
+        {
+          "at": "2026-10-10T22:00:14+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "Markdown plan review’s tracker dependency must be limited to anchor and question records."
+        },
+        {
+          "at": "2026-10-10T22:04:22+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "The plan’s only Beads dependency must be anchor and question records."
+        },
+        {
+          "at": "2026-10-10T22:07:48+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "Markdown plan review must require tracker records only for anchors and their question records."
+        },
+        {
+          "at": "2026-10-10T22:23:22+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "The sole tracker record type required by Markdown plan review is an anchor question tree."
+        }
+      ]
+    },
+    {
+      "id": "ANC-018",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "The skill must document br initialization with no prerequisite beyond a local Git repository.",
+      "quote": "at that point the only beads dependency in the plan is for holding the anchoring info and questions which can be spun up in a br database quickly for any repo",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-10",
+      "context": "plan-anchor Phase A dogfood correction; live rubric pending explicit TypeSafe payload approval",
+      "summary": "Fast br anchor-store setup",
+      "scope": "changes br installation, local initialization prerequisites, command examples, or onboarding",
+      "deterministic_check": "Run the documented br initialization sequence in a temporary local Git repository without a remote service or phase epic.",
+      "fixtures": {
+        "pass": [
+          "In any local Git repository, the documented br initialization commands work without a remote tracker service or a phase epic."
+        ],
+        "fail": [
+          "Before br can initialize, every repository must connect to a shared tracker service and create a phase epic."
+        ]
+      },
+      "question_overrides": {},
+      "version": 6,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-c3t",
+        "plan_questions": "pa-c3t.1",
+        "dev_questions": "pa-c3t.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-10T21:31:36+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-10T21:31:41+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-10T21:32:21+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-c3t",
+            "plan_questions": "pa-c3t.1",
+            "dev_questions": "pa-c3t.2"
+          }
+        },
+        {
+          "at": "2026-10-10T21:59:10+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "The skill must provide a short br initialization path that creates a usable anchor and question store in any Git repository."
+        },
+        {
+          "at": "2026-10-10T22:00:14+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "The plan-anchoring skill must document a short br setup for its anchor and question records."
+        },
+        {
+          "at": "2026-10-10T22:04:22+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "A br database for anchor and question records must be quick to initialize in any repository."
+        },
+        {
+          "at": "2026-10-10T22:30:30+00:00",
+          "event": "updated",
+          "fields": [
+            "statement",
+            "scope",
+            "deterministic_check",
+            "fixtures"
+          ],
+          "previous_statement": "The skill must provide a documented br command sequence that initializes an anchor-and-question store in any Git repository."
+        }
+      ]
+    },
+    {
+      "id": "ANC-019",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "The harness-specific anchor-tuning agent must be a peer Opus/Sol agent that can invoke subagents while retaining tuning judgment.",
+      "quote": "I would expect anchor-tuning.md agent to be a peer agent which can call subagents.\n\nanchor-tuning would call jev w/ a set of questions in parallel (i.e. many more questions that the final calls would use), rank the questions and down-select.",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-11",
+      "context": "plan-anchor Phase A planning review",
+      "summary": "Peer tuning coordinator",
+      "scope": "changes tuning-agent hierarchy, harness model/tool access, or delegation authority",
+      "deterministic_check": "Repository validation proves both harnesses register anchor-tuning.md as an Opus/Sol peer with Agent/subagent capability and reserve oracle interpretation and question-selection judgment for that coordinator.",
+      "fixtures": {
+        "pass": [
+          "The Opus/Sol anchor-tuning peer invokes read-only Jev workers but alone freezes the oracle and selects questions."
+        ],
+        "fail": [
+          "A leaf tuner without Agent access performs every Jev call sequentially and cannot dispatch subagents."
+        ]
+      },
+      "question_overrides": {},
+      "version": 3,
+      "status": "retired",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-tnj",
+        "plan_questions": "pa-tnj.1",
+        "dev_questions": "pa-tnj.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-11T17:16:37+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-11T17:16:48+00:00",
+          "event": "updated",
+          "fields": [
+            "statement",
+            "scope",
+            "summary",
+            "deterministic_check",
+            "fixtures"
+          ],
+          "previous_statement": "The harness-specific anchor-tuning agent must be a peer Opus/Sol coordinator that can invoke subagents, evaluate a larger candidate-question pool through parallel Jev calls against one frozen oracle, and use independent judgment to rank and down-select the production question set."
+        },
+        {
+          "at": "2026-10-11T17:17:27+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-tnj",
+            "plan_questions": "pa-tnj.1",
+            "dev_questions": "pa-tnj.2"
+          }
+        },
+        {
+          "at": "2026-10-11T17:28:03+00:00",
+          "event": "retired",
+          "replaced_by": "ANC-026",
+          "reason": "User simplified the topology: anchor-tuning is a dedicated planner subagent that calls Jev directly; nested peer delegation is no longer required."
+        }
+      ]
+    },
+    {
+      "id": "ANC-020",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Anchor-tuning must rank parallel Jev evaluations of a frozen-oracle candidate pool and down-select fewer questions for production review.",
+      "quote": "anchor-tuning would call jev w/ a set of questions in parallel (i.e. many more questions that the final calls would use), rank the questions and down-select.",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-11",
+      "context": "plan-anchor Phase A planning review",
+      "summary": "Parallel candidate-question tournament",
+      "scope": "changes candidate-question generation, parallel Jev evaluation, ranking, down-selection, or production question payloads",
+      "deterministic_check": "Tournament tests prove a larger candidate pool is evaluated by direct parallel Jev calls against identical frozen-oracle cases, ranking evidence and tuner rationales are retained, and production review receives only the down-selected questions.",
+      "fixtures": {
+        "pass": [
+          "The tuner runs a broad candidate pool in parallel on one frozen oracle, records the ranking, and sends only selected questions to plan review."
+        ],
+        "fail": [
+          "The production review sends every speculative tuning question because no ranked down-selection occurs."
+        ]
+      },
+      "question_overrides": {},
+      "version": 4,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-q30",
+        "plan_questions": "pa-q30.1",
+        "dev_questions": "pa-q30.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-11T17:16:56+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-11T17:16:56+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-11T17:16:59+00:00",
+          "event": "updated",
+          "fields": [
+            "statement"
+          ],
+          "previous_statement": "The anchor-tuning agent must evaluate more candidate questions than production review uses by running them through Jev in parallel against one frozen oracle, ranking the evidence, and using independent judgment to down-select the production question set."
+        },
+        {
+          "at": "2026-10-11T17:17:27+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-q30",
+            "plan_questions": "pa-q30.1",
+            "dev_questions": "pa-q30.2"
+          }
+        },
+        {
+          "at": "2026-10-11T17:38:02+00:00",
+          "event": "updated",
+          "fields": [
+            "deterministic_check"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ANC-021",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Anchor-tuning must not modify authoritative plan sources.",
+      "quote": "anchor-tuning ONLY makes the plan modifications on temporary copies of the plan and does NOT modify the original plan.",
+      "kind": "prohibition",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-11",
+      "context": "plan-anchor Phase A planning review",
+      "summary": "Authoritative plans are read-only to tuning",
+      "scope": "changes tuning fixtures, mutation testing, plan-source writes, or authoritative Markdown/tracker content",
+      "deterministic_check": "Mutation tests hash authoritative Markdown and tracker copies before and after tuning and prove both originals remain unchanged.",
+      "fixtures": {
+        "pass": [
+          "The tuner leaves the Markdown plan and tracker copy byte-identical after calibration."
+        ],
+        "fail": [
+          "The tuner edits the authoritative sprint document to make Jev notice a requirement."
+        ]
+      },
+      "question_overrides": {},
+      "version": 2,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-7sq",
+        "plan_questions": "pa-7sq.1",
+        "dev_questions": "pa-7sq.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-11T17:20:00+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-11T17:20:24+00:00",
+          "event": "updated",
+          "fields": [
+            "statement",
+            "summary",
+            "deterministic_check",
+            "fixtures"
+          ],
+          "previous_statement": "Anchor-tuning may alter plan text only in temporary diagnostic copies and must never modify the authoritative plan."
+        },
+        {
+          "at": "2026-10-11T17:20:53+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-7sq",
+            "plan_questions": "pa-7sq.1",
+            "dev_questions": "pa-7sq.2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ANC-022",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Anchor-tuning must test candidate questions on temporary plan copies with diagnostic additions and removals.",
+      "quote": "anchor-tuning is allowed to modify proposed plan text w/ added ceremony to insure jev finds it, he may also remove important statements or deliverables so jev will flag the info missing.",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-11",
+      "context": "plan-anchor Phase A planning review",
+      "summary": "Diagnostic temporary plan mutations",
+      "scope": "changes tuning fixtures, candidate-question evaluation, mutation cases, or temporary workspace behavior",
+      "deterministic_check": "Tuning tests create disposable positive-visibility and required-content-removal variants, derive their expected outcomes from intent and anchors, evaluate candidates against them, and delete the variants without source writes.",
+      "fixtures": {
+        "pass": [
+          "The tuner adds explicit ceremony and removes a required deliverable only in disposable copies, then checks whether candidate questions distinguish both cases."
+        ],
+        "fail": [
+          "The tuner evaluates candidates only on the unchanged plan and never proves they detect missing required content."
+        ]
+      },
+      "question_overrides": {},
+      "version": 2,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-yaz",
+        "plan_questions": "pa-yaz.1",
+        "dev_questions": "pa-yaz.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-11T17:20:25+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-11T17:20:28+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-11T17:20:54+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-yaz",
+            "plan_questions": "pa-yaz.1",
+            "dev_questions": "pa-yaz.2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ANC-023",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Planning must run a named <team>-anchor-tuning subagent concurrently after the first draft and INTENT/ANC capture.",
+      "quote": "planning agent puts together a first draft of the plan, launches named team-member <team>-anchor-tuning which starts refining jev questions based on intent + anchors defined in parallel w/ planner completing the plan.",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-11",
+      "context": "plan-anchor Phase A planning review",
+      "summary": "Concurrent named tuning subagent",
+      "scope": "changes planning workflow ordering, subagent naming, tuning startup, or review prerequisites",
+      "deterministic_check": "Workflow tests prove a stable <team>-anchor-tuning subagent starts after the first draft and approved INTENT/ANC authority packet, overlaps continued plan authoring, and completes before leaf plan review consumes questions.",
+      "fixtures": {
+        "pass": [
+          "The planner launches team-a-anchor-tuning after the first draft and approved INTENT/ANC packet, then continues plan authoring while tuning runs."
+        ],
+        "fail": [
+          "The planner completes the plan before starting an unnamed tuning subagent."
+        ]
+      },
+      "question_overrides": {},
+      "version": 3,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-51f",
+        "plan_questions": "pa-51f.1",
+        "dev_questions": "pa-51f.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-11T17:24:30+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-11T17:24:35+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-11T17:24:50+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-51f",
+            "plan_questions": "pa-51f.1",
+            "dev_questions": "pa-51f.2"
+          }
+        },
+        {
+          "at": "2026-10-11T17:28:03+00:00",
+          "event": "updated",
+          "fields": [
+            "statement",
+            "scope",
+            "summary",
+            "deterministic_check",
+            "fixtures"
+          ],
+          "previous_statement": "Planning must run a named <team>-anchor-tuning peer concurrently after the first draft and INTENT/ANC capture."
+        }
+      ]
+    },
+    {
+      "id": "ANC-024",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Anchor-tuning may recommend clarity-only refinements or additions to INTENT and ANC records.",
+      "quote": "Note:  anchor-tuning can also recommend refinements or additions to anchors or intent for clarity (not to change meaning).",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-11",
+      "context": "plan-anchor Phase A planning review",
+      "summary": "Clarity-only authority recommendations",
+      "scope": "changes tuner findings, intent or anchor clarification proposals, or authority-edit boundaries",
+      "deterministic_check": "Contract tests permit a recommendation envelope for clarity-only INTENT/ANC edits, require a rationale and semantic-equivalence explanation, and forbid the tuner from applying or broadening them.",
+      "fixtures": {
+        "pass": [
+          "The tuner proposes a wording clarification with a rationale showing that the INTENT/ANC meaning is unchanged."
+        ],
+        "fail": [
+          "The tuner proposes a new product constraint as a clarification to an existing anchor."
+        ]
+      },
+      "question_overrides": {},
+      "version": 2,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-sx5",
+        "plan_questions": "pa-sx5.1",
+        "dev_questions": "pa-sx5.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-11T17:24:30+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-11T17:24:35+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-11T17:24:50+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-sx5",
+            "plan_questions": "pa-sx5.1",
+            "dev_questions": "pa-sx5.2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ANC-025",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "The user must approve every anchor-tuning recommendation before INTENT or ANC records are changed.",
+      "quote": "user should be consulted w/ recommended refinements to ANC + INTENT.",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-11",
+      "context": "plan-anchor Phase A planning review",
+      "summary": "User approves authority refinements",
+      "scope": "changes approval handling, intent or anchor updates, oracle invalidation, or tuning restart behavior",
+      "deterministic_check": "Workflow tests prove recommended authority edits remain proposals until explicit user approval; an approved version change invalidates and reruns affected oracles and candidate rankings.",
+      "fixtures": {
+        "pass": [
+          "The tuner presents its clarification proposal to the user and waits; after approval, the affected authority version and tournament are refreshed."
+        ],
+        "fail": [
+          "The tuner directly edits INTENT and keeps using the old oracle without asking the user."
+        ]
+      },
+      "question_overrides": {},
+      "version": 2,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-mqw",
+        "plan_questions": "pa-mqw.1",
+        "dev_questions": "pa-mqw.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-11T17:24:30+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-11T17:24:36+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-11T17:24:50+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-mqw",
+            "plan_questions": "pa-mqw.1",
+            "dev_questions": "pa-mqw.2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ANC-026",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Anchor-tuning must run as a dedicated Opus/Sol subagent of the planner.",
+      "quote": "I suppose anchor-tuning could simply be a sub-agent of planner (opus/sol minimum)",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-11",
+      "context": "plan-anchor Phase A planning review",
+      "summary": "Dedicated planner tuning subagent",
+      "scope": "changes tuning-agent hierarchy, launch ownership, or tuner model selection",
+      "deterministic_check": "Harness contract tests prove the planner launches the dedicated anchor-tuning profile with Opus on Claude and Sol on Codex, using an isolated structured authority packet.",
+      "fixtures": {
+        "pass": [
+          "The planner launches the isolated anchor-tuning profile with Opus or Sol and a structured INTENT/ANC authority packet."
+        ],
+        "fail": [
+          "The planner itself rewrites Jev questions in its own context."
+        ]
+      },
+      "question_overrides": {},
+      "version": 2,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-fiz",
+        "plan_questions": "pa-fiz.1",
+        "dev_questions": "pa-fiz.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-11T17:27:51+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-11T17:27:56+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-11T17:28:23+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-fiz",
+            "plan_questions": "pa-fiz.1",
+            "dev_questions": "pa-fiz.2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ANC-027",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Anchor-tuning must run its candidate-question Jev evaluations directly.",
+      "quote": "he could run jev questions directly.",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-11",
+      "context": "plan-anchor Phase A planning review",
+      "summary": "Tuner calls Jev directly",
+      "scope": "changes candidate-question execution, Jev call ownership, or nested-agent delegation",
+      "deterministic_check": "Execution traces prove anchor-tuning invokes Jev directly for its parallel candidate pool and does not require nested Agent delegation.",
+      "fixtures": {
+        "pass": [
+          "Anchor-tuning directly launches parallel Jev calls for its candidate pool and records every result."
+        ],
+        "fail": [
+          "Anchor-tuning must spawn nested Agent workers before it can evaluate any candidate question."
+        ]
+      },
+      "question_overrides": {},
+      "version": 2,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-tq0",
+        "plan_questions": "pa-tq0.1",
+        "dev_questions": "pa-tq0.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-11T17:27:51+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-11T17:27:56+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-11T17:28:23+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-tq0",
+            "plan_questions": "pa-tq0.1",
+            "dev_questions": "pa-tq0.2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ANC-028",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "After anchor-plan-review, the planner must fix genuine plan findings or send raw review evidence to anchor-tuning for question-defect triage.",
+      "quote": "planner would then send results of anchor-plan-review to anchor-tuning and/or update his plan to fix issues found.",
+      "kind": "directive",
+      "stated_by": "randlee",
+      "stated_at": "2026-10-11",
+      "context": "plan-anchor Phase A planning review",
+      "summary": "Review-to-plan-or-tuner feedback loop",
+      "scope": "changes post-review triage, plan repair, question retuning, or review-result routing",
+      "deterministic_check": "Workflow tests route genuine findings to planner-owned plan edits and suspected question defects as unmodified review evidence to anchor-tuning; tuner triage cannot receive a desired verdict.",
+      "fixtures": {
+        "pass": [
+          "The planner fixes a confirmed missing deliverable, while a suspicious low-confidence role answer is sent unchanged to anchor-tuning for oracle-based triage."
+        ],
+        "fail": [
+          "The planner asks anchor-tuning to rewrite a question until a failing plan review passes."
+        ]
+      },
+      "question_overrides": {},
+      "version": 2,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-ys2",
+        "plan_questions": "pa-ys2.1",
+        "dev_questions": "pa-ys2.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-11T17:27:51+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-11T17:27:56+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-11T17:28:23+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-ys2",
+            "plan_questions": "pa-ys2.1",
+            "dev_questions": "pa-ys2.2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ANC-029",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Planner-to-anchor-tuning review feedback must be rendered from a checked-in sc-compose Jinja2 template.",
+      "quote": "with this work model, it is important that the feedback sent to anchor-tuning be in a sc-compose j2 template which has strong wording that his job is NOT to fix jev failures that accurately point out issues w/ the current plan.",
+      "kind": "directive",
+      "stated_by": "user",
+      "stated_at": "2026-10-11",
+      "context": "planning session",
+      "summary": "Render planner feedback through checked-in sc-compose template",
+      "scope": "Planner-to-anchor-tuning review feedback transport.",
+      "deterministic_check": "Validate the checked-in .j2 template with sc-compose --strict and prove the planner renders every review-feedback handoff from it.",
+      "fixtures": {
+        "pass": [
+          "The planner renders the raw review request and result through the checked-in anchor-tuning-review-feedback.md.j2 template with sc-compose --strict."
+        ],
+        "fail": [
+          "The planner writes a free-form message asking the tuner to fix questions."
+        ]
+      },
+      "question_overrides": {},
+      "version": 2,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-y78",
+        "plan_questions": "pa-y78.1",
+        "dev_questions": "pa-y78.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-11T17:31:01+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-11T17:31:07+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-11T17:31:21+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-y78",
+            "plan_questions": "pa-y78.1",
+            "dev_questions": "pa-y78.2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ANC-030",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Anchor-tuning must independently classify each disputed Jev failure as either a cited plan violation or a cited question defect.",
+      "quote": "the anchor-tuning should respond w/ a) your plan violates ANC-XXX or INTENT-YYY. OR b) Yes, jev's response does not support ANC-XXX or INTENT-YYY, I will update the questions.",
+      "kind": "directive",
+      "stated_by": "user",
+      "stated_at": "2026-10-11",
+      "context": "planning session",
+      "summary": "Require binary evidence-backed tuner disposition",
+      "scope": "Anchor-tuning triage of planner-submitted Jev failures.",
+      "deterministic_check": "Reject triage results unless disposition is plan_violation or question_defect and evidence cites at least one approved ANC or INTENT identifier.",
+      "fixtures": {
+        "pass": [
+          "The tuner returns plan_violation, cites ANC-010, quotes the conflicting plan text, and leaves the sealed question digest unchanged.",
+          "The tuner returns question_defect, cites INTENT review policy, shows the frozen-oracle mismatch, and reopens the affected question tournament."
+        ],
+        "fail": [
+          "The tuner accepts the planner conclusion and edits the question without choosing a disposition or citing authority."
+        ]
+      },
+      "question_overrides": {},
+      "version": 2,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-9n0",
+        "plan_questions": "pa-9n0.1",
+        "dev_questions": "pa-9n0.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-11T17:31:02+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-11T17:31:08+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-11T17:31:22+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-9n0",
+            "plan_questions": "pa-9n0.1",
+            "dev_questions": "pa-9n0.2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ANC-031",
+      "source_type": "ANC",
+      "source_ref": null,
+      "statement": "Anchor-tuning must not change an accurate Jev question merely because the planner asks it to make a failing plan pass.",
+      "quote": "the feedback path from planner -> anchor-tuning has risk that planner would say 'jev is failing by plan, fix the questions'.",
+      "kind": "prohibition",
+      "stated_by": "user",
+      "stated_at": "2026-10-11",
+      "context": "planning session",
+      "summary": "Forbid pass-seeking retuning from planner pressure",
+      "scope": "Anchor-tuning triage and question updates after plan review.",
+      "deterministic_check": "Mutation tests submit a planner request to fix questions for a known plan defect and require plan_violation with unchanged sealed question digest.",
+      "fixtures": {
+        "pass": [
+          "A planner asks to fix a question for a known plan defect; the tuner rejects the request as plan_violation and preserves the sealed question digest."
+        ],
+        "fail": [
+          "A planner says the plan must pass, so the tuner weakens an accurate question until Jev returns pass."
+        ]
+      },
+      "question_overrides": {},
+      "version": 2,
+      "status": "locked",
+      "promoted_to": null,
+      "beads": {
+        "anchor": "pa-y6o",
+        "plan_questions": "pa-y6o.1",
+        "dev_questions": "pa-y6o.2"
+      },
+      "history": [
+        {
+          "at": "2026-10-11T17:31:02+00:00",
+          "event": "created",
+          "status": "locked"
+        },
+        {
+          "at": "2026-10-11T17:31:08+00:00",
+          "event": "updated",
+          "fields": [
+            "fixtures"
+          ]
+        },
+        {
+          "at": "2026-10-11T17:31:23+00:00",
+          "event": "beads_set",
+          "beads": {
+            "anchor": "pa-y6o",
+            "plan_questions": "pa-y6o.1",
+            "dev_questions": "pa-y6o.2"
+          }
+        }
+      ]
+    }
+  ]
+}

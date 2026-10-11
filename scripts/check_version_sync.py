@@ -109,7 +109,7 @@ def release_checks(want: str, drift: list) -> int:
             if f.parent == agent_dir:
                 front = FRONT_RE.match(f.read_text(encoding="utf-8"))
                 model_match = MODEL_RE.search(front.group(1)) if front else None
-                if f.name == "anchor-question-tune.md":
+                if f.name in {"anchor-question-tune.md", "anchor-tuning.md"}:
                     expected = "opus" if harness == "claude" else "sol"
                 else:
                     expected = "sonnet" if harness == "claude" else "luna"

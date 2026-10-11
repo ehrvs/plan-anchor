@@ -1,0 +1,34 @@
+{
+  "success": true,
+  "canceled": false,
+  "aborted_by": null,
+  "data": {
+    "operation": "triage",
+    "disposition": "plan_violation",
+    "authority_citations": ["ANC-031 v2"],
+    "oracle_sha256": null,
+    "sealed_question_set": {
+      "digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "questions": {"addressed": {"instructions": "Does the plan prevent pass-seeking retuning?"}}
+    },
+    "candidate_rankings": [],
+    "acceptance_table": [],
+    "evidence": {"review_run_id": "jev-review-031"},
+    "explanation": "The Jev failure accurately identifies the missing ANC-031 safeguard.",
+    "planner_action": "Fix the plan text; do not change the question.",
+    "question_action": "unchanged",
+    "sealed_question_set_digest_before": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "sealed_question_set_digest_after": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "authority_recommendations": []
+  },
+  "error": null,
+  "metadata": {
+    "duration_ms": 721,
+    "tool_calls": 2,
+    "retry_count": 0,
+    "correlation_id": "phase-a:A5:ANC-031",
+    "jev_run_ids": ["jev-review-031"],
+    "planner_observation_trust": "untrusted",
+    "authoritative_sources_unchanged": true
+  }
+}
