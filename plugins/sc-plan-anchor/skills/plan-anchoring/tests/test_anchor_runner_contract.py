@@ -80,6 +80,16 @@ class RunnerContractTests(unittest.TestCase):
         self.assertEqual((claude["model"], codex["model"]), ("sonnet", "luna"))
         self.assertRegex(claude["sha256"], r"^[0-9a-f]{64}$")
 
+    def test_resolves_crlf_agent_definition(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td) / "plugin"
+            definition = self.plugin(root)
+            content = definition.read_bytes().replace(b"\n", b"\r\n")
+            definition.write_bytes(content)
+            runtime = self.contract.resolve_agent(root, "codex", "anchor-plan-review")
+            self.assertEqual(runtime["agent"], "anchor-plan-review")
+            self.assertEqual(runtime["sha256"], self.contract.sha256_bytes(content))
+
     def test_rejects_traversal_symlink_nonregular_and_identity_mismatches(self):
         cases = []
         with tempfile.TemporaryDirectory() as td:
@@ -218,6 +228,7 @@ class RunnerContractTests(unittest.TestCase):
                 check=True,
                 capture_output=True,
                 text=True,
+                encoding="utf-8",
             )
             text = output.read_text(encoding="utf-8")
             blocks = re.findall(r"```json\s*(.*?)\s*```", text, re.S)

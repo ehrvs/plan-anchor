@@ -73,13 +73,18 @@ def _confined(root: Path, candidate: Path) -> bool:
 
 
 def _frontmatter(text: str) -> dict[str, Any]:
-    if not text.startswith("---\n"):
+    # Git may materialize checked-in Markdown with CRLF on Windows. Parse the
+    # frontmatter by logical lines while retaining the raw bytes for the
+    # runtime attestation hash.
+    lines = text.splitlines()
+    if not lines or lines[0] != "---":
         _fail("RUNTIME.FRONTMATTER", "agent definition lacks YAML frontmatter")
-    end = text.find("\n---\n", 4)
-    if end < 0:
+    try:
+        end = lines.index("---", 1)
+    except ValueError:
         _fail("RUNTIME.FRONTMATTER", "agent definition has unterminated YAML frontmatter")
     value: dict[str, str] = {}
-    for line in text[4:end].splitlines():
+    for line in lines[1:end]:
         if not line.strip() or line.lstrip().startswith("#") or line.startswith((" ", "\t")):
             continue
         match = re.fullmatch(r"([A-Za-z_][A-Za-z0-9_-]*):[ \t]*(.*)", line)

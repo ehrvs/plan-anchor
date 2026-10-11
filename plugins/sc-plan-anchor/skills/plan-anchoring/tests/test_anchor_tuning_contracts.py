@@ -60,6 +60,7 @@ class AnchorTuningContractTests(unittest.TestCase):
                 check=True,
                 capture_output=True,
                 text=True,
+                encoding="utf-8",
             )
             return fenced_json(output.read_text(encoding="utf-8"))
 
