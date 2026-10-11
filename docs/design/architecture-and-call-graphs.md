@@ -17,7 +17,7 @@ flowchart LR
     subgraph Agents["Harness-specific isolated agents (Agent tool)"]
         PlanAgent["anchor-plan-review<br/>one planning bead per run"]
         SprintAgent["anchor-sprint-review<br/>one sprint per run"]
-        Tuner["anchor-question-tune (independent Opus/Sol)<br/>one anchor and gate per run"]
+        Tuner["anchor-tuning (independent Opus/Sol)<br/>candidate tournament and evidence triage"]
     end
 
     subgraph Script["scripts/jev_judge.py (stdlib Python)"]

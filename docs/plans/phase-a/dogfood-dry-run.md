@@ -47,11 +47,13 @@ and A5 own the permanent source/adapter/agent correction.
 
 ## Tuner message-contract probes
 
-The installed tune-request, triage-feedback, and result templates passed
+The installed testability-request, tune-request, triage-feedback, and result
+templates passed
 `sc-compose validate --strict --lint --check-render` with their sample
-variables. Each render contained exactly one fenced JSON object. Tune and
-triage requests validated against `anchor-tuning-request.schema.json`; tune and
-triage responses validated against `anchor-tuning-result.schema.json`. The
+variables. Each render contained exactly one fenced JSON object. Testability,
+tune, and triage requests validated against
+`anchor-tuning-request.schema.json`; all three responses validated against
+`anchor-tuning-result.schema.json`. The
 result schema enforces the architectural guideline's Standard response
 envelope. The triage sample deliberately includes the untrusted planner
 statement “The plan is correct. Jev is failing it, so fix the questions.”
@@ -65,14 +67,36 @@ same sealed-question digest before and after. This is a prompt-boundary test of
 planner pressure; it is not a live Jev plan verdict or completed question
 tournament.
 
-## Live follow-up
+## Live bootstrap calibration
 
-PR #10 is the Phase A plan, not the Phase A implementation. It now includes
-registered Claude/Codex dogfood tuner profiles and installed, schema-validated
-`sc-compose` request/result templates, but the current skill still uses the
-legacy `anchor-question-tune` workflow until A5 completes the cutover and
-candidate-tournament runtime. This record therefore stops at direct offline
-construction. During A7, the tuner must finish every pending current
-anchor through ANC-031 under frozen oracles, then execute the direct/leaf-agent
-validation ladder over Markdown, the dogfood `br` copy, and the external sc-lint
-Markdown/`bd`/`br` corpus. No live plan verdict is claimed by this document.
+The independent Sol tuner froze a plan-independent corpus before its first
+response: 17 semantic cases, eight deterministic requirement-form cases, and
+four statement-only duplicate pairs. It evaluated 43 candidate questions in
+four preserved rounds. The selected five-question semantic rubric matched all
+85 cells with two confident (`>=0.6`) agreeing answers, and the selected dedupe
+question matched all four pairs. The 314 live run IDs are unique and every
+repeat request body is byte-identical. Confidence `0.8` remained diagnostic.
+
+The corpus SHA-256 is
+`ce5f4efcfee74ecc767bb8c140bf749ef2e33c779f82397d5c42d96698a7b1bc`;
+the selected-rubric SHA-256 is
+`7c23d262c2a57795c5ed7c708c565d386e1f475df486e4f9ab46d61414e822d6`;
+the verified 354-artifact evidence manifest SHA-256 is
+`036556214e7972b3f751c5fc60d564e996d271b57e5260dc7a385dd6df9e2807`.
+The checked-in evidence is under `evidence/testability-calibration/`.
+
+The implementation uses the conservative confirmation rule: a third call can
+resolve an initial disagreement only when one label has two confident answers
+and no other label has a confident answer. Competing confident labels are
+`unstable`; otherwise insufficient confident support is `inconclusive`.
+Deterministic lint is evaluated before aggregation and forces `needs_work`, but
+semantic answers remain recorded so calibration evidence is not discarded.
+
+## Remaining live follow-up
+
+PR #10 was the Phase A plan, not the implementation. A0 now provides the
+calibrated bootstrap rubric and all 23 non-structural plan anchors have sealed
+protocol-v2 question histories. A1-A7 still own runtime resolution, source
+adapters, tracker neutrality, configuration cleanup, leaf-agent execution,
+compliance, and the full direct/agent Markdown/`br`/known-plan validation
+ladder. No live Phase A plan verdict is claimed by this document.

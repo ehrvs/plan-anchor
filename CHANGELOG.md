@@ -4,6 +4,14 @@
 
 ## Unreleased
 
+- Calibrate the five-question anchor-testability rubric against a frozen,
+  plan-independent 17-case oracle: 85/85 semantic cells and 4/4 statement-only
+  duplicate cases matched across byte-identical live Jev repeats. Requirement
+  form is deterministic lint; low-confidence cells are inconclusive and
+  competing confident answers are unstable.
+- Separate question-tournament semantic calibration from the unchanged
+  fail-closed production confidence gate, and carry source-neutral canonical
+  tuning history across Markdown and `bd`/`br` plan sources.
 - Install the Phase A `anchor-tuning` dogfood agent in both harness registries
   (Opus for Claude, Sol for Codex) and add schema-validated `sc-compose`
   templates for tune requests, review feedback, and Standard-envelope results.

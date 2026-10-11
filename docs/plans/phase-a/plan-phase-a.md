@@ -16,6 +16,7 @@
   [Claude Opus](../../../plugins/sc-plan-anchor/.claude/agents/anchor-tuning.md)
   and [Codex Sol](../../../plugins/sc-plan-anchor/.codex/agents/anchor-tuning.md)
   profiles, with installed `sc-compose` templates for
+  [testability calibration](../../../plugins/sc-plan-anchor/skills/plan-anchoring/templates/anchor-tuning-testability-request.md.j2),
   [tuning requests](../../../plugins/sc-plan-anchor/skills/plan-anchoring/templates/anchor-tuning-tune-request.md.j2),
   [review feedback](../../../plugins/sc-plan-anchor/skills/plan-anchoring/templates/anchor-tuning-review-feedback.md.j2),
   and [tuner results](../../../plugins/sc-plan-anchor/skills/plan-anchoring/templates/anchor-tuning-result.md.j2).
@@ -73,7 +74,7 @@ the Markdown route does not require plan work to be modeled as tracker issues.
 | PA-REQ-016 | Keep examples executable against current harness and tracker output shapes and repository-valid paths. |
 | PA-REQ-017 | Do not define or invoke the sc-lint agents `arch-qa` or `req-qa` from this plugin. |
 | PA-REQ-018 | Before anchors are accepted or plan/development questions are tuned, an independent Opus/Sol evaluator must calibrate the versioned testability rubric against a frozen, plan-independent oracle corpus and record stability evidence. |
-| PA-REQ-019 | Replace the leaf `anchor-question-tune` role with a harness-specific Opus/Sol `anchor-tuning` subagent of the planner that evaluates a larger candidate-question pool through direct parallel Jev calls, retains oracle and selection judgment, and supports plan-independent `tune` plus post-review `triage` operations. |
+| PA-REQ-019 | Replace the leaf `anchor-question-tune` role with a harness-specific Opus/Sol `anchor-tuning` subagent of the planner that evaluates a larger candidate-question pool through direct parallel Jev calls, retains oracle and selection judgment, down-selects through the versioned semantic tournament protocol, and supports plan-independent `tune` plus post-review `triage` operations. |
 | PA-REQ-020 | Validate each sprint through a staged differential ladder: direct Jev construction, planner-invoked leaf review agents over Markdown and tracker copies, and known-plan fixtures materialized in both `bd` and `br`; any request or verdict divergence must be explained before acceptance. |
 | PA-REQ-021 | Let `anchor-tuning` evaluate candidates on diagnostic temporary plan copies with explicit ceremony added or required statements/deliverables removed, while proving authoritative Markdown and tracker sources are never modified. |
 | PA-REQ-022 | After the first draft and approved INTENT/ANC capture, launch a stable named `<team>-anchor-tuning` subagent and continue plan authoring concurrently; Sonnet/Luna leaf review must wait for its sealed production question set. |
@@ -152,8 +153,9 @@ Each harness registers `anchor-tuning.md` as a dedicated planner subagent
 (Claude Opus, Codex Sol) in place of the current leaf `anchor-question-tune`
 profile. The planner invokes it through the Agent tool. The tuner owns the
 frozen oracle, calls Jev directly, decides which wording to retain, and returns
-the auditable acceptance table. It does not spawn review agents or own final
-plan review. The profile has two non-overlapping operations:
+the auditable acceptance table. It may use bounded parallel candidate
+evaluators, but it does not spawn review agents or own final plan review. The
+profile has three non-overlapping operations:
 
 The normal lifecycle is pipelined. The planner creates a first draft, captures
 user-approved INTENT and ANC records, and launches the named subagent
@@ -161,21 +163,32 @@ user-approved INTENT and ANC records, and launches the named subagent
 draft. The final Sonnet/Luna `anchor-plan-review` fan-out is blocked until the
 tuner returns a sealed question-set digest for every applicable anchor.
 
-1. `tune` receives an authority packet rendered from the checked-in
+1. `testability` receives approved intent, an empty pre-anchor authority set,
+   and the frozen plan-independent corpus. It calibrates exactly five semantic
+   roles, keeps requirement form as deterministic lint, and seals only after
+   two byte-identical confident agreeing calls per cell; a third call is made
+   only after disagreement and cannot outvote a competing confident label.
+2. `tune` receives an authority packet rendered from the checked-in
    `anchor-tuning-tune-request.md.j2` template and containing only approved intent and the
    locked ANC records, with no desired plan verdict. It freezes the oracle,
    generates a diverse pool of candidate questions for each production role,
    and calls Jev directly and in parallel over identical frozen cases. The tuner
-   ranks candidates by exact oracle-cell agreement, correct derived verdicts,
-   minimum confidence, repeated-call stability, absence of regressions, and
+   accepts candidates only when every raw role label and threshold-free derived
+   verdict exactly matches the frozen oracle, repeated calls are identical, and
+   regressions are zero. It ranks accepted candidates using confidence only as
+   a diagnostic after semantic correctness and stability, then
    clarity/simplicity. It exercises judgment to select the smallest
-   role-complete production set and seals that set and its digest. A separately
+   role-complete production set and seals that set, the protocol version,
+   semantic score, confidence distribution, and source-neutral history digest.
+   The configured production confidence rule is separate and unchanged (the
+   current default is `0.6`): any required lower-confidence production answer
+   remains inconclusive/failing. A separately
    labeled read-only plan source may be used only as diagnostic corpus in a
    temporary workspace: positive variants add explicit ceremony and negative
    variants remove important statements or deliverables. Expectations come from
    INTENT/ANC, never the baseline plan's desired outcome. The authoritative
    Markdown and tracker records are hashed before and after and remain unchanged.
-2. `triage` receives a rendered post-review handoff, not free-form planner
+3. `triage` receives a rendered post-review handoff, not free-form planner
    instructions. The checked-in
    `plugins/sc-plan-anchor/skills/plan-anchoring/templates/anchor-tuning-review-feedback.md.j2`
    is rendered with
@@ -319,8 +332,12 @@ PR represents each implementation sprint.
   and removed required content, and leave authoritative Markdown and tracker
   sources byte-identical.
 - A named `<team>-anchor-tuning` subagent overlaps planner completion, emits sealed
-  question digests before leaf review, and routes every clarity-only authority
-  recommendation through explicit user approval and affected-result invalidation.
+  current-protocol question digests and byte-identical source-neutral tuning
+  history for Markdown and tracker copies before leaf review, and routes every
+  clarity-only authority recommendation through explicit user approval and
+  affected-result invalidation. Tournament confidence uses `0.8` only as a
+  ranking reference; production review remains fail-closed below its configured
+  threshold (default `0.6`).
 - Every planner-to-tuner review handoff is rendered from the checked-in
   `sc-compose` Jinja2 template. Triage cites INTENT/ANC and returns exactly
   `plan_violation` with an unchanged question digest or `question_defect` with

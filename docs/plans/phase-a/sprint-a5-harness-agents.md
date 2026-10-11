@@ -59,9 +59,11 @@ or introduce sc-lint reviewers.
   mutations. `triage` accepts only a `sc-compose`-rendered evidence handoff and
   cannot accept a desired verdict or a proposed rewrite from the planner.
 - Define the tuning tournament record: candidate ID and text, target role,
-  frozen case IDs, raw role answers, derived verdicts, confidence, repeat
-  stability, regressions, complexity, rank, rejection rationale, and selected
-  production question. Every parallel call receives the same immutable
+  protocol version, frozen case IDs, raw role answers, threshold-free semantic
+  verdicts, confidence-aware production verdicts, confidence diagnostics,
+  repeat stability, regressions, complexity, rank, rejection rationale,
+  selected production question, and source-neutral history-chain digest. Every
+  parallel call receives the same immutable
   candidate/corpus packet and returns raw evidence to the tuner.
 - Keep the tuning pool out of normal review. Production `anchor-plan-review`
   requests contain only the down-selected role-complete question set; unselected
@@ -123,7 +125,11 @@ or introduce sc-lint reviewers.
 - `anchor-tuning` is launched as a dedicated planner subagent through the Agent
   tool in both harnesses; contract tests prove only the tuner can
   freeze/interpret the oracle, rank candidates, and accept the down-selected
-  production questions.
+  production questions. Acceptance requires complete evidence, exact raw role
+  cells, exact threshold-free semantic verdicts, identical repeats, zero
+  regressions, and a role-complete bundle; confidence remains a ranking
+  diagnostic against the `0.8` reference and never changes the configured
+  production gate threshold (default `0.6`).
 - Given one sealed question set and equivalent Markdown/`br` inputs, direct and
   planner-invoked review-agent paths return byte-identical outbound Jev JSON
   before any verdict is considered.
@@ -156,8 +162,11 @@ or introduce sc-lint reviewers.
 - Direct-call fixtures proving parallel Jev calls cannot relabel oracle cells,
   write plan/tracker state, or hide a divergent request.
 - Tournament fixtures proving several candidates run concurrently on identical
-  frozen cases, ranking inputs are complete, rejected candidates remain
-  auditable, and final review payloads contain only selected questions.
+  frozen cases, threshold-free semantic projection is exact, low tournament
+  confidence alone does not reject an otherwise exact stable candidate,
+  instability and regressions do reject it, deterministic tie-breaking is
+  reproducible, rejected candidates remain auditable, and final review payloads
+  contain only selected questions.
 - Mutation fixtures proving added ceremony is detectable, removal of important
   statements/deliverables is flagged, expectations derive only from intent/ANC,
   and all writes remain inside the disposable workspace.

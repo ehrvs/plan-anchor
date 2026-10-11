@@ -1,12 +1,18 @@
 {
+  "template": {
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
   "correlation_id": "phase-a:A1:ANC-001:markdown",
   "runtime": {
     "workspace": "/workspace/plan-anchor",
     "script": "/workspace/plan-anchor/plugins/sc-plan-anchor/skills/plan-anchoring/scripts/jev_judge.py",
-    "version": "0.4.0",
+    "contract_script": "/workspace/plan-anchor/plugins/sc-plan-anchor/skills/plan-anchoring/scripts/anchor_tuning_contract.py",
+    "contract_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "version": "0.4.1",
     "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
     "agent": "anchor-tuning",
-    "model_tier": "opus-or-sol"
+    "harness": "codex",
+    "model": "sol"
   },
   "authority": {
     "intent": {
@@ -39,5 +45,13 @@
   },
   "candidate_minimum": 3,
   "repeat_count": 2,
-  "acceptance_threshold": 0.8
+  "tournament_protocol_version": "plan-anchor/question-tournament/2.0.0",
+  "production_confidence_threshold": 0.6,
+  "confidence_reference_threshold": 0.8,
+  "tuning_history": {
+    "schema": "plan-anchor/tuning-history/2",
+    "history_id": "phase-a:ANC-001:authority-v1:oracle-1111111111111111111111111111111111111111111111111111111111111111",
+    "events": []
+  },
+  "diagnostic_plan": null
 }

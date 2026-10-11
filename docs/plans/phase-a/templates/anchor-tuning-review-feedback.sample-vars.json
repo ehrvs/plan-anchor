@@ -6,10 +6,13 @@
   "runtime": {
     "workspace": "/workspace/plan-anchor",
     "script": "/workspace/plan-anchor/plugins/sc-plan-anchor/skills/plan-anchoring/scripts/jev_judge.py",
+    "contract_script": "/workspace/plan-anchor/plugins/sc-plan-anchor/skills/plan-anchoring/scripts/anchor_tuning_contract.py",
+    "contract_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
     "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
     "agent": "anchor-tuning",
-    "version": "0.4.0",
-    "model_tier": "opus-or-sol"
+    "harness": "codex",
+    "model": "sol",
+    "version": "0.4.1"
   },
   "authority": {
     "intent": {
@@ -35,14 +38,27 @@
     }
   },
   "sealed_question_set": {
-    "digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "digest": "acc28087f49d3bfe30b619e33b0dc9a2a97563d6e44505d31b3e0d39c57beaed",
     "questions": {
+      "relevant": {
+        "type": "choice",
+        "instructions": "Does the item govern question retuning after review?",
+        "criteria": {"yes": "It governs retuning.", "no": "It is unrelated.", "unclear": "The scope is ambiguous."}
+      },
       "addressed": {
-        "instructions": "Does the plan preserve an accurate failure rather than retune for passage?"
+        "type": "choice",
+        "instructions": "Does the plan prevent pass-seeking retuning?",
+        "criteria": {"yes": "It prevents pass-seeking retuning.", "no": "The safeguard is absent.", "unclear": "The safeguard is ambiguous."}
+      },
+      "contradicted": {
+        "type": "choice",
+        "instructions": "Does the item authorize retuning merely to make a plan pass?",
+        "criteria": {"yes": "It authorizes pass-seeking.", "no": "It does not conflict.", "unclear": "The authority is ambiguous."}
       }
     }
   },
   "review": {
+    "gate": "planning",
     "role": "anchor-plan-review",
     "source_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
     "canonical_request": {

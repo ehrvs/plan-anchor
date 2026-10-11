@@ -4,12 +4,115 @@
   "aborted_by": null,
   "data": {
     "operation": "tune",
+    "gate": "planning",
     "accepted": true,
+    "tournament_protocol_version": "plan-anchor/question-tournament/2.0.0",
+    "production_confidence_threshold": 0.6,
+    "confidence_reference_threshold": 0.8,
+    "semantic_score": {
+      "exact_role_cells": 24,
+      "total_role_cells": 24,
+      "exact_semantic_verdicts": 8,
+      "total_semantic_verdicts": 8,
+      "stable_cases": 4,
+      "total_cases": 4,
+      "regressions": 0
+    },
+    "confidence_diagnostics": {
+      "threshold": 0.8,
+      "cells_at_or_above_threshold": 22,
+      "total_cells": 24,
+      "minimum": 0.72,
+      "p10": 0.81,
+      "median": 0.96,
+      "mean": 0.91
+    },
+    "tuning_history_before_sha256": "f5f6b9726b096879731732c12477084abc3381f3eed1cc735e9915caa695ea73",
+    "tuning_history_after": {
+      "schema": "plan-anchor/tuning-history/2",
+      "history_id": "phase-a:ANC-001:authority-v1:oracle-1111111111111111111111111111111111111111111111111111111111111111",
+      "events": [
+        {
+          "event_index": 1,
+          "previous_event_sha256": null,
+          "event": "protocol_re_evaluated",
+          "protocol_version": "plan-anchor/question-tournament/2.0.0",
+          "authority": {
+            "intent_id": "phase-a-intent",
+            "intent_version": 1,
+            "intent_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "anchor_id": "ANC-001",
+            "anchor_version": 1,
+            "anchor_record_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+          },
+          "oracle": {
+            "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+            "case_ids": ["markdown-plan", "silent-plan", "conflicting-plan", "irrelevant-plan"],
+            "case_count": 4,
+            "repeat_count": 2
+          },
+          "candidate": {
+            "candidate_id": "addressed-2",
+            "question_sha256": "6c1c3a95b903c3bcbabe0328a1f92175e9701edee17c35cff4a466afd7303af7"
+          },
+          "evidence": {
+            "canonical_request_sha256": ["4444444444444444444444444444444444444444444444444444444444444444"],
+            "raw_response_sha256": ["5555555555555555555555555555555555555555555555555555555555555555"],
+            "run_ids": ["jev-tune-001", "jev-tune-002"]
+          },
+          "score": {
+            "exact_role_cells": 24,
+            "total_role_cells": 24,
+            "exact_semantic_verdicts": 8,
+            "total_semantic_verdicts": 8,
+            "stable_cases": 4,
+            "total_cases": 4,
+            "regressions": 0,
+            "confidence": {
+              "threshold": 0.8,
+              "cells_at_or_above_threshold": 22,
+              "total_cells": 24,
+              "minimum": 0.72,
+              "p10": 0.81,
+              "median": 0.96,
+              "mean": 0.91
+            }
+          },
+          "decision": {
+            "status": "sealed",
+            "question_set_sha256": "6c1c3a95b903c3bcbabe0328a1f92175e9701edee17c35cff4a466afd7303af7",
+            "reason_code": "TOURNAMENT.SEMANTIC_ACCEPTED"
+          },
+          "supersedes": {
+            "protocol_version": "plan-anchor/question-tournament/1",
+            "decision_sha256": "6666666666666666666666666666666666666666666666666666666666666666"
+          }
+        }
+      ]
+    },
+    "tuning_history_after_sha256": "831dce6dd64d9c6748d9515882db3c5512f7295b760d498b84b1e6b07b5c9b04",
+    "production_semantics_unchanged": true,
     "authority_citations": ["ANC-001 v1"],
     "oracle_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
     "sealed_question_set": {
-      "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-      "questions": {"addressed": {"instructions": "Does the plan keep Markdown authoritative?"}}
+      "digest": "6c1c3a95b903c3bcbabe0328a1f92175e9701edee17c35cff4a466afd7303af7",
+      "questions": {
+        "relevant": {
+          "type": "choice",
+          "instructions": "Does the item govern the accepted plan source?",
+          "criteria": {"yes": "It governs the source.", "no": "It is unrelated.", "unclear": "The scope is ambiguous."}
+        },
+        "addressed": {
+          "type": "choice",
+          "instructions": "Does the plan keep Markdown authoritative?",
+          "criteria": {"yes": "Markdown stays authoritative.", "no": "The requirement is absent.", "unclear": "Authority is ambiguous."}
+        },
+        "contradicted": {
+          "type": "choice",
+          "instructions": "Does the item replace Markdown authority?",
+          "criteria": {"yes": "It replaces Markdown authority.", "no": "It does not conflict.", "unclear": "The relationship is ambiguous."}
+        }
+      }
     },
     "candidate_rankings": [{"candidate_id": "addressed-2", "rank": 1}],
     "acceptance_table": [{"case_id": "markdown-plan", "matched": true}],
@@ -18,7 +121,7 @@
     "planner_action": "Use the sealed question set for review.",
     "question_action": null,
     "sealed_question_set_digest_before": null,
-    "sealed_question_set_digest_after": "2222222222222222222222222222222222222222222222222222222222222222",
+    "sealed_question_set_digest_after": "6c1c3a95b903c3bcbabe0328a1f92175e9701edee17c35cff4a466afd7303af7",
     "authority_recommendations": []
   },
   "error": null,
