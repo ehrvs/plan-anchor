@@ -21,6 +21,9 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
       - run: python -m pip install "jsonschema>=4,<5"
+      - run: python scripts/install_sc_compose_ci.py
+        env:
+          GH_TOKEN: ${{ github.token }}
       - run: python -m unittest discover -v -s plugins/sc-plan-anchor/skills/plan-anchoring/tests
       - run: python scripts/check_version_sync.py
       - if: github.event_name == 'pull_request'

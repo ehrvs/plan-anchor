@@ -20,24 +20,6 @@ def fenced_json(text: str) -> dict:
     return json.loads(blocks[0])
 
 
-def stdlib_render(template: str, variables: dict) -> str:
-    """Strict fallback for the templates' deliberately tiny tojson subset."""
-
-    def replace(match: re.Match) -> str:
-        path = match.group(1).strip().split(".")
-        value = variables
-        for part in path:
-            if not isinstance(value, dict) or part not in value:
-                raise AssertionError(f"missing strict template variable: {'.'.join(path)}")
-            value = value[part]
-        return json.dumps(value, separators=(",", ":"), ensure_ascii=False)
-
-    rendered = re.sub(r"\{\{\s*([A-Za-z0-9_.]+)\s*\|\s*tojson\s*\}\}", replace, template)
-    if "{{" in rendered or "{%" in rendered:
-        raise AssertionError("unsupported or unresolved template expression")
-    return rendered
-
-
 class AnchorTuningContractTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -56,11 +38,7 @@ class AnchorTuningContractTests(unittest.TestCase):
         template_path = SKILL / "templates" / template
         variables_path = PLAN / "templates" / variables
         if not binary:
-            rendered = stdlib_render(
-                template_path.read_text(encoding="utf-8"),
-                json.loads(variables_path.read_text(encoding="utf-8")),
-            )
-            return fenced_json(rendered)
+            self.fail("sc-compose 1.7.0 is required for strict contract rendering")
         with tempfile.TemporaryDirectory() as td:
             output = Path(td) / "rendered.md"
             subprocess.run(
