@@ -1,0 +1,34 @@
+{
+  "success": true,
+  "canceled": false,
+  "aborted_by": null,
+  "data": {
+    "operation": "tune",
+    "accepted": true,
+    "authority_citations": ["ANC-001 v1"],
+    "oracle_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+    "sealed_question_set": {
+      "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+      "questions": {"addressed": {"instructions": "Does the plan keep Markdown authoritative?"}}
+    },
+    "candidate_rankings": [{"candidate_id": "addressed-2", "rank": 1}],
+    "acceptance_table": [{"case_id": "markdown-plan", "matched": true}],
+    "evidence": {"runs": ["jev-tune-001", "jev-tune-002"]},
+    "explanation": "The selected question most accurately distinguishes explicit support, silence, and conflict.",
+    "planner_action": "Use the sealed question set for review.",
+    "question_action": null,
+    "sealed_question_set_digest_before": null,
+    "sealed_question_set_digest_after": "2222222222222222222222222222222222222222222222222222222222222222",
+    "authority_recommendations": []
+  },
+  "error": null,
+  "metadata": {
+    "duration_ms": 1842,
+    "tool_calls": 6,
+    "retry_count": 0,
+    "correlation_id": "phase-a:A1:ANC-001:markdown",
+    "jev_run_ids": ["jev-tune-001", "jev-tune-002"],
+    "planner_observation_trust": null,
+    "authoritative_sources_unchanged": true
+  }
+}

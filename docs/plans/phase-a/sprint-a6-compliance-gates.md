@@ -54,10 +54,11 @@ contracts or documentation narrative.
 - Add authority-recommendation tests proving proposals are clarity-only and
   non-mutating, user approval is required, rejected proposals preserve versions,
   and approved changes invalidate/restart all and only affected tuning evidence.
-- Add strict `sc-compose` template tests covering declared variables, missing
-  values, deterministic rendering, valid JSON payloads, hostile planner text
-  remaining inert data, the exact anti-pass-seeking instruction, and the absence
-  of desired-verdict fields.
+- Add strict `sc-compose` and JSON Schema tests for tune requests, triage
+  feedback, and tuner results covering declared variables, missing values,
+  deterministic rendering, exactly one valid fenced JSON payload, the Standard
+  response envelope, hostile planner text remaining inert data, the exact
+  anti-pass-seeking instruction, and the absence of desired-verdict fields.
 - Add triage mutation tests in which the planner says "the plan is correct; fix
   the questions." When raw evidence supports the failure, the only valid result
   is a cited `plan_violation` with an unchanged question digest. When a frozen
@@ -107,8 +108,9 @@ contracts or documentation narrative.
   supported by existing CI.
 - `git diff --check` and secret-canary repository scan.
 - Mutation fixtures for each prohibited condition listed in acceptance.
-- `sc-compose validate --strict --check-render` and a strict sample render of
-  `docs/plans/phase-a/templates/anchor-tuning-review-feedback.md.j2`.
+- `sc-compose validate --strict --lint --check-render` and strict sample renders
+  of all three installed anchor-tuning templates, followed by JSON Schema
+  validation of each extracted fenced payload.
 - Recorded-answer differential fixtures from this Phase A plan and selected
   sc-lint plans, each materialized through Markdown plus disposable `bd` and
   `br` stores.

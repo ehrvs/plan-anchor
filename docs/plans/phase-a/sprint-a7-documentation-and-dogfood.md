@@ -51,10 +51,11 @@ does not weaken anchors, questions, size limits, or verdicts to obtain a pass.
   example and one user-approved wording clarification fixture; prove no proposal
   changes meaning, no unapproved edit lands, and approved versions invalidate
   and rerun their affected tuning evidence.
-- Validate and render the checked-in `sc-compose` triage template from its
-  sample vars. Preserve the rendered evidence packet and prove hostile planner
-  wording remains untrusted data while the anti-pass-seeking instruction stays
-  authoritative.
+- Validate and render the checked-in `sc-compose` tune-request, triage-feedback,
+  and result templates from their sample vars. Validate the extracted fenced
+  payloads against the request/result schemas. Preserve the rendered evidence
+  packets and prove hostile planner wording remains untrusted data while the
+  anti-pass-seeking instruction stays authoritative.
 - For each sprint, first run Jev directly from the Markdown item and persist the
   canonical outbound request body per anchor. Then have the planner invoke
   `anchor-plan-review` over the Markdown and exact `br` copies with the sealed

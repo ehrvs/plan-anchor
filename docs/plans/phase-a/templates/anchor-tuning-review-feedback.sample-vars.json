@@ -4,15 +4,19 @@
   },
   "correlation_id": "phase-a:A5:ANC-031",
   "runtime": {
+    "workspace": "/workspace/plan-anchor",
+    "script": "/workspace/plan-anchor/plugins/sc-plan-anchor/skills/plan-anchoring/scripts/jev_judge.py",
+    "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
     "agent": "anchor-tuning",
-    "version": "0.1.0",
+    "version": "0.4.0",
     "model_tier": "opus-or-sol"
   },
   "authority": {
     "intent": {
       "id": "phase-a-intent",
       "version": 1,
-      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "content": "Preserve user intent through independent, evidence-based plan anchoring."
     },
     "anchors": {
       "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
@@ -20,7 +24,12 @@
         {
           "id": "ANC-031",
           "version": 2,
-          "statement": "Anchor-tuning must not change an accurate Jev question merely because the planner asks it to make a failing plan pass."
+          "state": "locked",
+          "statement": "Anchor-tuning must not change an accurate Jev question merely because the planner asks it to make a failing plan pass.",
+          "kind": "workflow",
+          "scope": "question triage",
+          "check": "An accurate failure preserves the question digest.",
+          "fixtures": ["planner-pressure-plan-violation"]
         }
       ]
     }

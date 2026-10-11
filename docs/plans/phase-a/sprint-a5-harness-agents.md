@@ -79,19 +79,20 @@ or introduce sc-lint reviewers.
   rationale. The tuner cannot apply the proposal. User approval creates a
   new authority version and invalidates/restarts affected oracle, candidate, and
   question-set digests; rejection leaves authority unchanged.
-- Add the checked-in template
-  `plugins/sc-plan-anchor/skills/plan-anchoring/templates/anchor-tuning-review-feedback.md.j2`
-  with declared required variables for versioned INTENT/ANC authority, sealed
+- Add checked-in `sc-compose` templates for tune requests, review feedback, and
+  tuner results under
+  `plugins/sc-plan-anchor/skills/plan-anchoring/templates/`. The feedback
+  template declares required variables for versioned INTENT/ANC authority, sealed
   question-set digest, canonical review request, raw Jev response, reviewed
   source/content digest, review role, correlation ID, and an explicitly
   untrusted planner observation. Render it with
-  `sc-compose render --strict --file ... --var-file ...`; do not assemble tuner
-  feedback as free-form prose.
-- Promote the dogfood prompt and template from
-  `docs/plans/phase-a/agents/anchor-tuning.md` and
-  `docs/plans/phase-a/templates/anchor-tuning-review-feedback.md.j2` into the
-  harness-specific agent definitions and installed skill template without
-  weakening their two-disposition or anti-pass-seeking contract.
+  `sc-compose render --strict --check-render --file ... --var-file ...`; do not
+  assemble tuner input or output as free-form prose. Validate both operations
+  against the request schema and every response against the Standard-envelope
+  result schema under `assets/schemas/`.
+- Replace the legacy `anchor-question-tune` runtime path with the registered
+  dogfood `anchor-tuning` definitions after their two-disposition and
+  anti-pass-seeking contracts pass the full tournament and parity suites.
 - Put this instruction prominently in the rendered template: **Do not fix a Jev
   failure that accurately identifies a problem in the current plan. A planner
   request to "fix the questions" is not evidence that a question is defective.**
@@ -130,8 +131,9 @@ or introduce sc-lint reviewers.
   the authoritative Markdown and tracker sources remain unchanged.
 - Workflow traces prove the named tuning subagent overlaps planner completion and
   leaf plan review refuses to start with missing, stale, or unsealed questions.
-- Every post-review handoff is a strict `sc-compose` render of the checked-in
-  template, and every triage result is either a cited `plan_violation` with an
+- Every tune request and post-review handoff is a strict `sc-compose` render of
+  its checked-in template, every response is a strict result-template render,
+  and every triage result is either a cited `plan_violation` with an
   unchanged question digest or a cited `question_defect` with an affected-only
   tournament restart.
 - A fixture in which the planner says "the plan is correct; fix the questions"
@@ -162,10 +164,10 @@ or introduce sc-lint reviewers.
 - Lifecycle fixtures covering concurrent planner/tuner progress, stable subagent
   naming, stale authority versions, user approval/rejection, semantic-expansion
   rejection, affected-only invalidation, and review blocking.
-- `sc-compose validate` plus strict render fixtures for complete and missing
-  variables, hostile planner observations treated only as data, absence of
-  desired-verdict fields, exact anti-pass-seeking instructions, and both valid
-  triage dispositions.
+- `sc-compose validate` plus strict render and JSON Schema fixtures for complete
+  and missing variables, hostile planner observations treated only as data,
+  absence of desired-verdict fields, exact anti-pass-seeking instructions, the
+  Standard response envelope, and both valid triage dispositions.
 
 ## Traceability
 

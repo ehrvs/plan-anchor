@@ -1,0 +1,43 @@
+{
+  "correlation_id": "phase-a:A1:ANC-001:markdown",
+  "runtime": {
+    "workspace": "/workspace/plan-anchor",
+    "script": "/workspace/plan-anchor/plugins/sc-plan-anchor/skills/plan-anchoring/scripts/jev_judge.py",
+    "version": "0.4.0",
+    "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "agent": "anchor-tuning",
+    "model_tier": "opus-or-sol"
+  },
+  "authority": {
+    "intent": {
+      "id": "phase-a-intent",
+      "version": 1,
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "content": "Preserve user intent through independent, evidence-based plan anchoring."
+    },
+    "anchors": {
+      "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "records": [
+        {
+          "id": "ANC-001",
+          "version": 1,
+          "state": "locked",
+          "statement": "The skill accepts a Markdown plan as authoritative input.",
+          "kind": "contract",
+          "scope": "planning gate",
+          "check": "A Markdown sprint can be normalized without tracker substitution.",
+          "fixtures": ["markdown-plan", "silent-plan", "conflicting-plan"]
+        }
+      ]
+    }
+  },
+  "gate": "planning",
+  "current_questions": {
+    "addressed": {
+      "instructions": "Does the plan explicitly preserve Markdown as the authoritative source?"
+    }
+  },
+  "candidate_minimum": 3,
+  "repeat_count": 2,
+  "acceptance_threshold": 0.8
+}

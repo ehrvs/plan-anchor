@@ -9,12 +9,16 @@ agents:
   anchor-question-tune:
     version: 0.4.0
     path: .codex/agents/anchor-question-tune.md
+  anchor-tuning:
+    version: 0.4.0
+    path: .codex/agents/anchor-tuning.md
 
 skills:
   plan-anchoring:
-    version: 0.4.0
+    version: 0.4.1
     path: skills/plan-anchoring/SKILL.md
     depends_on:
       anchor-plan-review: "0.x"
       anchor-sprint-review: "0.x"
       anchor-question-tune: "0.x"
+      anchor-tuning: "0.x"

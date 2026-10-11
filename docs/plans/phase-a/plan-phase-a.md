@@ -12,8 +12,13 @@
 - Dogfood evidence: [question tuning](question-tuning-evidence.md) and
   [offline source parity](dogfood-dry-run.md). Live review evidence is added
   only after the external Jev gate completes.
-- Dogfood tuner: [agents/anchor-tuning.md](agents/anchor-tuning.md), with its
-  checked-in [sc-compose feedback template](templates/anchor-tuning-review-feedback.md.j2).
+- Dogfood tuners: registered
+  [Claude Opus](../../../plugins/sc-plan-anchor/.claude/agents/anchor-tuning.md)
+  and [Codex Sol](../../../plugins/sc-plan-anchor/.codex/agents/anchor-tuning.md)
+  profiles, with installed `sc-compose` templates for
+  [tuning requests](../../../plugins/sc-plan-anchor/skills/plan-anchoring/templates/anchor-tuning-tune-request.md.j2),
+  [review feedback](../../../plugins/sc-plan-anchor/skills/plan-anchoring/templates/anchor-tuning-review-feedback.md.j2),
+  and [tuner results](../../../plugins/sc-plan-anchor/skills/plan-anchoring/templates/anchor-tuning-result.md.j2).
 - Tracker epic: `pa-sza`. Tracker records carry identity, dependencies, status,
   question overrides, and review evidence; they do not replace sprint plans.
 - Architectural baseline:
@@ -156,7 +161,8 @@ user-approved INTENT and ANC records, and launches the named subagent
 draft. The final Sonnet/Luna `anchor-plan-review` fan-out is blocked until the
 tuner returns a sealed question-set digest for every applicable anchor.
 
-1. `tune` receives an authority packet containing only approved intent and the
+1. `tune` receives an authority packet rendered from the checked-in
+   `anchor-tuning-tune-request.md.j2` template and containing only approved intent and the
    locked ANC records, with no desired plan verdict. It freezes the oracle,
    generates a diverse pool of candidate questions for each production role,
    and calls Jev directly and in parallel over identical frozen cases. The tuner
@@ -192,6 +198,13 @@ tuner returns a sealed question-set digest for every applicable anchor.
   show why Jev's response fails to support that authority under the frozen
   oracle, and reopen only the affected question tournament. The tuner updates a
   question only after that tournament produces and reseals a better question.
+
+Both request operations validate against
+`assets/schemas/anchor-tuning-request.schema.json`. Every tuner response is
+rendered from `anchor-tuning-result.md.j2`, validates against
+`assets/schemas/anchor-tuning-result.schema.json`, and uses the guideline's
+Standard envelope (`success`, `canceled`, `aborted_by`, `data`, `error`, and
+the required execution metadata).
 
 The planner's conclusion is never normative. A triage result that lacks one of
 the two dispositions, lacks an authority citation, accepts a requested verdict,
