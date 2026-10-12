@@ -4,6 +4,10 @@
 
 ## Unreleased
 
+- Rebuild progressive disclosure from the current tested skill language: keep
+  dependency verification, agent delegation, design positions, and hard stops
+  in `SKILL.md`; move each operation's existing workflow text verbatim behind a
+  role router without changing Jev, gate, tuning, tracker, or agent behavior.
 - Pin CI and the skill baseline to the released `sc-compose` 1.7.0 CLI on
   Linux, macOS, and Windows, and declare the JSON Schema test dependency.
 - Add one shared agent-runner contract that resolves a registered Claude or
