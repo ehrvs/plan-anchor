@@ -8,7 +8,7 @@ import unittest
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parents[5]
+ROOT = Path(__file__).resolve().parents[2]
 SKILL = ROOT / "plugins" / "sc-plan-anchor" / "skills" / "plan-anchoring"
 PLAN = ROOT / "docs" / "plans" / "phase-a"
 

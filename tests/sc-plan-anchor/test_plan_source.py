@@ -6,7 +6,7 @@ import unittest
 from unittest import mock
 
 
-ROOT = Path(__file__).resolve().parents[5]
+ROOT = Path(__file__).resolve().parents[2]
 SKILL = ROOT / "plugins" / "sc-plan-anchor" / "skills" / "plan-anchoring"
 MODULE_PATH = SKILL / "scripts" / "plan_source.py"
 JUDGE_PATH = SKILL / "scripts" / "jev_judge.py"

@@ -24,7 +24,7 @@ jobs:
       - run: python scripts/install_sc_compose_ci.py
         env:
           GH_TOKEN: ${{ github.token }}
-      - run: python -m unittest discover -v -s plugins/sc-plan-anchor/skills/plan-anchoring/tests
+      - run: python -m unittest discover -v -s tests/sc-plan-anchor
       - run: python scripts/check_version_sync.py
       - if: github.event_name == 'pull_request'
         run: python scripts/check_version_sync.py --base origin/${{ github.base_ref }}

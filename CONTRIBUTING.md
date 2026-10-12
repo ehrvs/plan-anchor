@@ -8,7 +8,7 @@ plan-anchoring is a general-purpose skill. Anyone, human or agent, may propose a
 - **General wording.** No project names, people, issue numbers, crate names or team-specific process. Use neutral examples (the "legacy repo" example is the house one). `grep -rniE "<your repo>|<your team>" plugins/sc-plan-anchor/` must return nothing.
 - **Concise.** One idea per sentence. State a rule once, where it is defined; elsewhere cite it. Justify numbers from `references/measured-behaviour.md`; a behaviour change that rests on how Jev judges comes with measurements (see `docs/experiments/` for the protocol).
 - **Script and docs together.** A new flag, field, verdict, error code or exit code lands with its reference text, its agent text if an agent uses it, and a test. Existing names are never renamed or removed in a patch; add only.
-- **Tests green.** `python3 -m unittest discover -s plugins/sc-plan-anchor/skills/plan-anchoring/tests` and `python3 scripts/check_version_sync.py --base origin/main` both pass before you open the PR.
+- **Tests green.** `python3 -m unittest discover -s tests/sc-plan-anchor` and `python3 scripts/check_version_sync.py --base origin/main` both pass before you open the PR.
 - **Never a secret.** No keys, no live run output containing private plan text. Fixture answers and dry runs are how tests touch Jev.
 
 ## Versioning
@@ -17,7 +17,7 @@ plan-anchoring is a general-purpose skill. Anyone, human or agent, may propose a
 
 | You are | You do |
 | --- | --- |
-| Proposing a change | Bump the **patch** of every artifact you edit, from the version it has on the base branch: `0.3.0` becomes `0.3.1`. Edits to `scripts/`, `assets/` or `tests/` count against `SKILL.md`. Mirror every agent and skill bump in `registry.yaml`. Add a line under `## Unreleased` in `CHANGELOG.md`. |
+| Proposing a change | Bump the **patch** of every artifact you edit, from the version it has on the base branch: `0.3.0` becomes `0.3.1`. Edits to `scripts/`, `assets/` or the repository-level `tests/sc-plan-anchor/` suite count against `SKILL.md`. Mirror every agent and skill bump in `registry.yaml`. Add a line under `## Unreleased` in `CHANGELOG.md`. |
 | Releasing (maintainers) | Bump the **minor** in `VERSION`, set every artifact and manifest to exactly that version in one commit, turn `## Unreleased` into `## X.Y.0 — date`. |
 
 Never change major.minor in a non-release PR, never bump a file you did not edit, and never leave an edited artifact at its old version. `scripts/check_version_sync.py` enforces this: by default it checks that every artifact shares `VERSION`'s major.minor with a patch at or above it, that the registry mirrors the agents, that manifests equal `VERSION`, and that the changelog has the release entry; with `--base <ref>` (CI runs it on every pull request) it also checks that each artifact you touched advanced its patch and that `CHANGELOG.md` changed. A PR that changes `VERSION` is a release and must bring every artifact to the new version exactly.

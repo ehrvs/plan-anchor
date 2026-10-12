@@ -15,7 +15,9 @@ import tempfile
 import unittest
 from unittest import mock
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+ROOT = Path(__file__).resolve().parents[2]
+SKILL = ROOT / "plugins" / "sc-plan-anchor" / "skills" / "plan-anchoring"
+sys.path.insert(0, str(SKILL / "scripts"))
 import jev_judge as jj  # noqa: E402
 
 PLAN_ROLES = {"relevance": "relevant", "compliance": "addressed", "conflict": "contradicted"}
@@ -25,7 +27,7 @@ STATEMENT = "The runtime crates are created by copying the legacy repo's runtime
 QUOTE = "copy the libraries from the legacy repo as the starting point and remove the legacy-specific code"
 REQ_STATEMENT = "All public CLI commands must support --json output with a stable schema."
 LIVE_ENV = {"TYPESAFE_API_KEY": "sk-test-0001", "PLAN_ANCHOR_ALLOW_REMOTE_JUDGE": "1"}
-ASSETS = Path(__file__).resolve().parents[1] / "assets"
+ASSETS = SKILL / "assets"
 
 
 def answer(choice, p=0.9, options=OPTIONS):
@@ -541,7 +543,7 @@ class RubricTests(unittest.TestCase):
         self.assertEqual(len(corpus["requirement_form_lint_cases"]), 8)
 
         selected = json.loads(
-            (ASSETS.parents[4] / "docs" / "plans" / "phase-a" / "evidence" /
+            (ROOT / "docs" / "plans" / "phase-a" / "evidence" /
              "testability-calibration" / "selected-rubric.json").read_text()
         )
         self.assertEqual(
@@ -1098,7 +1100,7 @@ class ResponseValidationTests(unittest.TestCase):
         self.assertIs(jj.validate_response({"model": "x", "answers": plan_answers()}, questions)["answers"]["relevant"]["choice"], "yes")
 
     def test_shipped_fixture_passes_validation(self):
-        fixture = json.loads((Path(__file__).resolve().parents[1] / "assets" / "examples" / "answers.fixture.json").read_text())
+        fixture = json.loads((ASSETS / "examples" / "answers.fixture.json").read_text())
         plan = jj.load_question_set("plan")
         for aid, answers in fixture.items():
             jj.validate_response({"answers": answers}, plan["questions"])

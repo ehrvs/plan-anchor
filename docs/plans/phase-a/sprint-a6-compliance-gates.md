@@ -107,7 +107,7 @@ contracts or documentation narrative.
 
 ## Authoritative validation
 
-- `python3 -m unittest discover -s plugins/sc-plan-anchor/skills/plan-anchoring/tests -p 'test_*.py'`.
+- `python3 -m unittest discover -s tests/sc-plan-anchor -p 'test_*.py'`.
 - `python3 scripts/check_version_sync.py`.
 - New source/runner/tracker contract suites on Linux, macOS, and Windows where
   supported by existing CI.
