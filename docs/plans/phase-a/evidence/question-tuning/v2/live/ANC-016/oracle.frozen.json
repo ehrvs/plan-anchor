@@ -1,0 +1,123 @@
+{
+  "authority_only": true,
+  "cases": {
+    "ANC-016": [
+      {
+        "authority_rationale": "Approved dual adapters operate on equivalent plan sources.",
+        "case_id": "approved-pass",
+        "expected_answers": {
+          "addressed": "yes",
+          "contradicted": "no",
+          "relevant": "yes"
+        },
+        "expected_verdict": "satisfied",
+        "item_path": "/private/tmp/jev-public-only-anc016-round2-20261011/items/approved-pass.md"
+      },
+      {
+        "authority_rationale": "Markdown input is explicitly rejected.",
+        "case_id": "approved-fail",
+        "expected_answers": {
+          "addressed": "no",
+          "contradicted": "yes",
+          "relevant": "yes"
+        },
+        "expected_verdict": "contradicted",
+        "item_path": "/private/tmp/jev-public-only-anc016-round2-20261011/items/approved-fail.md"
+      },
+      {
+        "authority_rationale": "Both required source forms are explicit.",
+        "case_id": "minimal-compliant",
+        "expected_answers": {
+          "addressed": "yes",
+          "contradicted": "no",
+          "relevant": "yes"
+        },
+        "expected_verdict": "satisfied",
+        "item_path": "/private/tmp/jev-public-only-anc016-round2-20261011/items/minimal-compliant.md"
+      },
+      {
+        "authority_rationale": "Governed source work omits the required pair.",
+        "case_id": "silent-relevant",
+        "expected_answers": {
+          "addressed": "no",
+          "contradicted": "no",
+          "relevant": "yes"
+        },
+        "expected_verdict": "not_addressed",
+        "item_path": "/private/tmp/jev-public-only-anc016-round2-20261011/items/silent-relevant.md"
+      },
+      {
+        "authority_rationale": "Generic multi-source support does not name Markdown and br.",
+        "case_id": "topical-only",
+        "expected_answers": {
+          "addressed": "no",
+          "contradicted": "no",
+          "relevant": "yes"
+        },
+        "expected_verdict": "not_addressed",
+        "item_path": "/private/tmp/jev-public-only-anc016-round2-20261011/items/topical-only.md"
+      },
+      {
+        "authority_rationale": "Unrelated capability.",
+        "case_id": "irrelevant",
+        "expected_answers": {
+          "addressed": "no",
+          "contradicted": "no",
+          "relevant": "no"
+        },
+        "expected_verdict": "not_applicable",
+        "item_path": "/private/tmp/jev-public-only-anc016-round2-20261011/items/irrelevant.md"
+      },
+      {
+        "authority_rationale": "Both are mentioned but dual input support/exclusion is unresolved.",
+        "case_id": "boundary",
+        "expected_answers": {
+          "addressed": "unclear",
+          "contradicted": "unclear",
+          "relevant": "yes"
+        },
+        "expected_verdict": "underspecified",
+        "item_path": "/private/tmp/jev-public-only-anc016-round2-20261011/items/boundary.md"
+      },
+      {
+        "authority_rationale": "One required source is excluded.",
+        "case_id": "markdown-only",
+        "expected_answers": {
+          "addressed": "no",
+          "contradicted": "yes",
+          "relevant": "yes"
+        },
+        "expected_verdict": "contradicted",
+        "item_path": "/private/tmp/jev-public-only-anc016-round2-20261011/items/markdown-only.md"
+      },
+      {
+        "authority_rationale": "Additional source does not conflict with preserved pair.",
+        "case_id": "add-bd",
+        "expected_answers": {
+          "addressed": "yes",
+          "contradicted": "no",
+          "relevant": "yes"
+        },
+        "expected_verdict": "satisfied",
+        "item_path": "/private/tmp/jev-public-only-anc016-round2-20261011/items/add-bd.md"
+      },
+      {
+        "authority_rationale": "Refactor is silent about affirmatively supporting the pair and does not exclude it.",
+        "case_id": "internal-refactor",
+        "expected_answers": {
+          "addressed": "no",
+          "contradicted": "no",
+          "relevant": "yes"
+        },
+        "expected_verdict": "not_addressed",
+        "item_path": "/private/tmp/jev-public-only-anc016-round2-20261011/items/internal-refactor.md"
+      }
+    ]
+  },
+  "diagnostic_plan_included": false,
+  "oracle_sha256": "18b43dbf2e0365c5a9d2ffe7c0f10f7bfde53762d9aa538f418628978286683a",
+  "repeat_count": 2,
+  "schema": "anchor-tuning-oracle/1",
+  "threshold": 0.8,
+  "verdict_derivation": "relevant=no=>not_applicable; else contradicted=yes=>contradicted; else addressed=yes=>satisfied; else any unclear=>underspecified; else not_addressed"
+}

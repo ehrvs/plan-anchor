@@ -83,6 +83,11 @@ def owner_of(rel: str):
     for agent_dir in AGENT_DIRS.values():
         agents_rel = agent_dir.relative_to(ROOT).as_posix()
         if rel.startswith(agents_rel + "/") and rel.endswith(".md"):
+            if not (ROOT / rel).exists():
+                # A removed profile cannot carry a new frontmatter version.
+                # Attribute the deletion to the skill contract that owns the
+                # active delegation set instead of reporting "no version".
+                return skill_rel + "/SKILL.md"
             return rel
     return None
 
@@ -109,7 +114,7 @@ def release_checks(want: str, drift: list) -> int:
             if f.parent == agent_dir:
                 front = FRONT_RE.match(f.read_text(encoding="utf-8"))
                 model_match = MODEL_RE.search(front.group(1)) if front else None
-                if f.name in {"anchor-question-tune.md", "anchor-tuning.md"}:
+                if f.name == "anchor-tuning.md":
                     expected = "opus" if harness == "claude" else "sol"
                 else:
                     expected = "sonnet" if harness == "claude" else "luna"

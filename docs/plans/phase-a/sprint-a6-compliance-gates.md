@@ -42,7 +42,10 @@ contracts or documentation narrative.
 - Add tuning-tournament tests proving candidate questions are evaluated in
   parallel against identical frozen cases, rank components and rejection reasons
   are persisted, semantic judgment can reject a misleading high score, and only
-  down-selected questions enter production review requests.
+  down-selected questions enter production review requests. Cover digest-checked
+  v1-to-v2 offline re-evaluation, byte-identical source-neutral history through
+  Markdown and tracker copies, and a regression proving a required production
+  answer below the configured threshold remains inconclusive/failing.
 - Add neutral plan-mutation tests: ceremony is added and required content is
   removed only in temporary copies, expectations are traceable to intent/ANC,
   source hashes remain unchanged, and a real baseline-plan failure is reported
@@ -83,8 +86,10 @@ contracts or documentation narrative.
   direct Jev call can change oracle/question state, source metadata enters a Jev
   body, or two equivalent source paths serialize different request JSON.
 - CI fails when candidate evaluation changes the oracle/case set, omits a
-  candidate result, ranks on current-plan passage, or leaks unselected tuning
-  questions into the production Jev body.
+  candidate result, accepts a semantic mismatch, hides instability or a
+  regression, alters historical evidence, ranks on current-plan passage, uses
+  threshold-free semantic projection as a production verdict, or leaks
+  unselected tuning questions into the production Jev body.
 - CI fails if tuning treats plan text as normative, writes an authoritative
   Markdown/tracker source, derives an expected mutation result from a desired
   plan verdict, or changes sealed questions after baseline-plan review.
@@ -113,7 +118,8 @@ contracts or documentation narrative.
   validation of each extracted fenced payload.
 - Recorded-answer differential fixtures from this Phase A plan and selected
   sc-lint plans, each materialized through Markdown plus disposable `bd` and
-  `br` stores.
+  `br` stores. Exercise both tournament protocol versions offline without new
+  Jev calls.
 
 ## Traceability
 

@@ -1,0 +1,123 @@
+{
+  "authority_only": true,
+  "cases": {
+    "ANC-013": [
+      {
+        "authority_rationale": "Approved fixture uses valid path, current flags, and supported envelope.",
+        "case_id": "approved-pass",
+        "expected_answers": {
+          "addressed": "yes",
+          "contradicted": "no",
+          "relevant": "yes"
+        },
+        "expected_verdict": "satisfied",
+        "item_path": "/private/tmp/jev-public-only-anc013-round2-20261011/items/approved-pass.md"
+      },
+      {
+        "authority_rationale": "Every concrete example element is incompatible.",
+        "case_id": "approved-fail",
+        "expected_answers": {
+          "addressed": "no",
+          "contradicted": "yes",
+          "relevant": "yes"
+        },
+        "expected_verdict": "contradicted",
+        "item_path": "/private/tmp/jev-public-only-anc013-round2-20261011/items/approved-fail.md"
+      },
+      {
+        "authority_rationale": "Complete validity policy is explicit.",
+        "case_id": "minimal-compliant",
+        "expected_answers": {
+          "addressed": "yes",
+          "contradicted": "no",
+          "relevant": "yes"
+        },
+        "expected_verdict": "satisfied",
+        "item_path": "/private/tmp/jev-public-only-anc013-round2-20261011/items/minimal-compliant.md"
+      },
+      {
+        "authority_rationale": "Bare example request does not establish validity.",
+        "case_id": "silent-relevant",
+        "expected_answers": {
+          "addressed": "no",
+          "contradicted": "no",
+          "relevant": "yes"
+        },
+        "expected_verdict": "not_addressed",
+        "item_path": "/private/tmp/jev-public-only-anc013-round2-20261011/items/silent-relevant.md"
+      },
+      {
+        "authority_rationale": "Generic realism/audit language is insufficient.",
+        "case_id": "topical-only",
+        "expected_answers": {
+          "addressed": "no",
+          "contradicted": "no",
+          "relevant": "yes"
+        },
+        "expected_verdict": "not_addressed",
+        "item_path": "/private/tmp/jev-public-only-anc013-round2-20261011/items/topical-only.md"
+      },
+      {
+        "authority_rationale": "No examples/interface topic.",
+        "case_id": "irrelevant",
+        "expected_answers": {
+          "addressed": "no",
+          "contradicted": "no",
+          "relevant": "no"
+        },
+        "expected_verdict": "not_applicable",
+        "item_path": "/private/tmp/jev-public-only-anc013-round2-20261011/items/irrelevant.md"
+      },
+      {
+        "authority_rationale": "Applicable JSON validity remains unspecified.",
+        "case_id": "boundary",
+        "expected_answers": {
+          "addressed": "unclear",
+          "contradicted": "no",
+          "relevant": "yes"
+        },
+        "expected_verdict": "underspecified",
+        "item_path": "/private/tmp/jev-public-only-anc013-round2-20261011/items/boundary.md"
+      },
+      {
+        "authority_rationale": "Concrete supported form satisfies the directive.",
+        "case_id": "valid-bd",
+        "expected_answers": {
+          "addressed": "yes",
+          "contradicted": "no",
+          "relevant": "yes"
+        },
+        "expected_verdict": "satisfied",
+        "item_path": "/private/tmp/jev-public-only-anc013-round2-20261011/items/valid-bd.md"
+      },
+      {
+        "authority_rationale": "Literal non-repository placeholder is presented as executable.",
+        "case_id": "placeholder-executable",
+        "expected_answers": {
+          "addressed": "no",
+          "contradicted": "yes",
+          "relevant": "yes"
+        },
+        "expected_verdict": "contradicted",
+        "item_path": "/private/tmp/jev-public-only-anc013-round2-20261011/items/placeholder-executable.md"
+      },
+      {
+        "authority_rationale": "Support for the concrete flag and shape cannot be determined from text.",
+        "case_id": "unknown-flag",
+        "expected_answers": {
+          "addressed": "unclear",
+          "contradicted": "unclear",
+          "relevant": "yes"
+        },
+        "expected_verdict": "underspecified",
+        "item_path": "/private/tmp/jev-public-only-anc013-round2-20261011/items/unknown-flag.md"
+      }
+    ]
+  },
+  "diagnostic_plan_included": false,
+  "oracle_sha256": "0aedacf3d1f54a90df3cbb5db8de7db88ce34008b14d14679f015bc3bab23b07",
+  "repeat_count": 2,
+  "schema": "anchor-tuning-oracle/1",
+  "threshold": 0.8,
+  "verdict_derivation": "relevant=no=>not_applicable; else contradicted=yes=>contradicted; else addressed=yes=>satisfied; else any unclear=>underspecified; else not_addressed"
+}

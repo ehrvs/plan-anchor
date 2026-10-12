@@ -38,8 +38,10 @@ does not weaken anchors, questions, size limits, or verdicts to obtain a pass.
   calibrated rubric against every locked anchor before plan-question tuning.
 - Run `anchor-tuning tune` for every non-structural anchor/gate, record the
   frozen oracle digest, full candidate pool and ranking evidence, rejection and
-  selection rationales, acceptance table, worker run IDs, and sealed production
-  question-set digest in `question-tuning-evidence.md`; apply only the
+  selection rationales, protocol version, semantic score, confidence
+  distribution, source-neutral history digest, migration event, acceptance
+  table, worker run IDs, and sealed production question-set digest in
+  `question-tuning-evidence.md`; apply only the
   tuner's down-selection whose normative inputs are only approved intent
   and ANC records and whose objective is accurate detection, never plan passage.
 - Exercise the candidate pool on temporary copies of representative plan text:
@@ -89,9 +91,11 @@ does not weaken anchors, questions, size limits, or verdicts to obtain a pass.
 - Jev is identified as required for the normal workflow; dry-run and fixture
   modes are accurately described as offline development/CI aids.
 - Every tuning result was produced independently from the active plan verdicts
-  and meets its frozen oracle at the required confidence. Its larger parallel
-  candidate pool is auditable, while final gate calls use only the sealed
-  down-selected questions.
+  and meets its frozen oracle with exact raw role labels, exact threshold-free
+  semantic verdicts, identical repeats, and zero regressions. Its confidence
+  distribution remains diagnostic and auditable, while final gate calls use
+  only the sealed down-selected questions and still fail closed when any
+  required production answer is below the configured threshold.
 - Diagnostic mutations correctly distinguish added explicit compliance from
   removed required content, and pre/post hashes prove no authoritative plan or
   tracker source was changed by the tuner.
@@ -155,8 +159,9 @@ does not weaken anchors, questions, size limits, or verdicts to obtain a pass.
 
 ## Non-closure
 
-- Waiving a Jev failure, lowering confidence to pass, or rewriting an anchor from
-  a live failure alone.
+- Waiving a Jev failure, lowering or bypassing production confidence to pass,
+  using threshold-free tournament semantics as a production verdict, or
+  rewriting an anchor from a live failure alone.
 - Adding unrelated marketplace work or sc-lint agents.
 - Writing test copies into sc-lint's live `bd` or `br` database.
 - Starting Phase B implementation.

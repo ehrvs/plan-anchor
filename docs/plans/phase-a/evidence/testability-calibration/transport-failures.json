@@ -1,0 +1,1 @@
+{"failures":[{"attempt":"sandbox-live-wave-1","error_code":"JEV.NETWORK","message":"Sandbox DNS resolution was unavailable before any response or run artifact was produced.","preserved":true}],"schema":"plan-anchor/transport-failures/1"}

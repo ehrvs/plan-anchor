@@ -1,0 +1,80 @@
+{
+  "anchors": {
+    "ANC-013": {
+      "artifact_root": "/private/tmp/phase-a-anchor-tuning-role-simple-v5-live-20261011/ANC-013",
+      "composition": [
+        "relevant=current-default",
+        "addressed=current-anchor-v4",
+        "contradicted=ANC-013-c9-conflict-proof-burden"
+      ],
+      "oracle_file_sha256": "b387665b743896dd594a2cdf95b8dd4b32c803797549a6b083c1170113a4e046",
+      "oracle_sha256": "0aedacf3d1f54a90df3cbb5db8de7db88ce34008b14d14679f015bc3bab23b07",
+      "score": {
+        "confidence": {
+          "cells_at_or_above_threshold": 56,
+          "mean": 0.9532,
+          "median": 1.0,
+          "minimum": 0.53,
+          "p10": 0.908,
+          "threshold": 0.8,
+          "total_cells": 60
+        },
+        "exact_role_cells": 58,
+        "exact_semantic_verdicts": 18,
+        "regressions": 2,
+        "stable_cases": 10,
+        "total_cases": 10,
+        "total_role_cells": 60,
+        "total_semantic_verdicts": 20
+      },
+      "sealed": false,
+      "selected_candidate_id": null,
+      "selected_jev_questions_sha256": null,
+      "selected_question_set_sha256": null,
+      "tuning_history_after_sha256": "481671d35588509f93b035daf626f5d72ef592799aa2009c3f944b9fdaf00744",
+      "tuning_history_before_sha256": "75450df5282321fc0fc07ff061a0017fa0c21e2f083581c3868024bd850ffd8a"
+    },
+    "ANC-016": {
+      "artifact_root": "/private/tmp/phase-a-anchor-tuning-role-simple-v5-live-20261011/ANC-016",
+      "composition": [
+        "relevant=ANC-016-c12-relevance-counterfactual",
+        "addressed=ANC-016-c9-entailment-boundary",
+        "contradicted=current-anchor-v6"
+      ],
+      "oracle_file_sha256": "4d9e90d24f0d71173f6a056153bc9de2723c096dbdc1c78a5e6b9aec11e0f051",
+      "oracle_sha256": "18b43dbf2e0365c5a9d2ffe7c0f10f7bfde53762d9aa538f418628978286683a",
+      "score": {
+        "confidence": {
+          "cells_at_or_above_threshold": 56,
+          "mean": 0.9708,
+          "median": 1.0,
+          "minimum": 0.58,
+          "p10": 0.935,
+          "threshold": 0.8,
+          "total_cells": 60
+        },
+        "exact_role_cells": 60,
+        "exact_semantic_verdicts": 20,
+        "regressions": 0,
+        "stable_cases": 10,
+        "total_cases": 10,
+        "total_role_cells": 60,
+        "total_semantic_verdicts": 20
+      },
+      "sealed": true,
+      "selected_candidate_id": "ANC-016-c13-role-simple-dual-source",
+      "selected_jev_questions_sha256": "476b342d07adacfbfb2f69ce8ea49e616e424f4db748cf5226d0b4b189ab6843",
+      "selected_question_set_sha256": "87781ba2190d7ff09f6192f11efcee7f9126456ef8204b6117aa4c355fc08589",
+      "tuning_history_after_sha256": "6c0a8e169f2d09e2092f221eaf9e75b1839a8e40a1803655d19dc4ba2556c719",
+      "tuning_history_before_sha256": "706996b0878028de62e7e068db53eb88eab7486ce8387dd4720e47926a08caff"
+    }
+  },
+  "authoritative_sources_unchanged": true,
+  "confidence_reference_threshold": 0.8,
+  "duration_ms": 1752,
+  "production_confidence_threshold": 0.6,
+  "protocol_version": "plan-anchor/question-tournament/2.0.0",
+  "role_simple": true,
+  "schema": "plan-anchor/final-tuning-outcome/2",
+  "semantic_verdict_threshold": 0.0
+}

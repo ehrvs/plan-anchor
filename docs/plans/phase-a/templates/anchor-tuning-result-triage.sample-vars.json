@@ -4,12 +4,29 @@
   "aborted_by": null,
   "data": {
     "operation": "triage",
+    "gate": "planning",
     "disposition": "plan_violation",
     "authority_citations": ["ANC-031 v2"],
     "oracle_sha256": null,
     "sealed_question_set": {
-      "digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
-      "questions": {"addressed": {"instructions": "Does the plan prevent pass-seeking retuning?"}}
+      "digest": "acc28087f49d3bfe30b619e33b0dc9a2a97563d6e44505d31b3e0d39c57beaed",
+      "questions": {
+        "relevant": {
+          "type": "choice",
+          "instructions": "Does the item govern question retuning after review?",
+          "criteria": {"yes": "It governs retuning.", "no": "It is unrelated.", "unclear": "The scope is ambiguous."}
+        },
+        "addressed": {
+          "type": "choice",
+          "instructions": "Does the plan prevent pass-seeking retuning?",
+          "criteria": {"yes": "It prevents pass-seeking retuning.", "no": "The safeguard is absent.", "unclear": "The safeguard is ambiguous."}
+        },
+        "contradicted": {
+          "type": "choice",
+          "instructions": "Does the item authorize retuning merely to make a plan pass?",
+          "criteria": {"yes": "It authorizes pass-seeking.", "no": "It does not conflict.", "unclear": "The authority is ambiguous."}
+        }
+      }
     },
     "candidate_rankings": [],
     "acceptance_table": [],
@@ -17,8 +34,8 @@
     "explanation": "The Jev failure accurately identifies the missing ANC-031 safeguard.",
     "planner_action": "Fix the plan text; do not change the question.",
     "question_action": "unchanged",
-    "sealed_question_set_digest_before": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
-    "sealed_question_set_digest_after": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "sealed_question_set_digest_before": "acc28087f49d3bfe30b619e33b0dc9a2a97563d6e44505d31b3e0d39c57beaed",
+    "sealed_question_set_digest_after": "acc28087f49d3bfe30b619e33b0dc9a2a97563d6e44505d31b3e0d39c57beaed",
     "authority_recommendations": []
   },
   "error": null,

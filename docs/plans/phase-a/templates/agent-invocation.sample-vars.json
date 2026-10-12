@@ -1,0 +1,18 @@
+{
+  "runtime": {
+    "agent": "anchor-plan-review",
+    "harness": "codex",
+    "path": ".codex/agents/anchor-plan-review.md",
+    "version": "0.4.0",
+    "model": "luna",
+    "sha256": "c09dd8d3102e367bb637f9340967fbbad3d12f1f3f5acdc79c59fcbbaf988181"
+  },
+  "operation": "plan_review",
+  "correlation_id": "phase-a:A1",
+  "params": {
+    "plan_source": {
+      "kind": "markdown",
+      "path": "docs/plans/phase-a"
+    }
+  }
+}

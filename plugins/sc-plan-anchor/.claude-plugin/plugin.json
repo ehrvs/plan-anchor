@@ -22,7 +22,6 @@
   "agents": [
     "./.claude/agents/anchor-plan-review.md",
     "./.claude/agents/anchor-sprint-review.md",
-    "./.claude/agents/anchor-question-tune.md",
     "./.claude/agents/anchor-tuning.md"
   ]
 }
