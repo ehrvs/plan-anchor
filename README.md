@@ -142,10 +142,16 @@ Planning-gate requests stay under 24,000 bytes: fitting beads are sent whole, an
 ## Development
 
 ```bash
-python3 -m unittest discover -s plugins/sc-plan-anchor/skills/plan-anchoring/tests -v
+python3 -m unittest discover -s tests/sc-plan-anchor -v
 ```
 
-Tests use fixture answers and a stub transport; they cover ID allocation, gating, overrides, retries and context shortening, response validation, report format, coverage and diffs, not Jev's judgment. CI runs them on Linux, macOS and Windows with Python 3.9 and the latest 3.x. A smoke run with no key (exits 1 because the example gate fails by design):
+Maintainer tests live outside the marketplace plugin so plugin consumers do not
+redistribute or inherit this repository's test suite. They use fixture answers
+and a stub transport; they cover ID allocation, gating, overrides, retries and
+context shortening, response validation, report format, coverage and diffs,
+not Jev's judgment. CI runs them on Linux, macOS and Windows with Python 3.9
+and the latest 3.x. A smoke run with no key (exits 1 because the example gate
+fails by design):
 
 ```bash
 S=plugins/sc-plan-anchor/skills/plan-anchoring/scripts/jev_judge.py

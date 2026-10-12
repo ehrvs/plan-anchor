@@ -4,6 +4,9 @@
 
 ## Unreleased
 
+- Keep maintainer tests outside the marketplace plugin at
+  `tests/sc-plan-anchor/`, so installing the skill does not redistribute the
+  upstream unit suite or invite consumers to wire it into their own CI.
 - Rebuild progressive disclosure from the current tested skill language: keep
   dependency verification, agent delegation, design positions, and hard stops
   in `SKILL.md`; move each operation's existing workflow text verbatim behind a
