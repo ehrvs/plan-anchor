@@ -1,0 +1,13 @@
+{
+  "name": "plan-anchor",
+  "owner": {
+    "name": "randlee"
+  },
+  "plugins": [
+    {
+      "name": "sc-plan-anchor",
+      "source": "./plugins/sc-plan-anchor",
+      "description": "Keep plans and delivered work aligned with user-approved anchors."
+    }
+  ]
+}

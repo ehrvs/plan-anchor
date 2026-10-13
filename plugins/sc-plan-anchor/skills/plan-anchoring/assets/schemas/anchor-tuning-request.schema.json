@@ -21,8 +21,8 @@
         "contract_script": {"type": "string", "minLength": 1},
         "contract_sha256": {"$ref": "#/$defs/sha256"},
         "agent": {"const": "anchor-tuning"},
-        "harness": {"enum": ["claude", "codex"]},
-        "model": {"enum": ["opus", "sol"]}
+        "harness": {"enum": ["claude", "codex", "cursor"]},
+        "model": {"enum": ["opus", "sol", "grok[effort=high]"]}
       }
     },
     "authority": {

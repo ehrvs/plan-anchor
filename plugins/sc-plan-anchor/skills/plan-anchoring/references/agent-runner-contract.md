@@ -1,6 +1,6 @@
 ---
 name: agent-runner-contract
-version: 0.4.1
+version: 0.4.2
 description: Resolve one trusted harness agent, validate one fenced request and response, and write a credential-safe invocation attestation.
 ---
 
@@ -14,7 +14,10 @@ returns an immutable runtime descriptor. A failed supplied root or registry
 fails closed; callers do not search for another installation.
 
 Render `templates/agent-invocation.md.j2` with that descriptor and invoke the
-named definition through the harness **Agent** tool. The invocation contains
+named definition through the harness **Agent** tool. In Cursor, invoke the
+registered subagent through the **Task** tool and do not pass a model argument;
+the descriptor's `model` is `composer` for the gates and `grok[effort=high]`
+for tuning. The invocation contains
 exactly one fenced JSON request. The response must contain exactly one fenced
 JSON result and pass `validate-fence` before any follow-on action.
 

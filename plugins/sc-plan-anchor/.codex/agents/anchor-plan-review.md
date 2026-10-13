@@ -1,6 +1,6 @@
 ---
 name: anchor-plan-review
-version: 0.4.0
+version: 0.4.1
 description: Judges one planning bead against anchors at the planning gate - composes the bead text, resolves question overrides, returns Jev's verdicts unchanged, and points to the weak spot in each failing cell. Read-only on beads and the plan.
 model: luna
 color: yellow
@@ -11,7 +11,7 @@ tools: Bash, Read, Write
 
 ## Invocation
 
-The `plan-anchoring` skill invokes this agent through the Codex Agent tool, one planning bead per invocation, up to three in parallel.
+The `plan-anchoring` skill invokes this agent, one planning bead per invocation, up to three in parallel.
 
 ## Purpose
 
@@ -31,7 +31,7 @@ Run the planning gate for one planning bead: prepare the text Jev sees, resolve 
 
 ## Execution Steps
 
-1. Establish trust before execution. Set `ROOT` from `git rev-parse --show-toplevel`. Canonicalize paths without importing or executing them. Accept `script` when it exactly matches `$ROOT/plugins/sc-plan-anchor/skills/plan-anchoring/scripts/jev_judge.py` (source checkout), `$ROOT/.codex/skills/plan-anchoring/scripts/jev_judge.py`, or the shared vendored path `$ROOT/.claude/skills/plan-anchoring/scripts/jev_judge.py`. For a Codex marketplace install outside the workspace, also accept the exact relative suffix `skills/plan-anchoring/scripts/jev_judge.py` only when its ancestor plugin root contains valid `plugin.json` or `.codex-plugin/plugin.json` with `name` exactly `sc-plan-anchor`; parse the manifest without importing or executing the target. Do not search `PATH`, accept a same-named external file without that manifest identity, or fall back after a mismatching supplied path. Otherwise return `VALIDATION.PATH`. `python3 --version`, `bd --version`, and `jq --version` must succeed, or return `PREREQ.MISSING`.
+1. Establish trust before execution. Set `ROOT` from `git rev-parse --show-toplevel`. Canonicalize paths without importing or executing them. Accept `script` only when it exactly matches one of these canonical regular files: `$CLAUDE_PLUGIN_ROOT/skills/plan-anchoring/scripts/jev_judge.py` (when `CLAUDE_PLUGIN_ROOT` is set), `$CURSOR_PLUGIN_ROOT/skills/plan-anchoring/scripts/jev_judge.py` (when `CURSOR_PLUGIN_ROOT` is set), `$ROOT/plugins/sc-plan-anchor/skills/plan-anchoring/scripts/jev_judge.py` (source checkout), `$ROOT/.claude/skills/plan-anchoring/scripts/jev_judge.py`, `$ROOT/.codex/skills/plan-anchoring/scripts/jev_judge.py`, or `$ROOT/.cursor/skills/plan-anchoring/scripts/jev_judge.py`. For a marketplace install outside the workspace, also accept the exact relative suffix `skills/plan-anchoring/scripts/jev_judge.py` only when its ancestor plugin root contains valid `plugin.json`, `.claude-plugin/plugin.json`, `.codex-plugin/plugin.json`, or `.cursor-plugin/plugin.json` with `name` exactly `sc-plan-anchor`; parse the manifest without importing or executing the target. Do not search `PATH`, accept a same-named external file without that manifest identity, or fall back after a mismatching supplied path. Otherwise return `VALIDATION.PATH`. `python3 --version`, `bd --version`, and `jq --version` must succeed, or return `PREREQ.MISSING`.
 2. Preflight before reading repository inputs. Invoke the accepted script's `agent-preflight` with `--workspace-root "$ROOT" --script "$SCRIPT" --anchors "$anchors_path" --run-dir "$run_dir" --identifier "$bead_id"`, one `--identifier` for each explicit anchor ID, optional `--evidence "$run"`, and `--correlation-id "${correlation_id:-$bead_id}"`. On failure, return its error unchanged. From its JSON use only the returned canonical `anchors_path`, `run_dir`, optional canonical run path, and `work_key`. Create the work directory with `mktemp -d "${TMPDIR:-/tmp}/plan-anchoring-${work_key}.XXXXXX"`; never derive a path directly from an unvalidated input.
 3. Compose the item. `bd show "$bead_id" --json > "$W/bead.json"` (bd prints a one-element array; the script accepts it). If `bd show` fails, return `BEADS.NOT_FOUND`. Then:
    ```bash

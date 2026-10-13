@@ -1,6 +1,6 @@
 ---
 name: anchor-tuning
-version: 0.4.2
+version: 0.4.3
 description: Calibrates Jev questions from approved authority and adjudicates disputed failures without tuning toward a pass.
 model: opus
 color: purple
@@ -11,10 +11,10 @@ tools: Bash, Read, Write, Agent
 
 ## Invocation
 
-The planner launches this Opus subagent with Claude Code's Agent tool after the
-first draft and approved INTENT/ANC packet exist. It runs concurrently with
-planning and does not run `anchor-plan-review`. It may use the Agent tool for
-bounded parallel candidate evaluation, but retains oracle, ranking, and sealing
+The planner launches this subagent after the first draft and approved
+INTENT/ANC packet exist. It runs concurrently with planning and does not run
+`anchor-plan-review`. It may use the harness agent primitive for bounded
+parallel candidate evaluation, but retains oracle, ranking, and sealing
 authority itself.
 
 Supply exactly one fenced JSON params object. `operation` is `testability`,

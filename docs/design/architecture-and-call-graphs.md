@@ -211,7 +211,7 @@ Policy summary:
 
 ## 5. Harness-specific execution
 
-Claude Code and Codex use separate agent definitions so model selection and invocation syntax belong to the harness, while the contract and deterministic script remain the same. Gate runners use Sonnet/Luna; question tuning is deliberately separated into Opus/Sol because it owns the judgment-heavy oracle and wording loop. Cursor has no bundled agent definition in this release and may follow gate steps inline, but may not collapse question tuning back into the planner.
+Claude Code, Codex, and Cursor use separate agent definitions so model selection and invocation syntax belong to the harness, while the contract and deterministic script remain the same. Gate runners use Sonnet, Luna, or Composer. Question tuning is deliberately separated into Opus, Sol, or unversioned Grok at high effort (`grok[effort=high]`) because it owns the judgment-heavy oracle and wording loop. Cursor launches those registered subagents with the Task tool and does not pass a model override.
 
 ```mermaid
 flowchart LR
@@ -221,11 +221,15 @@ flowchart LR
     subgraph CX["Codex"]
         S2["skill"] -- "Agent tool, model: luna" --> A2[".codex/agents/anchor-plan-review"] --> J2["jev_judge.py"]
     end
+    subgraph CU["Cursor"]
+        S3["skill"] -- "Task tool, model: composer" --> A3[".cursor/agents/anchor-plan-review"] --> J3["jev_judge.py"]
+    end
     J1 --> Jev[("Jev")]
     J2 --> Jev
+    J3 --> Jev
 ```
 
-Before execution, each agent canonicalizes the supplied script path and requires an exact match with its harness allowlist. It then calls `agent-preflight`, which confines anchors, run directories, and evidence to the Git workspace, rejects unsafe identifiers and PR numbers, and returns canonical paths. Claude accepts the script beside the installed plugin skill or under the project `.claude/skills/`; the project-local Codex adapter accepts `.codex/skills/` or the shared `.claude/skills/` installation.
+Before execution, each agent canonicalizes the supplied script path and requires an exact match with its harness allowlist. It then calls `agent-preflight`, which confines anchors, run directories, and evidence to the Git workspace, rejects unsafe identifiers and PR numbers, and returns canonical paths. Claude accepts the script beside the installed plugin skill or under the project `.claude/skills/`; the project-local Codex adapter accepts `.codex/skills/` or the shared `.claude/skills/` installation. Cursor accepts `$CURSOR_PLUGIN_ROOT`, a source checkout, `.cursor/skills/`, or a marketplace install whose `.cursor-plugin/plugin.json` names `sc-plan-anchor`.
 
 ## 6. What leaves the machine
 
