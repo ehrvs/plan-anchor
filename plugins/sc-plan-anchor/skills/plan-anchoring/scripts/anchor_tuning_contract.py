@@ -67,7 +67,7 @@ def validate_history(history: dict) -> None:
 def validate_request(request: dict) -> None:
     reject_forbidden(request)
     runtime = request["runtime"]
-    expected_model = {"claude": "opus", "codex": "sol"}.get(runtime["harness"])
+    expected_model = {"claude": "opus", "codex": "sol", "cursor": "grok[effort=high]"}.get(runtime["harness"])
     if runtime["model"] != expected_model:
         raise ContractError(
             f"VALIDATION.MODEL: {runtime['harness']} anchor-tuning requires {expected_model}"

@@ -38,6 +38,7 @@ SKILL = PLUGIN / "skills" / "plan-anchoring"
 AGENT_DIRS = {
     "claude": PLUGIN / ".claude" / "agents",
     "codex": PLUGIN / ".codex" / "agents",
+    "cursor": PLUGIN / ".cursor" / "agents",
 }
 FRONT_RE = re.compile(r"^---\n(.*?)\n---", re.S)
 VER_RE = re.compile(r'^\s*version:\s*["\']?([0-9]+\.[0-9]+\.[0-9]+)["\']?\s*$', re.M)
@@ -114,7 +115,9 @@ def release_checks(want: str, drift: list) -> int:
             if f.parent == agent_dir:
                 front = FRONT_RE.match(f.read_text(encoding="utf-8"))
                 model_match = MODEL_RE.search(front.group(1)) if front else None
-                if f.name == "anchor-tuning.md":
+                if harness == "cursor":
+                    expected = "grok[effort=high]" if f.name == "anchor-tuning.md" else "composer"
+                elif f.name == "anchor-tuning.md":
                     expected = "opus" if harness == "claude" else "sol"
                 else:
                     expected = "sonnet" if harness == "claude" else "luna"
@@ -154,7 +157,8 @@ def release_checks(want: str, drift: list) -> int:
             drift.append(f"{reg.relative_to(ROOT)}: depends_on {sorted(dependencies)} != {sorted(expected_agents)}")
     manifests = [PLUGIN / "plugin.json", *ROOT.glob("**/.claude-plugin/plugin.json"), *ROOT.glob("**/.codex-plugin/plugin.json"),
                      *ROOT.glob("**/.cursor-plugin/plugin.json"), *ROOT.glob("**/.claude-plugin/marketplace.json"),
-                     *ROOT.glob("**/.agents/plugins/marketplace.json"), *ROOT.glob("**/manifest.yaml")]
+                     *ROOT.glob("**/.agents/plugins/marketplace.json"), *ROOT.glob("**/.cursor-plugin/marketplace.json"),
+                     *ROOT.glob("**/manifest.yaml")]
     for manifest in manifests:
         if "/.git/" in str(manifest) or "node_modules" in str(manifest):
             continue
@@ -178,6 +182,7 @@ def release_checks(want: str, drift: list) -> int:
         PLUGIN / "plugin.json",
         PLUGIN / ".claude-plugin" / "plugin.json",
         PLUGIN / ".codex-plugin" / "plugin.json",
+        PLUGIN / ".cursor-plugin" / "plugin.json",
     ]
     for manifest in plugin_manifests:
         if not manifest.exists():
@@ -193,7 +198,13 @@ def release_checks(want: str, drift: list) -> int:
     catalogs = [
         ROOT / ".claude-plugin" / "marketplace.json",
         ROOT / ".agents" / "plugins" / "marketplace.json",
+        ROOT / ".cursor-plugin" / "marketplace.json",
     ]
+    cursor_manifest = json.loads((PLUGIN / ".cursor-plugin" / "plugin.json").read_text())
+    if cursor_manifest.get("skills") != "./skills/":
+        drift.append("Cursor manifest skills must be ./skills/")
+    if cursor_manifest.get("agents") != "./.cursor/agents":
+        drift.append("Cursor manifest agents must be ./.cursor/agents")
     for catalog in catalogs:
         if not catalog.exists():
             drift.append(f"{catalog.relative_to(ROOT)}: missing")

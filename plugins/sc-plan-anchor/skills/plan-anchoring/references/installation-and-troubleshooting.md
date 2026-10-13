@@ -1,7 +1,7 @@
 ---
 name: installation-and-troubleshooting
-version: 0.4.2
-description: Installing and locating the CLIs and credentials plan-anchoring depends on (python3, beads, sc-compose, TypeSafe API key), minimum versions, PATH issues in Claude Code, Codex environment policy, validation, and known issues.
+version: 0.4.3
+description: Installing and locating the CLIs and credentials plan-anchoring depends on (python3, beads, sc-compose, jq, TypeSafe API key), minimum versions, PATH issues in Claude Code, Codex and Cursor environment policy, validation, and known issues.
 ---
 
 # Installation and troubleshooting
@@ -12,10 +12,11 @@ description: Installing and locating the CLIs and credentials plan-anchoring dep
 which python3 && python3 --version
 which bd && bd --version
 which sc-compose && sc-compose --version
+which jq && jq --version
 test -n "$TYPESAFE_API_KEY" && echo "key set" || echo "key missing"
 ```
 
-If all three succeed, skip to Validation.
+If these checks succeed, skip to Validation.
 
 ## Find an existing install
 
@@ -25,6 +26,7 @@ Claude Code's bash inherits a minimal PATH that can miss Homebrew, Go, pyenv, an
 for p in /opt/homebrew/bin/bd "$HOME/go/bin/bd" "$HOME/.local/bin/bd" /usr/local/bin/bd; do [ -x "$p" ] && echo "bd at $p"; done
 for p in /opt/homebrew/bin/python3 /usr/local/bin/python3 /usr/bin/python3 "$HOME/.pyenv/shims/python3"; do [ -x "$p" ] && echo "python3 at $p"; done
 for p in /opt/homebrew/bin/sc-compose "$HOME/.local/bin/sc-compose" /usr/local/bin/sc-compose; do [ -x "$p" ] && echo "sc-compose at $p"; done
+for p in /opt/homebrew/bin/jq /usr/bin/jq /usr/local/bin/jq; do [ -x "$p" ] && echo "jq at $p"; done
 ```
 
 Use the full path, or `export PATH="/opt/homebrew/bin:$PATH"` for the session.
@@ -64,6 +66,7 @@ Use the full path, or `export PATH="/opt/homebrew/bin:$PATH"` for the session.
   ```
   GUI-launched apps do not read shell files; use `launchctl setenv TYPESAFE_API_KEY "$TYPESAFE_API_KEY"` (macOS, until reboot). Never commit or echo the key.
 - Under Codex, `TYPESAFE_API_KEY` matches the default `*KEY*` exclusion for command environments. If you restrict `[shell_environment_policy]` in `config.toml`, keep `ignore_default_excludes = true`, and with an allowlist under `[shell_environment_policy.filters]` add `"TYPESAFE_API_KEY" = "include"`.
+- Cursor's agent shell uses the environment of the Cursor app. A GUI launch does not read shell rc files, so set `TYPESAFE_API_KEY` with `launchctl setenv` (macOS, until reboot) before starting Cursor, and export `PLAN_ANCHOR_ALLOW_REMOTE_JUDGE=1` in that same app environment for a live session. A plugin variable does not export into `python3 jev_judge.py`.
 - For the live rubric, tuning, fixture checks, and gates also `export PLAN_ANCHOR_ALLOW_REMOTE_JUDGE=1` for that session only (`jev-api.md`). The normal skill workflow requires Jev; offline commands are diagnostics and CI support.
 
 ## Minimum versions
@@ -73,6 +76,7 @@ Use the full path, or `export PATH="/opt/homebrew/bin:$PATH"` for the session.
 | python3 | 3.9 | tested floor; standard library only |
 | bd | 1.x | `--parent`, `--labels`, `--silent`, `--body-file`, `show --json`, `children --json`, `comment --file`, `ready --exclude-label` |
 | sc-compose | 1.6.0 | strict render, declared-variable validation, and `--check-render` |
+| jq | any current release | gate agents read question-override beads |
 | Jev | `jev-latest` | pin a version once thresholds are tuned |
 
 ## PATH troubleshooting

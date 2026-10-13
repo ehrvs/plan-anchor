@@ -77,7 +77,10 @@ class RunnerContractTests(unittest.TestCase):
         plugin = ROOT / "plugins" / "sc-plan-anchor"
         claude = self.contract.resolve_agent(plugin, "claude", "anchor-plan-review")
         codex = self.contract.resolve_agent(plugin, "codex", "anchor-plan-review")
-        self.assertEqual((claude["model"], codex["model"]), ("sonnet", "luna"))
+        cursor = self.contract.resolve_agent(plugin, "cursor", "anchor-plan-review")
+        tuning = self.contract.resolve_agent(plugin, "cursor", "anchor-tuning")
+        self.assertEqual((claude["model"], codex["model"], cursor["model"]), ("sonnet", "luna", "composer"))
+        self.assertEqual(tuning["model"], "grok[effort=high]")
         self.assertRegex(claude["sha256"], r"^[0-9a-f]{64}$")
 
     def test_resolves_crlf_agent_definition(self):

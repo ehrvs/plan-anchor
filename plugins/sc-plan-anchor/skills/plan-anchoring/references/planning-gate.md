@@ -1,6 +1,6 @@
 ---
 name: planning-gate
-version: 0.4.3
+version: 0.4.4
 description: Running the planning gate end to end - what to pass, what Jev sees, the command and exit codes, and how to read results for one sprint item and a whole phase.
 ---
 
@@ -39,10 +39,11 @@ python3 "$P" discover-tracker --tracker br --epic pa-sza
 python3 "$P" copy docs/plans/phase-a/ --tracker br --epic pa-sza
 ```
 
-Delegate each ordered descriptor using the harness-specific
-`anchor-plan-review` definition (Claude Code and Codex). Cursor may follow these
-steps inline, but cannot substitute the planner for independent question
-tuning. The gate agent runs once per item:
+Delegate each ordered descriptor to the harness-specific `anchor-plan-review`
+definition. Claude Code and Codex use their Agent tool. Cursor uses the Task
+tool with no model override; the registered agent pins Composer. If that
+subagent is not registered, stop. The planner does not substitute for
+independent question tuning. The gate agent runs once per item:
 
 ```bash
 python3 "$S" judge --anchors "$A" --gate plan --all --item-id <sprint-id> --item-title "<title>" \

@@ -3,7 +3,7 @@
 
 This module is intentionally data-only: it parses registries and frontmatter but
 never imports or executes an agent definition.  A caller resolves once, passes
-the returned immutable descriptor to the harness Agent tool, validates the
+the returned immutable descriptor to the harness Agent tool (Cursor: Task), validates the
 single fenced response, then writes a credential-safe attestation.
 """
 
@@ -22,10 +22,11 @@ from typing import Any
 
 
 SCHEMA_VERSION = "1.0.0"
+HARNESSES = ("claude", "codex", "cursor")
 AGENT_MODELS = {
-    "anchor-plan-review": {"claude": "sonnet", "codex": "luna"},
-    "anchor-sprint-review": {"claude": "sonnet", "codex": "luna"},
-    "anchor-tuning": {"claude": "opus", "codex": "sol"},
+    "anchor-plan-review": {"claude": "sonnet", "codex": "luna", "cursor": "composer"},
+    "anchor-sprint-review": {"claude": "sonnet", "codex": "luna", "cursor": "composer"},
+    "anchor-tuning": {"claude": "opus", "codex": "sol", "cursor": "grok[effort=high]"},
 }
 OPERATIONS = {"plan_review", "sprint_review", "testability", "tune", "triage"}
 CORRELATION_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$")
@@ -140,8 +141,8 @@ def _registry_agent_entry(text: str, agent: str) -> dict[str, str]:
 def resolve_agent(plugin_root: str | Path, harness: str, agent: str) -> dict[str, str]:
     """Resolve and validate one registry entry without executing it."""
 
-    if harness not in {"claude", "codex"}:
-        _fail("RUNTIME.HARNESS", "harness must be claude or codex")
+    if harness not in HARNESSES:
+        _fail("RUNTIME.HARNESS", "harness must be claude, codex, or cursor")
     if agent not in AGENT_MODELS:
         _fail("RUNTIME.IDENTITY", "agent is not registered for plan-anchor")
 
@@ -223,7 +224,7 @@ def validate_runtime(runtime: Any) -> None:
     if runtime.get("agent") not in AGENT_MODELS:
         _fail("ENVELOPE.RUNTIME", "runtime agent is unknown")
     harness = runtime.get("harness")
-    if harness not in {"claude", "codex"}:
+    if harness not in HARNESSES:
         _fail("ENVELOPE.RUNTIME", "runtime harness is invalid")
     if runtime.get("model") != AGENT_MODELS[runtime["agent"]][harness]:
         _fail("ENVELOPE.RUNTIME", "runtime model is invalid for its harness and role")
@@ -376,7 +377,7 @@ def _parser() -> argparse.ArgumentParser:
     sub = parser.add_subparsers(dest="command", required=True)
     resolve = sub.add_parser("resolve")
     resolve.add_argument("--plugin-root", required=True)
-    resolve.add_argument("--harness", required=True, choices=("claude", "codex"))
+    resolve.add_argument("--harness", required=True, choices=HARNESSES)
     resolve.add_argument("--agent", required=True, choices=tuple(AGENT_MODELS))
     check = sub.add_parser("validate-fence")
     check.add_argument("--kind", required=True, choices=("request", "result"))

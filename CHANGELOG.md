@@ -4,6 +4,7 @@
 
 ## Unreleased
 
+- Package `sc-plan-anchor` for the Cursor marketplace. Gate subagents pin unversioned Composer; the independent tuner pins unversioned Grok at high effort (`grok[effort=high]`). Cursor launches them with the Task tool and does not fall back to the parent chat.
 - Keep maintainer tests outside the marketplace plugin at
   `tests/sc-plan-anchor/`, so installing the skill does not redistribute the
   upstream unit suite or invite consumers to wire it into their own CI.

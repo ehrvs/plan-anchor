@@ -2,7 +2,7 @@
 name: plan-anchoring
 description: Capture the facts a user states while planning as numbered anchors (ANC-001...), one clear, testable requirement each, with the user's verbatim words kept as provenance, alongside existing requirements (REQ) and ADRs. Turn them into Jev-judged questions, tune and test the questions per anchor, and enforce them at two gates with a triage-apply-rerun loop. The planning gate checks each plan bead still says what the user said; the development gate checks the delivered sprint work followed it. Use when planning a phase or sprint with beads, when the user says "anchor this", "lock this", "don't let this drift", or "remember I said", when re-opening a plan after context compression, or when reviewing a sprint against its plan. Not for general code review, and not a replacement for plan hardening.
 metadata:
-  version: "0.4.5"
+  version: "0.4.6"
 ---
 
 # Plan Anchoring
@@ -19,6 +19,7 @@ Run before any capture, delegation, or gate. On a missing dependency, surface th
 which python3 && python3 --version          # 3.9 or newer
 which bd && bd --version                    # beads CLI, 1.x ("(dev)" suffix is fine)
 which sc-compose && sc-compose --version    # 1.7.0 or newer
+which jq && jq --version                    # gate agents parse question overrides with jq
 test -n "$TYPESAFE_API_KEY" && echo "TYPESAFE_API_KEY set" || echo "TYPESAFE_API_KEY missing"
 echo "remote judge opt-in: ${PLAN_ANCHOR_ALLOW_REMOTE_JUDGE:-unset}"
 ```
@@ -39,7 +40,7 @@ If found off PATH, `export PATH="<dir>:$PATH"` for the session. If anything is m
 Then resolve the script once. It sits next to this file:
 
 ```bash
-S="<this skill's directory>/scripts/jev_judge.py"   # absolute; Claude plugin: $CLAUDE_PLUGIN_ROOT/skills/plan-anchoring/scripts/jev_judge.py
+S="<this skill's directory>/scripts/jev_judge.py"   # absolute; Claude: $CLAUDE_PLUGIN_ROOT/...; Cursor: $CURSOR_PLUGIN_ROOT/skills/plan-anchoring/scripts/jev_judge.py
 A=doc/plan/phase-current/anchors.json
 python3 "$S" --help
 ```
@@ -76,7 +77,7 @@ locking do not load that reference.
 - **Relationship to plan hardening**: standalone and composable; run the planning gate after hardening.
 - **Data retention**: fail closed. The gates refuse to call TypeSafe unless `PLAN_ANCHOR_ALLOW_REMOTE_JUDGE=1` is set for the session, and `--dry-run` writes exactly what would leave the machine.
 - **Fixture authorship**: the skill drafts one pass and one fail fixture per anchor at lock time; the user approves them. `check-fixtures` sends them to Jev (same opt-in) to confirm the wording lands them; `--answers-file` fixtures exercise the gating offline in CI.
-- **Question-tuning independence**: the planner cannot tune. An isolated Opus/Sol evaluator derives and freezes its oracle from approved intent and anchors before seeing Jev answers, then iterates wording against that oracle without regard to whether the current plan passes. A live gate failure alone never authorizes an override or scope change. The main session records only an override accompanied by the frozen oracle, digest, acceptance table, and run IDs.
+- **Question-tuning independence**: the planner cannot tune. An isolated evaluator (Claude: Opus; Codex: Sol; Cursor: Grok at high effort, version left off) derives and freezes its oracle from approved intent and anchors before seeing Jev answers, then iterates wording against that oracle without regard to whether the current plan passes. A live gate failure alone never authorizes an override or scope change. The main session records only an override accompanied by the frozen oracle, digest, acceptance table, and run IDs.
 
 ## Hard stops
 

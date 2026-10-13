@@ -201,7 +201,7 @@ class AnchorTuningContractTests(unittest.TestCase):
             self.contract.validate_result(invalid)
 
     def test_harness_prompts_keep_tournament_and_production_separate(self):
-        for harness, model in ((".claude", "opus"), (".codex", "sol")):
+        for harness, model in ((".claude", "opus"), (".codex", "sol"), (".cursor", "grok[effort=high]")):
             text = (
                 ROOT
                 / "plugins"

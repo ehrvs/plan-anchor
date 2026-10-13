@@ -50,13 +50,15 @@ codex plugin marketplace add randlee/plan-anchor
 
 Then open `/plugins` and install **Plan Anchor**. Codex discovers the skill from the portable root manifest; the skill explicitly launches the bundled Luna/Sol definitions through the Agent tool because Codex does not auto-register plugin-owned custom agent profiles.
 
-For a source checkout, use the files under `plugins/sc-plan-anchor/` directly. Cursor can execute the gate procedure inline, but this release does not claim a Cursor package: independent question tuning requires a separate higher-reasoning agent. Hermes distribution is likewise deferred; it has no marketplace manifest and this package has not been landed in its registry.
+Cursor: in Customize, import this GitHub repository (it reads `.cursor-plugin/marketplace.json`), then install **Plan Anchor**. The slash command is `/plan-anchoring`. Gate subagents pin Composer (`model: composer`). The tuner pins Grok at high effort with the version left off (`model: grok[effort=high]`). The skill launches them with the Task tool and does not pass a model override.
+
+For a source checkout, use the files under `plugins/sc-plan-anchor/` directly. Hermes distribution is likewise deferred; it has no marketplace manifest and this package has not been landed in its registry.
 
 | Need | For | Notes |
 | --- | --- | --- |
 | `python3` 3.9+ | everything | The script is standard-library only |
 | `bd` ([beads](https://github.com/steveyegge/beads)) 1.x | the bead tree and reading beads | Agents use it read-only; the skill creates anchor beads and posts comments from the main session |
-| `TYPESAFE_API_KEY` | the Jev-backed workflow | Get a key at typesafe.ai. Export it in the shell that launches Claude Code or Codex |
+| `TYPESAFE_API_KEY` | the Jev-backed workflow | Get a key at typesafe.ai. Export it in the shell that launches Claude Code, Codex, or Cursor |
 | `PLAN_ANCHOR_ALLOW_REMOTE_JUDGE=1` | every live Jev operation | Per-session opt-in; set it only when sending this plan's scoped text to TypeSafe is acceptable |
 
 Offline dry runs, deterministic lint/shape/render commands, fixture-answer tests, and record maintenance need neither value. They support development and inspection; they do not replace the live rubric, tuning, and gate judgments required by the skill.
@@ -85,7 +87,7 @@ python3 $S report --run doc/plan/phase-current/anchor-runs/<run>.json --format m
 python3 $S coverage --runs doc/plan/phase-current/anchor-runs --gate plan --format md
 ```
 
-In a Claude Code or Codex session the skill does this for you: say "anchor this" or "lock this" while planning, then "run the planning gate on the sprint 2 beads" or "review sprint 2 against the anchors". Claude Code invokes Sonnet gate agents and an Opus tuner from the plugin's `.claude/agents/`; Codex invokes Luna gate agents and a Sol tuner from `.codex/agents/`. Claude uses the Agent tool, never the Task tool. Cursor may follow gate steps inline, but question tuning requires an independent higher-reasoning agent.
+In a Claude Code, Codex, or Cursor session the skill does this for you: say "anchor this" or "lock this" while planning, then "run the planning gate on the sprint 2 beads" or "review sprint 2 against the anchors". Claude Code invokes Sonnet gate agents and an Opus tuner from the plugin's `.claude/agents/`; Codex invokes Luna gate agents and a Sol tuner from `.codex/agents/`. Claude uses the Agent tool, never the Task tool. Cursor invokes Composer gate agents and a Grok-high tuner from `.cursor/agents/` through the Task tool, with no model override.
 
 ## What you get back
 
@@ -108,12 +110,15 @@ docs/
 └── design/                                architecture, call graphs, data model, gating
 .claude-plugin/marketplace.json            Claude marketplace catalog
 .agents/plugins/marketplace.json           Codex repository marketplace catalog
+.cursor-plugin/marketplace.json            Cursor marketplace catalog
 plugins/sc-plan-anchor/
 ├── plugin.json                            portable Agent Plugins manifest
 ├── .claude-plugin/plugin.json             Claude manifest and agent registration
 ├── .codex-plugin/plugin.json              Codex compatibility/presentation overlay
+├── .cursor-plugin/plugin.json             Cursor manifest: skills and agents
 ├── .claude/agents/                        Claude gates: Sonnet; independent tuner: Opus
 ├── .codex/agents/                         Codex gates: Luna; independent tuner: Sol
+├── .cursor/agents/                        Cursor gates: Composer; independent tuner: Grok high
 └── skills/plan-anchoring/
     ├── SKILL.md                           entry point and table of contents
     ├── references/                        capture, gates, tuning, reports, Jev API
@@ -170,7 +175,7 @@ Revision 0.4 builds on the first real multi-sprint use and 245 live Jev requests
 - Per-anchor question tuning is an independent higher-reasoning agent's job. It freezes an intent-derived oracle before its first Jev call and iterates wording without access to a plan-pass objective.
 - Near-threshold cells are re-asked once because run-to-run noise flipped one cell in six; every cell reports its leaning.
 
-The offline suite runs on Linux, macOS and Windows in CI. The repository is a Claude and Codex marketplace containing the `sc-plan-anchor` plugin; the shared skill body is packaged once, with separate harness-owned agent definitions.
+The offline suite runs on Linux, macOS and Windows in CI. The repository is a Claude, Codex, and Cursor marketplace containing the `sc-plan-anchor` plugin; the shared skill body is packaged once, with separate harness-owned agent definitions.
 
 ## Versioning
 
