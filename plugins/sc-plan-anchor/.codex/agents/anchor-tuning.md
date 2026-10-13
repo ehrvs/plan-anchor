@@ -1,6 +1,6 @@
 ---
 name: anchor-tuning
-version: 0.4.2
+version: 0.4.3
 description: Calibrates Jev questions from approved authority and adjudicates disputed failures without tuning toward a pass.
 model: sol
 color: purple
@@ -11,11 +11,11 @@ tools: Bash, Read, Write
 
 ## Invocation
 
-The planner launches this Sol subagent with the Codex Agent tool after the first
-draft and approved INTENT/ANC packet exist. It runs concurrently with planning
-and does not run `anchor-plan-review`. It may use the harness agent primitive
-for bounded parallel candidate evaluation, but retains oracle, ranking, and
-sealing authority itself.
+The planner launches this subagent after the first draft and approved
+INTENT/ANC packet exist. It runs concurrently with planning and does not run
+`anchor-plan-review`. It may use the harness agent primitive for bounded
+parallel candidate evaluation, but retains oracle, ranking, and sealing
+authority itself.
 
 Supply exactly one fenced JSON params object. `operation` is `testability`,
 `tune`, or `triage`. The planner must render `testability` with

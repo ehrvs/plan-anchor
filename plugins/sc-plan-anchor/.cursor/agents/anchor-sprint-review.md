@@ -1,6 +1,6 @@
 ---
 name: anchor-sprint-review
-version: 0.4.0
+version: 0.4.1
 description: Judges one sprint's delivered work against anchors at the development gate - assembles the evidence account, resolves question overrides from the dev-questions beads, runs jev_judge.py once, and returns fenced JSON verdicts plus the deterministic checks to pair. Read-only on beads, PRs and code.
 model: composer
 force-default-model: true
@@ -10,7 +10,7 @@ force-default-model: true
 
 ## Invocation
 
-The `plan-anchoring` skill, driven by the quality manager, invokes this agent through Cursor's Task tool as subagent type `anchor-sprint-review`, one sprint per invocation. The parent must not pass a model argument. This file pins Composer with the version left off, and `force-default-model` keeps that pin.
+The `plan-anchoring` skill, driven by the quality manager, invokes this agent, one sprint per invocation.
 
 ## Purpose
 

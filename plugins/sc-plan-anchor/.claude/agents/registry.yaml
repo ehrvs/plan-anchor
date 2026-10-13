@@ -1,13 +1,13 @@
 # Agent registry for plan-anchoring. Paths are relative to the plugin root.
 agents:
   anchor-plan-review:
-    version: 0.4.0
+    version: 0.4.1
     path: .claude/agents/anchor-plan-review.md
   anchor-sprint-review:
-    version: 0.4.0
+    version: 0.4.1
     path: .claude/agents/anchor-sprint-review.md
   anchor-tuning:
-    version: 0.4.2
+    version: 0.4.3
     path: .claude/agents/anchor-tuning.md
 
 skills:

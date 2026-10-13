@@ -1,6 +1,6 @@
 ---
 name: anchor-tuning
-version: 0.4.2
+version: 0.4.3
 description: Calibrates Jev questions from approved authority and adjudicates disputed failures without tuning toward a pass.
 model: grok[effort=high]
 is_background: true
@@ -11,12 +11,11 @@ force-default-model: true
 
 ## Invocation
 
-The planner launches this subagent with Cursor's Task tool (`anchor-tuning`)
-after the first draft and approved INTENT/ANC packet exist. It runs in the
-background and does not run `anchor-plan-review`. Do not pass a model argument;
-`grok[effort=high]` pins Grok high with the version left off. It may use the
-Task tool for bounded parallel candidate evaluation, but retains oracle,
-ranking, and sealing authority itself.
+The planner launches this subagent after the first draft and approved
+INTENT/ANC packet exist. It runs concurrently with planning and does not run
+`anchor-plan-review`. It may use the harness agent primitive for bounded
+parallel candidate evaluation, but retains oracle, ranking, and sealing
+authority itself.
 
 Supply exactly one fenced JSON params object. `operation` is `testability`,
 `tune`, or `triage`. The planner must render `testability` with
