@@ -1,3 +1,4 @@
+import copy
 import json
 import importlib.util
 import re
@@ -199,6 +200,64 @@ class AnchorTuningContractTests(unittest.TestCase):
         invalid["data"]["sealed_question_set_digest_after"] = "f" * 64
         with self.assertRaises(self.contract.ContractError):
             self.contract.validate_result(invalid)
+
+    def tuning_pair(self):
+        request = self.render(
+            "anchor-tuning-tune-request.md.j2",
+            "anchor-tuning-tune-request.sample-vars.json",
+        )
+        result = self.render(
+            "anchor-tuning-result.md.j2",
+            "anchor-tuning-result-tune.sample-vars.json",
+        )
+        return request, result
+
+    def validate_tuning_pair(self, request, result):
+        history = result["data"]["tuning_history_after"]
+        records = request["authority"]["anchors"]["records"]
+        request["authority"]["anchors"]["sha256"] = self.contract.sha256(records)
+        for event in history["events"]:
+            event["authority"]["anchor_record_sha256"] = self.contract.sha256(records[0])
+        request["tuning_history"] = copy.deepcopy(history)
+        before = dict(history, events=history["events"][:-1])
+        result["data"]["tuning_history_before_sha256"] = self.contract.sha256(before)
+        result["data"]["tuning_history_after_sha256"] = self.contract.sha256(history)
+        self.validate(request, "anchor-tuning-request.schema.json")
+        self.contract.validate_request(request)
+        self.validate(result, "anchor-tuning-result.schema.json")
+        self.contract.validate_result(result)
+
+    def test_initial_migration_and_later_history_events(self):
+        request, result = self.tuning_pair()
+        events = result["data"]["tuning_history_after"]["events"]
+        self.assertIsNone(events[0]["supersedes"])
+        self.assertEqual(events[0]["event_index"], 1)
+        self.validate_tuning_pair(request, result)
+
+        # A first v2 event may instead migrate a decision from an older protocol.
+        predecessor = {
+            "protocol_version": "plan-anchor/question-tournament/1",
+            "decision_sha256": "6" * 64,
+        }
+        events[0]["event"] = "protocol_re_evaluated"
+        events[0]["supersedes"] = predecessor
+        self.validate_tuning_pair(request, result)
+
+        later = copy.deepcopy(events[0])
+        later["event_index"] = 2
+        later["previous_event_sha256"] = self.contract.sha256(events[0])
+        later["event"] = "question_set_sealed"
+        later["supersedes"] = {
+            "protocol_version": events[0]["protocol_version"],
+            "decision_sha256": self.contract.sha256(events[0]["decision"]),
+        }
+        events.append(later)
+        self.validate_tuning_pair(request, result)
+        later["supersedes"] = None
+        with self.assertRaises(self.jsonschema.ValidationError):
+            self.validate_tuning_pair(request, result)
+        with self.assertRaises(self.jsonschema.ValidationError):
+            self.validate(result, "anchor-tuning-result.schema.json")
 
     def test_harness_prompts_keep_tournament_and_production_separate(self):
         for harness, model in ((".claude", "opus"), (".codex", "sol"), (".cursor", "grok[effort=high]")):

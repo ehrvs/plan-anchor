@@ -4,6 +4,8 @@
 
 ## Unreleased
 
+- Accept initial tuning-history events without a predecessor in calibration request and result contracts.
+
 - Package `sc-plan-anchor` for the Cursor marketplace. Gate subagents pin unversioned Composer; the independent tuner pins unversioned Grok at high effort (`grok[effort=high]`). Cursor launches them with the Task tool and does not fall back to the parent chat.
 - Keep Claude, Codex, and Cursor agent bodies and registry comments identical. Harness differences stay in frontmatter and registry paths.
 - Keep maintainer tests outside the marketplace plugin at

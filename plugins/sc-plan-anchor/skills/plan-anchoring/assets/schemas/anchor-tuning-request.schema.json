@@ -154,6 +154,8 @@
     },
     "tuningEvent": {
       "type": "object",
+      "if": {"properties": {"event_index": {"minimum": 2}}},
+      "then": {"properties": {"supersedes": {"type": "object"}}},
       "additionalProperties": false,
       "required": ["event_index", "previous_event_sha256", "event", "protocol_version", "authority", "oracle", "candidate", "evidence", "score", "decision", "supersedes"],
       "properties": {
@@ -230,7 +232,7 @@
           }
         },
         "supersedes": {
-          "type": "object",
+          "type": ["object", "null"],
           "additionalProperties": false,
           "required": ["protocol_version", "decision_sha256"],
           "properties": {

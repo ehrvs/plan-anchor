@@ -861,6 +861,8 @@
     },
     "tuningEvent": {
       "type": "object",
+      "if": {"properties": {"event_index": {"minimum": 2}}},
+      "then": {"properties": {"supersedes": {"type": "object"}}},
       "additionalProperties": false,
       "required": [
         "event_index",
@@ -1059,7 +1061,7 @@
           }
         },
         "supersedes": {
-          "type": "object",
+          "type": ["object", "null"],
           "additionalProperties": false,
           "required": [
             "protocol_version",

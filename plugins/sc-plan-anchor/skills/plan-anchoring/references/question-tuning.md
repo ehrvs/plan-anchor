@@ -1,6 +1,6 @@
 ---
 name: question-tuning
-version: 0.4.2
+version: 0.4.3
 description: When and how to replace the generic Jev questions with anchor-specific wording, where the overrides live, how to test a question set with fixtures and known beads before trusting it, and when to stop tuning.
 ---
 
@@ -171,6 +171,8 @@ tournament result.
 Record the protocol version, oracle and question digests, semantic score,
 confidence diagnostics, rationales, acceptance table, request/response digests,
 and run IDs in an append-only canonical `plan-anchor/tuning-history/2` object.
+An initial event (`event_index: 1`) uses `supersedes: null` when no prior
+decision exists; migration and later events retain the predecessor object.
 Markdown and `bd`/`br` copies store byte-identical canonical JSON and SHA-256;
 paths, tracker IDs/revisions, timestamps that differ by source, credentials, and
 source kind remain outside it as local bindings. A v1 result can become a v2
