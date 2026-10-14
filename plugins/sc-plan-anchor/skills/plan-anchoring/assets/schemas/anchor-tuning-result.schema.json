@@ -930,7 +930,7 @@
             },
             "anchor_id": {
               "type": "string",
-              "pattern": "^ANC-[0-9]{3}$"
+              "minLength": 1
             },
             "anchor_version": {
               "type": [

@@ -55,7 +55,7 @@
                 "additionalProperties": false,
                 "required": ["id", "version", "state", "statement", "kind", "scope", "check", "fixtures"],
                 "properties": {
-                  "id": {"type": "string", "pattern": "^ANC-[0-9]{3}$"},
+                  "id": {"type": "string", "minLength": 1},
                   "version": {"type": ["integer", "string"]},
                   "state": {"const": "locked"},
                   "statement": {"type": "string", "minLength": 1},
@@ -171,7 +171,7 @@
             "intent_id": {"type": "string", "minLength": 1},
             "intent_version": {"type": ["integer", "string"]},
             "intent_sha256": {"$ref": "#/$defs/sha256"},
-            "anchor_id": {"type": "string", "pattern": "^ANC-[0-9]{3}$"},
+            "anchor_id": {"type": "string", "minLength": 1},
             "anchor_version": {"type": ["integer", "string"]},
             "anchor_record_sha256": {"$ref": "#/$defs/sha256"}
           }

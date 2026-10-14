@@ -259,6 +259,46 @@ class AnchorTuningContractTests(unittest.TestCase):
         with self.assertRaises(self.jsonschema.ValidationError):
             self.validate(result, "anchor-tuning-result.schema.json")
 
+    def test_authority_ids_preserve_evaluator_source_references(self):
+        original_request, original_result = self.tuning_pair()
+        for source_type, authority_id in (
+            ("REQ", "REQ-14"),
+            ("REQ", "REQ-003"),
+            ("ADR", "ADR-7"),
+            ("ADR", "ADR-0001"),
+            ("ANC", "ANC-1000"),
+            ("REQ", "requirement/authentication"),
+        ):
+            with self.subTest(authority_id=authority_id):
+                request, result = copy.deepcopy((original_request, original_result))
+                record = request["authority"]["anchors"]["records"][0]
+                record["id"] = authority_id
+                record["source_type"] = source_type
+                if record["source_type"] in ("REQ", "ADR"):
+                    record["source_ref"] = authority_id
+                event = result["data"]["tuning_history_after"]["events"][0]
+                event["authority"]["anchor_id"] = authority_id
+                self.validate_tuning_pair(request, result)
+
+        for missing in (False, True):
+            for location in ("record", "history"):
+                with self.subTest(missing=missing, location=location):
+                    request, result = copy.deepcopy((original_request, original_result))
+                    if location == "record":
+                        target, key = request["authority"]["anchors"]["records"][0], "id"
+                    else:
+                        target = result["data"]["tuning_history_after"]["events"][0]["authority"]
+                        key = "anchor_id"
+                    if missing:
+                        del target[key]
+                    else:
+                        target[key] = ""
+                    with self.assertRaises(self.jsonschema.ValidationError):
+                        self.validate_tuning_pair(request, result)
+                    if location == "history":
+                        with self.assertRaises(self.jsonschema.ValidationError):
+                            self.validate(result, "anchor-tuning-result.schema.json")
+
     def test_harness_prompts_keep_tournament_and_production_separate(self):
         for harness, model in ((".claude", "opus"), (".codex", "sol"), (".cursor", "grok[effort=high]")):
             text = (
