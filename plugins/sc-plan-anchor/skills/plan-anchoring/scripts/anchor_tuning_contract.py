@@ -61,6 +61,26 @@ def validate_history(history: dict) -> None:
         expected = None if index == 1 else sha256(events[index - 2])
         if event.get("previous_event_sha256") != expected:
             raise ContractError("HISTORY.CHAIN: previous_event_sha256 mismatch")
+        supersedes = event.get("supersedes")
+        if index == 1:
+            # Preserve recorded migrations from the older protocol. Fresh
+            # histories have no prior decision and must use null instead.
+            if supersedes is not None and not (
+                isinstance(supersedes, dict)
+                and event.get("event") == "protocol_re_evaluated"
+                and supersedes.get("protocol_version")
+                and supersedes["protocol_version"] != event.get("protocol_version")
+                and isinstance(supersedes.get("decision_sha256"), str)
+                and len(supersedes["decision_sha256"]) == 64
+            ):
+                raise ContractError("HISTORY.SUPERSEDES: initial event requires null or an older-protocol migration")
+        elif not isinstance(supersedes, dict):
+            raise ContractError("HISTORY.SUPERSEDES: later events must bind a predecessor")
+        else:
+            previous = events[index - 2]
+            if (supersedes.get("protocol_version") != previous.get("protocol_version")
+                    or supersedes.get("decision_sha256") != sha256(previous["decision"])):
+                raise ContractError("HISTORY.SUPERSEDES: predecessor decision does not match")
         reject_forbidden(event, f"$.events[{index - 1}]")
 
 

@@ -2,7 +2,7 @@
 name: plan-anchoring
 description: Capture the facts a user states while planning as numbered anchors (ANC-001...), one clear, testable requirement each, with the user's verbatim words kept as provenance, alongside existing requirements (REQ) and ADRs. Turn them into Jev-judged questions, tune and test the questions per anchor, and enforce them at two gates with a triage-apply-rerun loop. The planning gate checks each plan bead still says what the user said; the development gate checks the delivered sprint work followed it. Use when planning a phase or sprint with beads, when the user says "anchor this", "lock this", "don't let this drift", or "remember I said", when re-opening a plan after context compression, or when reviewing a sprint against its plan. Not for general code review, and not a replacement for plan hardening.
 metadata:
-  version: "0.4.5"
+  version: "0.5.0"
 ---
 
 # Plan Anchoring
@@ -12,6 +12,24 @@ Facts stated during planning get compressed out of context, ceremony accumulates
 This file is the table of contents; read the reference for the step you are on.
 
 ## Step 1 - Verify dependencies
+
+For the plan-review plugin's guided Jev mode, begin with the setup helper from
+the trusted installed plan-anchor plugin:
+
+```bash
+python3 "$CLAUDE_PLUGIN_ROOT/skills/plan-anchoring/scripts/jev-setup.py" inspect --plan <plan.md>
+```
+
+The helper reports bounded candidate inputs and mechanical blockers as JSON.
+Ask the user only about unresolved choices and proposed dependency repairs;
+obtain approval before applying a repair. `prepare` accepts an explicit JSON
+resolution file, writes machine settings without secrets, and stores plan
+authority under `<plan>.jev/`. Use `status` to check freshness. Setup readiness
+does not mean a Jev judgment passed. Remote consent remains scoped to the
+current invocation/session and is never stored in machine settings.
+
+The traditional dependency check below remains the detailed checklist for
+standalone plan-anchoring operations.
 
 Run before any capture, delegation, or gate. On a missing dependency, surface the gap and stop.
 

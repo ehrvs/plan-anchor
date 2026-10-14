@@ -928,7 +928,7 @@
             },
             "anchor_id": {
               "type": "string",
-              "pattern": "^ANC-[0-9]{3}$"
+              "pattern": "^(ANC-[0-9]{3}|REQ-[0-9]{3}|ADR-[0-9]{4})$"
             },
             "anchor_version": {
               "type": [
@@ -1059,21 +1059,26 @@
           }
         },
         "supersedes": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "protocol_version",
-            "decision_sha256"
-          ],
-          "properties": {
-            "protocol_version": {
-              "type": "string",
-              "minLength": 1
-            },
-            "decision_sha256": {
-              "$ref": "#/$defs/sha256"
+          "oneOf": [
+            {"type": "null"},
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "protocol_version",
+                "decision_sha256"
+              ],
+              "properties": {
+                "protocol_version": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "decision_sha256": {
+                  "$ref": "#/$defs/sha256"
+                }
+              }
             }
-          }
+          ]
         }
       }
     },

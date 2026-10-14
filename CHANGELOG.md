@@ -28,6 +28,17 @@
   (Opus for Claude, Sol for Codex) and add schema-validated `sc-compose`
   templates for tune requests, review feedback, and Standard-envelope results.
 - Package the fully qualified `sc-plan-anchor` plugin in Claude and Codex repository marketplaces. Claude declares its Sonnet/Opus agents in the plugin manifest; Codex discovers the shared skill and the skill launches its bundled Luna/Sol definitions explicitly through the Agent tool.
+- Add JSON-first guided Jev setup inspection, preparation and status readback; allow genuine first-event tuning history and plan-derived REQ/ADR authority; ship the versioned, plan-independent calibration corpus for fresh bootstrap.
+
+## 0.5.0 — 2026-10-14
+
+- Ship guided Jev setup with user-wide runtime discovery, native authority and calibration validation, honest tuner provenance, durable seals, and bounded incremental refresh/checkpoints.
+- Align all artifact and plugin release versions for the repository's required release-PR checks.
+
+## 0.4.1 — 2026-10-14
+
+- Permit a genuine initial tuning-history event with no predecessor while validating predecessor links and history chains for subsequent events. Accept supported ANC, REQ and ADR identifiers in calibration authority.
+- Add bounded JSON-first Jev setup discovery and freshness tracking, plus guided setup documentation and offline setup tests.
 
 ## 0.4.0 — 2026-10-10
 

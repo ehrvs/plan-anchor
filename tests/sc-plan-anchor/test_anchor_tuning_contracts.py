@@ -129,6 +129,15 @@ class AnchorTuningContractTests(unittest.TestCase):
         with self.assertRaises(self.contract.ContractError):
             self.contract.validate_result(request_drift)
 
+    def test_native_tune_authority_supports_requirements_and_decisions(self):
+        request = self.render("anchor-tuning-tune-request.md.j2", "anchor-tuning-tune-request.sample-vars.json")
+        for identifier in ("REQ-003", "ADR-0001"):
+            with self.subTest(identifier=identifier):
+                changed = json.loads(json.dumps(request))
+                changed["authority"]["anchors"]["records"][0]["id"] = identifier
+                self.validate(changed, "anchor-tuning-request.schema.json")
+                self.contract.validate_request(changed)
+
     def test_v2_tune_result_renders_and_validates(self):
         result = self.render(
             "anchor-tuning-result.md.j2",
@@ -138,6 +147,36 @@ class AnchorTuningContractTests(unittest.TestCase):
         self.assertTrue(result["data"]["production_semantics_unchanged"])
         self.assertEqual(result["data"]["confidence_diagnostics"]["threshold"], 0.8)
         self.contract.validate_result(result)
+
+        first_history = json.loads(json.dumps(result["data"]["tuning_history_after"]))
+        first_history["events"][0]["supersedes"] = None
+        # A real first event may have no predecessor, but must not claim one.
+        self.contract.validate_history(first_history)
+
+        false_predecessor = json.loads(json.dumps(first_history))
+        false_predecessor["events"][0]["supersedes"] = {"protocol_version": "plan-anchor/question-tournament/2.0.0", "decision_sha256": "1" * 64}
+        with self.assertRaises(self.contract.ContractError):
+            self.contract.validate_history(false_predecessor)
+
+        migrated = json.loads(json.dumps(first_history))
+        migrated["events"][0]["supersedes"] = {
+            "protocol_version": "plan-anchor/question-tournament/1",
+            "decision_sha256": "6" * 64,
+        }
+        self.contract.validate_history(migrated)
+
+        continued = json.loads(json.dumps(first_history))
+        previous = continued["events"][0]
+        following = json.loads(json.dumps(previous))
+        following.update(event_index=2,
+                         previous_event_sha256=self.contract.sha256(previous),
+                         supersedes={"protocol_version": previous["protocol_version"],
+                                     "decision_sha256": self.contract.sha256(previous["decision"])})
+        continued["events"].append(following)
+        self.contract.validate_history(continued)
+        following["supersedes"]["decision_sha256"] = "f" * 64
+        with self.assertRaises(self.contract.ContractError):
+            self.contract.validate_history(continued)
 
         rejected = json.loads(json.dumps(result))
         rejected["data"]["accepted"] = False

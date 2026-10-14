@@ -47,7 +47,12 @@
           },
           "oracle": {
             "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
-            "case_ids": ["markdown-plan", "silent-plan", "conflicting-plan", "irrelevant-plan"],
+            "case_ids": [
+              "markdown-plan",
+              "silent-plan",
+              "conflicting-plan",
+              "irrelevant-plan"
+            ],
             "case_count": 4,
             "repeat_count": 2
           },
@@ -56,9 +61,16 @@
             "question_sha256": "6c1c3a95b903c3bcbabe0328a1f92175e9701edee17c35cff4a466afd7303af7"
           },
           "evidence": {
-            "canonical_request_sha256": ["4444444444444444444444444444444444444444444444444444444444444444"],
-            "raw_response_sha256": ["5555555555555555555555555555555555555555555555555555555555555555"],
-            "run_ids": ["jev-tune-001", "jev-tune-002"]
+            "canonical_request_sha256": [
+              "4444444444444444444444444444444444444444444444444444444444444444"
+            ],
+            "raw_response_sha256": [
+              "5555555555555555555555555555555555555555555555555555555555555555"
+            ],
+            "run_ids": [
+              "jev-tune-001",
+              "jev-tune-002"
+            ]
           },
           "score": {
             "exact_role_cells": 24,
@@ -83,16 +95,15 @@
             "question_set_sha256": "6c1c3a95b903c3bcbabe0328a1f92175e9701edee17c35cff4a466afd7303af7",
             "reason_code": "TOURNAMENT.SEMANTIC_ACCEPTED"
           },
-          "supersedes": {
-            "protocol_version": "plan-anchor/question-tournament/1",
-            "decision_sha256": "6666666666666666666666666666666666666666666666666666666666666666"
-          }
+          "supersedes": null
         }
       ]
     },
-    "tuning_history_after_sha256": "831dce6dd64d9c6748d9515882db3c5512f7295b760d498b84b1e6b07b5c9b04",
+    "tuning_history_after_sha256": "24404190f90e5a4f1553eed2e210b67922e41f9351598da27a604adb9627ad12",
     "production_semantics_unchanged": true,
-    "authority_citations": ["ANC-001 v1"],
+    "authority_citations": [
+      "ANC-001 v1"
+    ],
     "oracle_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
     "sealed_question_set": {
       "digest": "6c1c3a95b903c3bcbabe0328a1f92175e9701edee17c35cff4a466afd7303af7",
@@ -100,23 +111,50 @@
         "relevant": {
           "type": "choice",
           "instructions": "Does the item govern the accepted plan source?",
-          "criteria": {"yes": "It governs the source.", "no": "It is unrelated.", "unclear": "The scope is ambiguous."}
+          "criteria": {
+            "yes": "It governs the source.",
+            "no": "It is unrelated.",
+            "unclear": "The scope is ambiguous."
+          }
         },
         "addressed": {
           "type": "choice",
           "instructions": "Does the plan keep Markdown authoritative?",
-          "criteria": {"yes": "Markdown stays authoritative.", "no": "The requirement is absent.", "unclear": "Authority is ambiguous."}
+          "criteria": {
+            "yes": "Markdown stays authoritative.",
+            "no": "The requirement is absent.",
+            "unclear": "Authority is ambiguous."
+          }
         },
         "contradicted": {
           "type": "choice",
           "instructions": "Does the item replace Markdown authority?",
-          "criteria": {"yes": "It replaces Markdown authority.", "no": "It does not conflict.", "unclear": "The relationship is ambiguous."}
+          "criteria": {
+            "yes": "It replaces Markdown authority.",
+            "no": "It does not conflict.",
+            "unclear": "The relationship is ambiguous."
+          }
         }
       }
     },
-    "candidate_rankings": [{"candidate_id": "addressed-2", "rank": 1}],
-    "acceptance_table": [{"case_id": "markdown-plan", "matched": true}],
-    "evidence": {"runs": ["jev-tune-001", "jev-tune-002"]},
+    "candidate_rankings": [
+      {
+        "candidate_id": "addressed-2",
+        "rank": 1
+      }
+    ],
+    "acceptance_table": [
+      {
+        "case_id": "markdown-plan",
+        "matched": true
+      }
+    ],
+    "evidence": {
+      "runs": [
+        "jev-tune-001",
+        "jev-tune-002"
+      ]
+    },
     "explanation": "The selected question most accurately distinguishes explicit support, silence, and conflict.",
     "planner_action": "Use the sealed question set for review.",
     "question_action": null,
@@ -130,7 +168,10 @@
     "tool_calls": 6,
     "retry_count": 0,
     "correlation_id": "phase-a:A1:ANC-001:markdown",
-    "jev_run_ids": ["jev-tune-001", "jev-tune-002"],
+    "jev_run_ids": [
+      "jev-tune-001",
+      "jev-tune-002"
+    ],
     "planner_observation_trust": null,
     "authoritative_sources_unchanged": true
   }
