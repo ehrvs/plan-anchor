@@ -213,7 +213,7 @@ class JevSetupTests(unittest.TestCase):
     def test_selected_venv_executable_preserves_environment(self):
         runtime = self.home / "venv"
         venv.EnvBuilder(with_pip=False).create(runtime)
-        python = runtime / "bin/python"
+        python = runtime / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
         _, data = self.run_helper("inspect", "--plan-anchor-root", str(ROOT), "--python", str(python))
         self.assertEqual(data["runtime"]["python"], str(python.absolute()))
         probe = setup.run_python(data["runtime"]["python"], ["-c", "import sys; print(sys.prefix)"])
