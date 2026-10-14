@@ -340,7 +340,8 @@ def inspect(args):
     if not current: blockers.append("authority approval missing or stale")
     seal, _ = json_file(resolved.get("seal"))
     if isinstance(seal, dict) and seal.get("schema") == "plan-review/jev-seal/1" and seal.get("anchors_sha256") == digest(resolved.get("anchors")) and seal.get("intent_sha256") == digest(resolved.get("intent")):
-        resolved["model"] = resolved.get("model") or seal.get("model")
+        if args.model is None:
+            resolved["model"] = seal.get("model")
     if not resolved.get("model") or resolved.get("model") == "jev-latest":
         missing.append("model")
         blockers.append("concrete model pin missing")

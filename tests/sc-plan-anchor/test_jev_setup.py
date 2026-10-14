@@ -228,8 +228,13 @@ class JevSetupTests(unittest.TestCase):
                                    "intent_sha256": setup.digest(values["intent"]),
                                    "model": "jev-1.13.0", "threshold": 0.7,
                                    "calibrations": []}))
+        choices_path = self.home / "plan.jev/choices.json"
+        choices = json.loads(choices_path.read_text())
+        choices["model"] = "jev-1.12.0"
+        choices_path.write_text(json.dumps(choices))
         _, report = self.run_helper("inspect")
         self.assertEqual(report["resolved"]["threshold"], 0.7)
+        self.assertEqual(report["resolved"]["model"], "jev-1.13.0")
         _, explicit = self.run_helper("inspect", "--threshold", "0.8")
         self.assertEqual(explicit["resolved"]["threshold"], 0.8)
 
