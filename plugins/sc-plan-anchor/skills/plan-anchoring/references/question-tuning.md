@@ -1,6 +1,6 @@
 ---
 name: question-tuning
-version: 0.4.4
+version: 0.5.0
 description: When and how to replace the generic Jev questions with anchor-specific wording, where the overrides live, how to test a question set with fixtures and known beads before trusting it, and when to stop tuning.
 ---
 
@@ -42,6 +42,14 @@ returns only a candidate whose result is accepted by the testability-result
 contract. The corpus must cover each of the five semantic judgments, valid and
 invalid requirement forms, and statement-level deduplication. Quote text is
 provenance, not deduplication input.
+
+`calibration_corpus.schema` and `version` identify the descriptor format, not
+the referenced payload format. The shipped v2 descriptor references
+`testability-calibration.v2.json`, whose frozen payload uses
+`plan-anchor/testability-calibration-corpus/1` and has no `version` field. Verify
+its canonical JSON SHA-256 and semantic case count; do not require these format
+identities to match or relabel the frozen corpus. Its legacy expected role
+`atomicity` corresponds to the rubric's `single_constraint` role.
 
 ## Who tunes
 

@@ -131,6 +131,7 @@
     "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
     "calibrationCorpus": {
       "type": "object",
+      "description": "Versioned descriptor of a frozen corpus, not the corpus payload schema. Descriptor version 2 may reference a plan-anchor/testability-calibration-corpus/1 payload without a version field. sha256 is the canonical JSON digest of that payload.",
       "additionalProperties": false,
       "required": ["schema", "version", "path", "sha256", "case_count", "frozen_before_live"],
       "properties": {

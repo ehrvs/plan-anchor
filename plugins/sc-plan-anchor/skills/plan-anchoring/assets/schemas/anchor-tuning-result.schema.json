@@ -5,6 +5,7 @@
   "type": "object",
   "additionalProperties": false,
   "required": [
+    "schema_version",
     "success",
     "canceled",
     "aborted_by",
@@ -13,6 +14,9 @@
     "metadata"
   ],
   "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
     "success": {
       "type": "boolean"
     },

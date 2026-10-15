@@ -1,4 +1,5 @@
 import copy
+import hashlib
 import json
 import importlib.util
 import re
@@ -33,14 +34,22 @@ class AnchorTuningContractTests(unittest.TestCase):
         spec = importlib.util.spec_from_file_location("anchor_tuning_contract", contract_path)
         cls.contract = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(cls.contract)
+        runner_path = SKILL / "scripts" / "anchor_runner_contract.py"
+        runner_spec = importlib.util.spec_from_file_location("anchor_runner_contract", runner_path)
+        cls.runner = importlib.util.module_from_spec(runner_spec)
+        runner_spec.loader.exec_module(cls.runner)
 
-    def render(self, template: str, variables: str) -> dict:
+    def render(self, template: str, variables) -> dict:
         binary = shutil.which("sc-compose")
         template_path = SKILL / "templates" / template
-        variables_path = PLAN / "templates" / variables
         if not binary:
             self.fail("sc-compose 1.7.0 is required for strict contract rendering")
         with tempfile.TemporaryDirectory() as td:
+            if isinstance(variables, dict):
+                variables_path = Path(td) / "variables.json"
+                variables_path.write_text(json.dumps(variables), encoding="utf-8")
+            else:
+                variables_path = PLAN / "templates" / variables
             output = Path(td) / "rendered.md"
             subprocess.run(
                 [
@@ -92,6 +101,75 @@ class AnchorTuningContractTests(unittest.TestCase):
         invalid_model["runtime"]["model"] = "opus"
         with self.assertRaises(self.contract.ContractError):
             self.contract.validate_request(invalid_model)
+
+    def test_rendered_tuning_results_satisfy_runner_and_tuning_contracts(self):
+        for operation in ("testability", "tune", "triage"):
+            with self.subTest(operation=operation):
+                result = self.render(
+                    "anchor-tuning-result.md.j2",
+                    f"anchor-tuning-result-{operation}.sample-vars.json",
+                )
+                self.validate(result, "anchor-tuning-result.schema.json")
+                self.validate(result, "agent-runner-result.schema.json")
+                self.contract.validate_result(result)
+                correlation_id = result["metadata"]["correlation_id"]
+                fenced = "```json\n" + json.dumps(result) + "\n```"
+                self.assertEqual(self.runner.parse_result(fenced, correlation_id), result)
+
+    def test_rendered_failure_satisfies_runner_and_tuning_contracts(self):
+        result = self.render("anchor-tuning-result.md.j2", {
+            "success": False,
+            "canceled": False,
+            "aborted_by": None,
+            "data": None,
+            "error": {
+                "code": "VALIDATION.INPUT",
+                "message": "The authority packet failed validation.",
+                "recoverable": False,
+                "suggested_action": "Correct the packet before retrying.",
+            },
+            "metadata": {
+                "duration_ms": 0,
+                "tool_calls": 0,
+                "retry_count": 0,
+                "correlation_id": "contract-failure",
+                "jev_run_ids": [],
+                "planner_observation_trust": "untrusted",
+                "authoritative_sources_unchanged": True,
+            },
+        })
+        self.validate(result, "anchor-tuning-result.schema.json")
+        self.validate(result, "agent-runner-result.schema.json")
+        self.contract.validate_result(result)
+        self.runner.validate_result(result, "contract-failure")
+        for version in (None, "2.0.0"):
+            invalid = dict(result)
+            if version is None:
+                invalid.pop("schema_version")
+            else:
+                invalid["schema_version"] = version
+            with self.subTest(version=version):
+                with self.assertRaises(self.jsonschema.ValidationError):
+                    self.validate(invalid, "anchor-tuning-result.schema.json")
+                with self.assertRaises(self.runner.RunnerContractError):
+                    self.runner.validate_result(invalid, "contract-failure")
+
+    def test_v2_corpus_descriptor_preserves_v1_frozen_payload(self):
+        request = self.render(
+            "anchor-tuning-testability-request.md.j2",
+            "anchor-tuning-testability-request.sample-vars.json",
+        )
+        self.validate(request, "anchor-tuning-request.schema.json")
+        self.contract.validate_request(request)
+        descriptor = request["calibration_corpus"]
+        corpus = json.loads((ROOT / descriptor["path"]).read_text(encoding="utf-8"))
+        self.assertEqual(descriptor["schema"], "plan-anchor/testability-calibration/2")
+        self.assertEqual(descriptor["version"], 2)
+        self.assertEqual(corpus["schema"], "plan-anchor/testability-calibration-corpus/1")
+        canonical = json.dumps(corpus, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+        self.assertEqual(hashlib.sha256(canonical).hexdigest(), descriptor["sha256"])
+        self.assertEqual(descriptor["case_count"], len(corpus["semantic_cases"]))
+        self.assertNotIn("version", corpus)
 
     def test_v2_testability_request_and_result_render_validate_relationally(self):
         request = self.render(
