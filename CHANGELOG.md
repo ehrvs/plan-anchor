@@ -4,6 +4,10 @@
 
 ## Unreleased
 
+- Require predecessor objects for every protocol migration, including the
+  first history event, in request/result schemas and the relational contract.
+  Exercise real before/after histories in calibration regression tests.
+
 - Accept initial tuning-history events without a predecessor and preserve existing evaluator authority IDs in calibration request and result contracts.
 
 - Package `sc-plan-anchor` for the Cursor marketplace. Gate subagents pin unversioned Composer; the independent tuner pins unversioned Grok at high effort (`grok[effort=high]`). Cursor launches them with the Task tool and does not fall back to the parent chat.

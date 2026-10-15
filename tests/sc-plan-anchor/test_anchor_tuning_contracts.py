@@ -218,8 +218,8 @@ class AnchorTuningContractTests(unittest.TestCase):
         request["authority"]["anchors"]["sha256"] = self.contract.sha256(records)
         for event in history["events"]:
             event["authority"]["anchor_record_sha256"] = self.contract.sha256(records[0])
-        request["tuning_history"] = copy.deepcopy(history)
-        before = dict(history, events=history["events"][:-1])
+        before = dict(history, events=copy.deepcopy(history["events"][:-1]))
+        request["tuning_history"] = before
         result["data"]["tuning_history_before_sha256"] = self.contract.sha256(before)
         result["data"]["tuning_history_after_sha256"] = self.contract.sha256(history)
         self.validate(request, "anchor-tuning-request.schema.json")
@@ -233,6 +233,12 @@ class AnchorTuningContractTests(unittest.TestCase):
         self.assertIsNone(events[0]["supersedes"])
         self.assertEqual(events[0]["event_index"], 1)
         self.validate_tuning_pair(request, result)
+        self.assertEqual(request["tuning_history"]["events"], [])
+        self.assertEqual(len(result["data"]["tuning_history_after"]["events"]), 1)
+        self.assertEqual(
+            result["data"]["tuning_history_before_sha256"],
+            self.contract.sha256(request["tuning_history"]),
+        )
 
         # A first v2 event may instead migrate a decision from an older protocol.
         predecessor = {
@@ -253,11 +259,49 @@ class AnchorTuningContractTests(unittest.TestCase):
         }
         events.append(later)
         self.validate_tuning_pair(request, result)
+        self.assertEqual(len(request["tuning_history"]["events"]), 1)
+        self.assertEqual(len(result["data"]["tuning_history_after"]["events"]), 2)
         later["supersedes"] = None
         with self.assertRaises(self.jsonschema.ValidationError):
             self.validate_tuning_pair(request, result)
         with self.assertRaises(self.jsonschema.ValidationError):
             self.validate(result, "anchor-tuning-result.schema.json")
+
+    def test_first_migration_requires_predecessor_in_both_contracts(self):
+        request, result = self.tuning_pair()
+        history = result["data"]["tuning_history_after"]
+        event = history["events"][0]
+        event["event"] = "protocol_re_evaluated"
+        self.assertEqual(event["event_index"], 1)
+        self.assertIsNone(event["supersedes"])
+        result["data"]["tuning_history_after_sha256"] = self.contract.sha256(history)
+        request["tuning_history"] = copy.deepcopy(history)
+
+        with self.assertRaises(self.jsonschema.ValidationError):
+            self.validate(request, "anchor-tuning-request.schema.json")
+        with self.assertRaises(self.jsonschema.ValidationError):
+            self.validate(result, "anchor-tuning-result.schema.json")
+        with self.assertRaisesRegex(self.contract.ContractError, "HISTORY.PREDECESSOR"):
+            self.contract.validate_request(request)
+        with self.assertRaisesRegex(self.contract.ContractError, "HISTORY.PREDECESSOR"):
+            self.contract.validate_result(result)
+
+    def test_later_event_requires_predecessor_in_relational_contract(self):
+        request, result = self.tuning_pair()
+        history = result["data"]["tuning_history_after"]
+        first = history["events"][0]
+        later = copy.deepcopy(first)
+        later["event_index"] = 2
+        later["previous_event_sha256"] = self.contract.sha256(first)
+        later["supersedes"] = None
+        history["events"].append(later)
+        result["data"]["tuning_history_after_sha256"] = self.contract.sha256(history)
+        request["tuning_history"] = copy.deepcopy(history)
+
+        with self.assertRaisesRegex(self.contract.ContractError, "HISTORY.PREDECESSOR"):
+            self.contract.validate_request(request)
+        with self.assertRaisesRegex(self.contract.ContractError, "HISTORY.PREDECESSOR"):
+            self.contract.validate_result(result)
 
     def test_authority_ids_preserve_evaluator_source_references(self):
         original_request, original_result = self.tuning_pair()
