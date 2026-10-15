@@ -3,8 +3,10 @@
 Parent: `ehrvs:fix/calibration-contract-compatibility`, PR #21.
 Pinned parent head: `1d93c254077f3bc82e6766da1d034d452e7f8c9b`.
 Child branch: `fix/calibration-migration-predecessor`.
-Landing target: `main`, after PR #21. The parent comes from a fork; this is a
-dependent git layer rather than a GitHub-native cross-fork stack.
+The follow-up was authored as a dependent git layer because the original PR
+comes from a fork. At the maintainer's direction, these additions and the
+schema/release work are being consolidated into Erik's original PR #21 through
+its enabled maintainer-edits permission, preserving his commits.
 
 ## Finding 1 — P2: first-event migrations can omit their predecessor
 
@@ -43,4 +45,4 @@ GitHub GraphQL calls are required.
 This follow-up retains PR #21's evaluator-ID compatibility and fresh-history
 support. It does not change evaluation questions, confidence thresholds, or
 the frozen corpus. The response-envelope repair and release preparation in
-PR #22 remain separate.
+PR #22 were authored separately and are included in that consolidation.
